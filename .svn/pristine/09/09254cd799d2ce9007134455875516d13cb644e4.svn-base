@@ -1,0 +1,103 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>ddangkong planer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div class="container" style="width: 60%;">
+<%@ include file="../../views/include/header.jsp" %>
+	<h1>마이페이지</h1>
+	<div class="row">
+		<div class="col-sm-3">
+			<div class="well">
+				<img src="../images/user.png" class="img-circle center-block" width="200px;" height="200px;">
+				<h3 style="text-align: center"><strong>bbucca</strong></h3>
+			</div>
+			<div>
+				<div class="list-group">
+					<a href="#" class="list-group-item active">나의 플래너 <span class="badge">2</span></a>
+					<a href="#" class="list-group-item">관심 플래너</a>
+					<a href="#" class="list-group-item"><span class="glyphicon glyphicon-envelope"></span> 쪽지함<span class="badge">4</span></a>
+					<a href="#" class="list-group-item">앨범</a>
+					<a href="#" class="list-group-item">주문내역</a>
+					<a href="#" class="list-group-item">정보수정</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-9">
+			<div class="col-sm-6 col-md-4">
+				<div class="thumbnail">
+					<div style="position: relative; height: 175px; overflow: hidden;">
+			    		<a href="#"><img width="242px" height="200px" style="border: 2px solid #e4e4e4" src="../images/main(sub1).JPG">
+			    		</a>
+			    	</div>
+			    	<div class="caption">
+			    		<ul class="list-unstyled">
+			    			<li style="text-align: center;"><h3><a href="#">전주 당일치기</a></h3></li>
+			    			<li style="text-align: center;">2018년 5월 초</li>
+			    			<li style="text-align: center; padding: 10px;">
+			    				<a href="#" class="btn btn-md btn-success">자세히</a>
+			    			</li>
+			    			<li style="text-align: center;">
+			    				<span class="glyphicon glyphicon-heart">20</span>
+			    			</li>
+			    		</ul>
+			    	</div>
+			    </div>
+			</div>
+			<div class="col-sm-6 col-md-4">
+				<div class="thumbnail">
+					<div style="position: relative; height: 175px; overflow: hidden;">
+			    		<a href="#"><img width="242px" height="200px" style="border: 2px solid #e4e4e4" src="../images/main(sub1).JPG">
+			    		</a>
+			    	</div>
+			    	<div class="caption">
+			    		<ul class="list-unstyled">
+			    			<li style="text-align: center;"><h3><a href="#">부산 먹방여행</a></h3></li>
+			    			<li style="text-align: center;">2018년 5월 초</li>
+			    			<li style="text-align: center; padding: 10px;">
+			    				<a href="#" class="btn btn-md btn-success">자세히</a>
+			    			</li>
+			    			<li style="text-align: center;">
+			    				<span class="glyphicon glyphicon-heart">20</span>
+			    			</li>
+			    		</ul>
+			    	</div>
+			    </div>
+			</div>
+			<div class="col-sm-6 col-md-4">
+				<div class="thumbnail">
+					<div style="position: relative; height: 175px; overflow: hidden;">
+			    		<a href="#"><img width="242px" height="200px" style="border: 2px solid #e4e4e4" src="../images/main(sub1).JPG">
+			    		</a>
+			    	</div>
+			    	<div class="caption">
+			    		<ul class="list-unstyled">
+			    			<li style="text-align: center;"><h3><a href="#">목포 가족여행</a></h3></li>
+			    			<li style="text-align: center;">2018년 5월 초</li>
+			    			<li style="text-align: center; padding: 10px;">
+			    				<a href="#" class="btn btn-md btn-success">자세히</a>
+			    			</li>
+			    			<li style="text-align: center;">
+			    				<span class="glyphicon glyphicon-heart">20</span>
+			    			</li>
+			    		</ul>
+			    	</div>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

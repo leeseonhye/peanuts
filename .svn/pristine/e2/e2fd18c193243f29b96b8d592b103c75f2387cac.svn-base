@@ -1,0 +1,789 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title></title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	var ticketNo = ${ticket.info.no};
+    getReview(event,ticketNo,1);
+    getQna(event,ticketNo,1);
+	$(function() {
+		$("a .small-box").click(function(event) {
+			var img = $(this).attr("src");
+			
+			
+			$(".big-box").attr("src" , img);
+			return false;
+		});
+		
+		
+		$('#review-form').on('click', 'span[id$=Star]', function(event) {
+			var grade = parseInt($(this).attr('id').substring(0,1));
+			$(':input[name=grade]').val(grade);
+			
+			var $p = $(this).parent();
+			var row = "";
+			
+			$p.empty();
+			for (var i=1; i <= grade; i++) {
+				row += "<span class='glyphicon glyphicon-star' id='"+i+"Star'></span>";
+			}
+			for (var i = (grade+1); i <= 5; i++) {
+				row += "<span class='glyphicon glyphicon-star-empty' id='"+i+"Star'></span>";
+			}
+			$p.html(row);
+			
+		});
+		
+		$('#qtyProduct').on('change', function(event) {
+			var removeText = $('#dcPrice').text().split("원");
+			var removeComma = removeText[0].split(",");
+			var dcPrice = parseInt(removeComma[0] + removeComma[1]);
+			var qty = parseInt($(this).val());
+			$(':input[name=ticketQty]').val(qty);
+			if(!qty) {
+				qty = 0;
+			}
+			var sum = qty * dcPrice;
+			num = sum + "";
+			point = num.length % 3;
+			len = num.length;
+			str = num.substring(0, point);
+			while(point < len) {
+				if (str != "") {
+					str += ",";
+				}
+				str += num.substring(point, point+3);
+				point += 3;
+			}
+			$('#sumPrice').text(str);
+			$('#payPrice').text(str);
+		});
+		
+		$('#orderBtn').on('click', function(event) {
+			if('${LOGIN_USER.id}' == ''){		
+				$('#neLogin').modal('show');				
+			} else {
+				$("#myOrder").modal('show');
+			}
+			var qty = $('#qtyProduct').val();
+			$('#orderQty').text(qty);
+			var price = '${ticket.info.price*((100 - ticket.info.discountRate)/100) }' * qty;
+			var sum = parseInt(price);
+			num = sum + "";
+			point = num.length % 3;
+			len = num.length;
+			str = num.substring(0, point);
+			while(point < len) {
+				if (str != "") {
+					str += ",";
+				}
+				str += num.substring(point, point+3);
+				point += 3;
+			}
+			$('#orderSumPrice').text(str+"원");
+		});
+		
+		$('#method').on('keyup','[id=numbersOnly]',function () {
+		    var number = $(this).val().replace(/[^0-9]/g,'');
+		    $(this).val(number);
+		});
+		
+		$('[name=payment-method]').change(function () {
+			$('#method').empty();
+			var row = "";
+			if($(this).val() == 'card') {
+				row += "<td colspan='1'><div><select><option>신한카드</option><option>씨티카드</option><option>우리카드</option><option>국민카드</option><option>NH농협카드</option></select></div></td><th><input size='6' id='numbersOnly' maxlength='4' type='text'>-<input size='6' id='numbersOnly' maxlength='4' type='text'>-<input size='6' id='numbersOnly' maxlength='4' type='text'></th></tr>"
+				$('#method').append(row);
+			} else if($(this).val() == 'bank') {
+				row += "<td colspan='1'><div><select><option>신한은행</option><option>씨티은행</option><option>우리은행</option><option>국민은행</option><option>NH농협은행</option></select></div></td><th><input size='30' id='numbersOnly' maxlength='20' type='text' readonly placeholder='123-456-789'></th></tr>"
+				$('#method').append(row);
+			} else if($(this).val() == 'phone') {
+				row += "<td colspan='1'><div><select><option>SKT</option><option>KT</option><option>LG</option><option>SK</option></select></div></td><th><input size='3' id='numbersOnly' maxlength='3' type='text'>-<input size='6' id='numbersOnly' maxlength='4' type='text'>-<input size='6' id='numbersOnly' maxlength='4' type='text'></th></tr>"
+					$('#method').append(row);
+			}
+		});
+		
+		$('#addPayment').click(function(event) {
+			var isEmpty = false;
+			$(':input[id=numbersOnly]').each(function(index,item) {
+				if( !$(item).val() ) {
+					isEmpty = true;
+				}
+			})
+			
+			if (!isEmpty) {
+				alert('주문완료');
+				return true;
+			} else {
+				alert('번호를 입력후 주문해주세요.');
+				return false;
+			}
+			
+		});
+		
+		$(':button[id^=updateReview]').on('click',function(event) {
+			$('#review-title').text('상품평 수정');
+			$('#review-form').attr('action','updateReview.do');
+			$('#review-form-btn').text('수정');
+			
+			var reviewNo = $(this).attr('id').replace("updateReview-","");
+			var ticketNo = $('#review-ticketNo').val();
+			console.log(ticketNo);
+			$reviewForm = $('#review-form');
+			
+			$.ajax({
+				type: "GET",
+				url: "/ticket/reviewDetail.do",
+				data: {reviewNo:reviewNo},
+				dataType: 'json',
+				success: function(result) {
+					var isSuccess = result.success;
+					if(isSuccess) {
+						var review = result.review;
+						var grade = review.ticketGrade;
+						var image = result.image;
+						$('#review-grade').val(review.ticketGrade);
+						$('#review-reviewNo').val(reviewNo);
+						$('#star-location').empty();
+						for(var i =1; i<= grade; i++) {
+							$('#star-location').append("<span class='glyphicon glyphicon-star' id='1Star'></span>");
+						}
+						for(var i = 1; i<= (5-grade); i++) {
+							$('#star-location').append("<span class='glyphicon glyphicon-star-empty' id='1Star'></span>");
+						}
+						$('#review-contents').text(review.reviewContents);
+					if(image != null){
+						$('#blah').attr('src', "/resources/images/review/"+image.IMAGENAME);						
+					}
+						
+					}
+				}
+			})
+			
+			
+		});
+		
+		$('#addReview').on('click',function(event) {
+			if('${LOGIN_USER.id}' != ''){
+				$('#reviewModal').modal('show');
+			} else {
+				$('#neLogin').modal('show');
+			}
+			$('#review-title').text('상품평 등록');
+			$('#review-form').attr('action','addReview.do');
+			$('#review-form-btn').text('등록');
+			$('#star-location').empty();
+			for(var i = 1; i<= 5; i++) {
+				$('#star-location').append("<span class='glyphicon glyphicon-star-empty' id='1Star'></span>");
+			}
+			$('#review-contents').text("");
+		});
+		
+		function readURL(input) {
+
+			  if (input.files && input.files[0]) {
+			    var reader = new FileReader();
+
+			    reader.onload = function(e) {
+			      $('#blah').attr('src', e.target.result);
+			    }
+
+			    reader.readAsDataURL(input.files[0]);
+			  }
+			}
+
+			$("#imgInp").change(function() {
+			  readURL(this);
+			});
+	});
+	
+	var end = new Date(${ticket.info.sellingEndTime});
+
+    var _second = 1000;
+    var _minute = _second * 60;
+    var _hour = _minute * 60;
+    var _day = _hour * 24;
+    var timer;
+
+    function showRemaining() {
+        var now = new Date();
+        var distance = end - now;
+        if (distance < 0) {
+
+            clearInterval(timer);
+            document.getElementById('countdown').innerHTML = '판매종료!';
+
+            return;
+        }
+        var days = Math.floor(distance / _day);
+        var hours = Math.floor((distance % _day) / _hour);
+        var minutes = Math.floor((distance % _hour) / _minute);
+        var seconds = Math.floor((distance % _minute) / _second);
+
+        document.getElementById('countdown').innerHTML = days + '일 ';
+        document.getElementById('countdown').innerHTML += hours + '시간 ';
+        document.getElementById('countdown').innerHTML += minutes + '분 ';
+        document.getElementById('countdown').innerHTML += seconds + '초';
+    }
+
+    timer = setInterval(showRemaining, 1000);
+    
+    function getReview(event,ticketNo,j) {
+		$.ajax({
+			type: "GET",
+			url: "/review/allReview.do",
+			data: {ticketNo:ticketNo,modalPageNo:j},
+			dataType: 'json',
+			success: function(result) {
+				var review = result.list;
+				var images = result.images;
+				var row ="";
+				var currentModalPageNo = j;
+				$.each(review, function(index, list) {
+					row += "<div class='panel-group'>"
+					row += "<div class='panel panel-info' style='border-bottom: 1px solid gray; margin: 10px;'>";
+					row += "<div class='panel-body'>"
+					row += "<div class='col-sm-4'>";
+					row += "<img src='/resources/images/profile/"+list.USERPROFILE+"' class='img-circle' width='50%' height='100px;'>";
+					row += "</div>";
+					row += "<div class='col-sm-8'>";
+					if(list.USERID == '${LOGIN_USER.id}'){						
+						row += "<span>"+list.USERNAME+"님	<button class='btn btn-primary btn-xs pull-right' id='updateReview-"+list.REVIEWNO+"' data-toggle='modal' data-target='#reviewModal'>수정</button><a href='deleteReview.do?ticketNo="+${ticket.info.no}+"&reviewNo="+list.REVIEWNO+"' class='btn btn-warning btn-xs pull-right'>삭제</a></span>";
+					} else {						
+						row += "<span>"+list.USERNAME+"님</span>";
+					}
+					row += "<p>";
+					for(var i=1; i<=list.TICKETGRADE; i++) {
+						row += "<span class='glyphicon glyphicon-star'></span>"
+					}
+					for(var i=1; i<=(5-list.TICKETGRADE); i++) {
+						row += "<span class='glyphicon glyphicon-star-empty'></span>"
+					}
+					row += "</p>";
+					row += "<p><small>"+formatDate(list.CREATEDATE)+"</small></p>";
+						$.each(images, function(index,image){
+							if(image.NO == list.REVIEWNO) {
+								row += "<img src='/resources/images/review/"+image.NAME+"' width='25%' height='80px;'>"
+							}
+						})
+						
+					row += "<p>";
+					row += list.REVIEWCONTENTS;
+					row += "</p>";
+					row += "</div>";
+					row += "</div>";
+					row += "</div>";
+				})
+				$('#review-box').empty();
+				$('#review-box').append(row);
+				
+				var nav = 5;
+				var totalCnt = result.totalCnt;
+				var totalPageNo = Math.ceil(totalCnt/10);
+				var totalBlocks = Math.ceil(totalPageNo/nav);
+				var currentBlock = Math.ceil(currentModalPageNo/nav);
+				var beginModalPage = ((currentBlock-1)*nav)+1;
+				var endModalPage = currentBlock*nav;
+				var previousPage = Math.floor((currentModalPageNo-1)/5)*5;
+				var	nextPage = Math.ceil(currentModalPageNo/5)*5+1;
+				
+				var pagination = "<nav>";
+				 	pagination += "<ul class='pagination'>";
+					if(currentBlock != 1){
+					    pagination += "<li><a href='#' onclick='getReview(event,"+ticketNo+","+previousPage+")' aria-label='Previous'>";
+					    pagination += "<span aria-hidden='true'>&laquo;</span></a></li>";
+					}
+					if(currentBlock == totalBlocks) {
+					   beginModalPage = ((totalBlocks-1)*nav)+1;
+					   endModalPage = totalPageNo;
+					}
+					for (var i=beginModalPage; i<=endModalPage; i++) {
+					   if (currentModalPageNo == i){
+					      pagination += "<li class='active'><a href='#'>"+i+"</a></li>";
+					   } else {
+					      pagination += '<li><a href="#" onclick="getReview(event,'+ticketNo+','+i+')">'+i+'</a></li>';
+					   }
+					}
+					if(currentBlock != totalBlocks){
+					    pagination += "<li><a href='#' onclick='getReview(event, "+ticketNo+", "+nextPage+")' aria-label='Next'>";
+					    pagination += "<span aria-hidden='true'>&raquo;</span></a></li>";
+					}
+				pagination += "</ul></nav>";
+				$('#review-nav').empty();
+				if(totalCnt != 0) {						
+					$('#review-nav').append(pagination);
+				}
+			}
+		});
+    }
+    
+    function getQna(event,ticketNo,j) {
+    	$.ajax({
+    		type: "GET",
+			url: "/qna/allQna.do",
+			dataType: 'json',
+			data:{ticketNo:ticketNo,pno:j},
+			success: function(result) {
+				var qnas = result.qnas;
+				var row = "";
+				row += "<div class='panel panel-group'>"
+				$.each(qnas, function(index,qna){
+					var qdate = formatDate(qna.QUESTIONDATE);
+					var adate = formatDate(qna.ANSWERDATE);
+					row += '<div class="panel-info">'
+					row += '<div class="panel-heading">';
+					row += '질문';
+					row += '</div>';
+					if(!qna.ANSWERCONTENTS) {					
+						row += '<div class="panel-body">'
+						row += '<span class="col-sm-6">'+qna.user.name+'님</span>';
+						row += '<span class="text-center">';
+						row += qdate;
+						if(qna.user.id == '${LOGIN_USER.id}'){						
+						row += '<a href="deleteQna.do?qnaNo='+qna.QNANO+'&ticketNo=${ticket.info.no}" class="btn btn-warning btn-xs">삭제</a>';
+						} else if('${LOGIN_USER.status}' == 'admin') {
+						row += '<button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#qnaAnswer">답변</button>';						
+						}
+						row += '</span>';
+						row += '<p>'+qna.QUESTIONCONTENTS+'</p>'
+						row += '</div>';
+						row += '</div>';
+					} else {					
+						row += '<div clas="panel-body">';
+						row += '<span class="col-sm-6">'+qna.user.name+'님</span><span class="text-center">'+qdate+'</span>';
+						row += '<p>'+qna.QUESTIONCONTENTS+'</p>';
+						row += '</div>';
+						row += '<div class="panel panel-warning">';
+						row += '<div class="panel-heading">';
+						row += '답변';
+						row += '</div>';
+						row += '<div class="panel-body">';
+						row += '<span class="col-sm-6">피넛매니저</span><span class="text-center">'+adate+'</span>';
+						row += '<p>'+qna.ANSWERCONTENTS+'</p>';
+						row += '</div>';
+						row += '</div>';
+					}
+				})
+				$('#qna-box').empty();
+				$('#qna-box').append(row);
+				
+				var nav = 5;
+				var currentModalPageNo = j;
+				var totalCnt = result.totalCnt;
+				var totalPageNo = Math.ceil(totalCnt/10);
+				var totalBlocks = Math.ceil(totalPageNo/nav);
+				var currentBlock = Math.ceil(currentModalPageNo/nav);
+				var beginModalPage = ((currentBlock-1)*nav)+1;
+				var endModalPage = currentBlock*nav;
+				var previousPage = Math.floor((currentModalPageNo-1)/5)*5;
+				var	nextPage = Math.ceil(currentModalPageNo/5)*5+1;
+				
+				var pagination = "<nav>";
+				 	pagination += "<ul class='pagination'>";
+					if(currentBlock != 1){
+					    pagination += "<li><a href='#' onclick='getQna(event,"+ticketNo+","+previousPage+")' aria-label='Previous'>";
+					    pagination += "<span aria-hidden='true'>&laquo;</span></a></li>";
+					}
+					if(currentBlock == totalBlocks) {
+					   beginModalPage = ((totalBlocks-1)*nav)+1;
+					   endModalPage = totalPageNo;
+					}
+					for (var i=beginModalPage; i<=endModalPage; i++) {
+					   if (currentModalPageNo == i){
+					      pagination += "<li class='active'><a href='#'>"+i+"</a></li>";
+					   } else {
+					      pagination += '<li><a href="#" onclick="getQna(event,'+ticketNo+','+i+')">'+i+'</a></li>';
+					   }
+					}
+					if(currentBlock != totalBlocks){
+					    pagination += "<li><a href='#' onclick='getQna(event, "+ticketNo+", "+nextPage+")' aria-label='Next'>";
+					    pagination += "<span aria-hidden='true'>&raquo;</span></a></li>";
+					}
+				pagination += "</ul></nav>";
+				
+				$('#qna-nav').empty();
+				if( totalCnt != 0){					
+					$('#qna-nav').append(pagination);
+				}
+			}
+    	})
+    }
+    
+    function formatDate(date) {
+        var d = new Date(date),
+        	month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+        	hour = d.getHours();
+        	minute = d.getMinutes();
+        	second = d.getSeconds();
+
+        if(month.length < 2){ 
+        	month = '0' + month;
+        }
+        if(day.length < 2){
+        	day = '0' + day;
+        }
+        if(hour.length < 2 ){
+        	hour = '0' + hour;
+        }
+        if(minute.length  < 2) {
+        	minute = '0' + minute;
+        }
+        if(second.length < 2) {
+        	second = '0' + second;
+        }
+		var formattedDate = [year, month, day].join('.')+ ' ' +[hour, month, second].join(':')
+        return formattedDate;
+    }
+</script>
+</head>
+<body>
+	<jsp:include page="../include/header.jsp">
+		<jsp:param value="ticket" name="header"/>
+	</jsp:include>
+	<div class="container" style="width: 60%">
+
+		<div class="row">
+		<div class="col-md-8 jumbotron">
+			<div>
+				<img src="/resources/images/ticket/${ticket.topImages[0] }" class="big-box" width="100%" />
+			</div>
+			<div class="text-center" style="margin: 10px;">
+				<c:forEach items="${ticket.topImages }" var="image">
+					<a href="/resources/images/ticket/${image }"><img src="/resources/images/ticket/${image }" class="small-box" width="62" height="63" /></a> 				
+				</c:forEach>
+			</div>
+
+		<div style="border: 1px solid gray;">
+			<ul class="nav nav-tabs">
+				<li class="active"><a data-toggle="tab" href="#home">상품설명</a></li>
+				<li><a data-toggle="tab" href="#menu1">상품평</a></li>
+				<li><a data-toggle="tab" href="#menu2">상품문의</a></li>
+			</ul>
+			<div class="tab-content">
+				<div id="home" class="tab-pane fade in active">
+				<c:forEach items="${ticket.mainImages }" var="image">
+					<img src="/resources/images/ticket/${image }" width="100%">
+				</c:forEach>
+				</div>
+				<div id="menu1" class="tab-pane fade">
+					<div>
+						<h3>상품평</h3>
+						<button type="button" class="btn btn-info btn-lg" id="addReview">상품평 등록</button>
+						
+						<div id="reviewModal" class="modal fade" role="dialog">
+						  <div class="modal-dialog">
+						    <!-- Modal content-->
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <button type="button" class="close" data-dismiss="modal">&times;</button>
+						        <h4 class="modal-title" id="review-title">상품평 등록</h4>
+						      </div>
+						      <div class="modal-body">
+						        <form action="addReview.do" method="post" class="well" enctype="multipart/form-data" id="review-form">
+						        	<div class="form-group">
+						        		<label>평점</label>
+						        		<input type="hidden" value="0" name="grade" id="review-grade">
+						        		<input type="hidden" value="${ticket.info.no }" name="reviewNo" id="review-reviewNo">
+						        		<input type="hidden" value="${ticket.info.no }" name="ticketNo" id="review-ticketNo">
+						        		<p id="star-location">
+						        			<span class="glyphicon glyphicon-star-empty" id="1Star"></span>
+						        			<span class="glyphicon glyphicon-star-empty" id="2Star"></span>
+						        			<span class="glyphicon glyphicon-star-empty" id="3Star"></span>
+						        			<span class="glyphicon glyphicon-star-empty" id="4Star"></span>
+						        			<span class="glyphicon glyphicon-star-empty" id="5Star"></span>
+						        		</p>
+						        	</div>
+						        	<div class="form-group">
+						        		<label>내용</label>
+						        		<textarea rows="4" class="col-sm-12" name="contents" id="review-contents"></textarea>
+						        	</div>
+						        	<div class="form-group">
+						        		<label>이미지 등록</label>
+						        		<input type="file" id="imgInp" name="images" multiple accept="image/*"><span><small style="color: red">이미지 파일만 등록 해주세요.(10Mb제한)</small></span>
+  										<img id="blah" width="100%" src="/resources/images/review/noimage.jpg" alt="your image" />
+						        	</div>
+						        	<button class="btn btn-default" id="review-form-btn">등록</button>
+						        	<a type="button" class="btn btn-default" data-dismiss="modal">취소</a>
+						        </form>
+						      </div>
+						    </div>
+						  </div>
+						</div>
+						<div class="col-md-6">
+							<h3>
+								<c:forEach begin="1" end="${review.avg +((review.avg%1>0.5)?(1-(review.avg%1))%1:-(review.avg%1))}">
+									<span style="color: #a0522d" class="glyphicon glyphicon-star"></span>
+								</c:forEach>
+								<c:forEach begin="1" end="${5-(review.avg +((review.avg%1>0.5)?(1-(review.avg%1))%1:-(review.avg%1))) }">
+									<span class="glyphicon glyphicon-star-empty"></span>
+								</c:forEach>
+							</h3>
+							<h3><fmt:formatNumber value="${review.avg }" pattern="###.##" />점</h3>
+							<span>${review.sum }개의 상품평이 있습니다.</span>
+						</div>
+						<div class="col-md-6">
+							<span>5점</span>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" aria-valuenow="${grades.FIVE }" aria-valuemin="0" aria-valuemax="100" style="width: ${review.ratio.FIVE }%;">
+									  <fmt:formatNumber value="${review.ratio.FIVE }" pattern="###.##" />%
+								</div>
+							</div>
+							<span>4점${grades.one }</span>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" aria-valuenow="${grades.FOUR }" aria-valuemin="0" aria-valuemax="100" style="width: ${review.ratio.FOUR }%;">
+									   <fmt:formatNumber value="${review.ratio.FOUR }" pattern="###.##" />%
+								</div>
+							</div>
+							<span>3점</span>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" aria-valuenow="${grades.THREE }" aria-valuemin="0" aria-valuemax="100" style="width: ${review.ratio.THREE }%;">
+									   <fmt:formatNumber value="${review.ratio.THREE }" pattern="###.##" />%
+								</div>
+							</div>
+							<span>2점</span>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" aria-valuenow="${grades.TWO }" aria-valuemin="0" aria-valuemax="100" style="width: ${review.ratio.TWO }%;">
+									  <fmt:formatNumber value="${review.ratio.TWO }" pattern="###.##" />%
+								</div>
+							</div>
+							<span>1점</span>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" aria-valuenow="${grades.ONE }" aria-valuemin="0" aria-valuemax="100" style="width: ${review.ratio.ONE }%;">
+									   <fmt:formatNumber value="${review.ratio.ONE }" pattern="###.##" />%
+								</div>
+							</div>
+						</div>
+					</div>
+					<div style="margin:10px; border-bottom:1px solid gray;">
+							<h3>상품평 이미지</h3>
+							<c:forEach var="image" items="${review.images }">
+								<img src="/resources/images/review/${image.NAME }" width="12.5%" height="100px;">
+							</c:forEach>
+					</div>
+					<h3>상품평</h3>
+					<div id="review-box">
+						
+					</div>
+					<div id="review-nav" class="text-center">
+					
+					</div>
+				</div>
+				<div id="menu2" class="tab-pane fade">
+					<div style=" margin: 10px; border-bottom: 1px solid black;">
+					<h3>상품에 대해 궁금한 점 있으시면 문의해주세요!</h3>
+						<ul>
+							<li>구매한 상품의 취소/반품은 구매내역에서 신청 가능합니다.</li>
+							<li>상품문의 및 후기게시판을 통해 취소나 환불, 반품 등은 처리되지 않습니다.</li>
+							<li>가격, 판매자, 교환/환불 및 배송 등 해당 삼품 자체와 관련 없는 문의는 받지 않습니다.</li>
+							<li>해당 상품 자체와 관계없는 글, 양도, 광고성, 욕설, 비방, 도배 등의 글은 예고 없이 이동, 노출제한, 삭제등의 조치가 취해질 수 있습니다.</li>
+							<li>공개 게시판이므로 전화번호, 메일 주소 등 고객님의 소중한 개인정보는 절대 남기지 말아주세요.</li>
+						</ul>
+						<form method="post" action="addQna.do">
+							<input type="hidden" value="${ticket.info.no }" name="ticketNo">
+							<textarea rows="2" class="col-sm-10" name="questionContents"></textarea> <button class="btn btn-default">등록</button>
+						</form>
+					</div>
+					<div style="margin-bottom: 10px; border-bottom: 1px solid black;" id="qna-box">
+						<div id="qnaAnswer" class="modal fade" role="dialog">
+						  <div class="modal-dialog">
+						    <!-- Modal content-->
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <button type="button" class="close" data-dismiss="modal">&times;</button>
+						        <h4 class="modal-title">문의 답변</h4>
+						      </div>
+						      <div class="modal-body">
+						      	<form action="addQnaAnswer.do" method="post">
+							        <table class="table">
+							        	<thead>
+							        		<tr>
+							        			<th>문의자</th>
+							        			<td>${qna.user.name }</td>
+							        			<th>문의내용</th>
+							        			<td>${qna.questionContents }</td>
+							        		</tr>
+							        	</thead>
+							        	<tbody>
+							        		<tr>
+							        			<th colspan="2">답변내용</th>
+							        			<th colspan="2">
+							        				<input type="hidden" value="${qna.qnaNo }" name="qnaNo">
+							        				<input type="hidden" value="${ticket.info.no }" name="ticketNo">
+							        				<textarea name="answerContents"></textarea>
+							        			</th>
+							        		</tr>
+							        	</tbody>
+							        </table>
+							      	<button class="btn btn-info">등록</button>
+							        <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+						      	</form>
+						      </div>
+						      <div class="modal-footer">
+						      </div>
+						    </div>
+						  </div>
+						</div>
+					</div>
+					<div class="text-center" id="qna-nav">
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		<div id="sidebox" class="col-md-3" style="position:fixed; top:200px; margin-right:-500px; right:40%">
+			<div style="border: 5px solid #a0522d; background-color: white; font-style: oblique;" class="jumbotron">
+				<h3>[${ticket.info.locationCity}] ${ticket.info.name }</h3>
+				<p>
+					<c:forEach begin="1" end="${review.avg +((review.avg%1>0.5)?(1-(review.avg%1))%1:-(review.avg%1))}">
+						<span style="color: #a0522d" class="glyphicon glyphicon-star"></span>
+					</c:forEach>
+					<c:forEach begin="1" end="${5-(review.avg +((review.avg%1>0.5)?(1-(review.avg%1))%1:-(review.avg%1))) }">
+						<span class="glyphicon glyphicon-star-empty"></span>
+					</c:forEach>
+					<span>${review.sum }개의 상품평</span> <br />
+					<span>할인율 : ${ticket.info.discountRate }%</span><br/>
+					<span style="text-decoration: line-through;"><fmt:formatNumber value="${ticket.info.price }" pattern="#,###" /></span>->
+					<span id="dcPrice"><fmt:formatNumber value="${ticket.info.price*((100 - ticket.info.discountRate)/100) }" pattern="#,###" />원</span><br />
+			 		<span>남은시간 <span id="countdown"></span></span>
+			 		<div class="text-center">
+				 		<span>수량을 입력해주세요</span>
+				 		<input type="number" value="1" min="1" name="qty" id="qtyProduct">
+							<input type="hidden" name="title">
+							<p>총 상품가: <strong class="text-right"><span id="sumPrice"><fmt:formatNumber value="${ticket.info.price*((100 - ticket.info.discountRate)/100) }" pattern="#,###" /></span>원</strong></p>
+							<button type="button" id="orderBtn" class="btn btn-primary btn-lg">바로구매</button>
+			 		</div>
+			</div>
+		</div>
+			<!-- Modal -->
+			<div id="myOrder" class="modal fade" role="dialog">
+			  <div class="modal-dialog">
+			    <!-- Modal content-->
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+			        <h4 class="modal-title">결제 정보</h4>
+			      </div>
+			      <div class="modal-body">
+			        <table class="table">
+			        	<thead>
+			        		<tr>
+			        			<th>티켓명</th>
+			        			<td colspan="3">${ticket.info.name }</td>
+			        		</tr>
+			        		<tr>
+			        			<th>가격</th>
+			        			<td id="orderPrice"><fmt:formatNumber value="${ticket.info.price*((100 - ticket.info.discountRate)/100) }" pattern="#,###" />원</td>
+			        			<th>수량</th>
+			        			<td id="orderQty"></td>
+			        		</tr>
+			        		<tr>
+			        			<th>총합</th>
+			        			<td id="orderSumPrice"></td>
+			        		</tr>
+			        	</thead>
+			        </table>
+			      </div>
+			      <div class="modal-footer">
+			      	<button type="button" class="btn btn-default" data-toggle="modal" data-target="#payment">결제하기</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			<div id=payment class="modal fade" role="dialog">
+			  <div class="modal-dialog">
+			    <!-- Modal content-->
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+			        <h4 class="modal-title">결제</h4>
+			      </div>
+			      <div class="modal-body">
+			        <table class="table">
+			        	<thead>
+			        		<tr>
+			        			<th colspan="4">
+			        				<div class="radio">
+			        					<label>
+					        				<input type="radio" value="card" name="payment-method" checked>
+					        				카드
+			        					</label>
+				        				<label>
+					        				<input type="radio" value="bank" name="payment-method">
+					        				무통장 입금
+			        					</label>
+			        					<label>
+					        				<input type="radio" value="phone" name="payment-method">
+					        				휴대폰
+			        					</label>
+			        				</div>
+			        			</th>
+			        		</tr>
+			        		<tr id="method">
+			        			<td colspan="1">
+			        				<div>
+			        					<select>
+			        						<option>신한카드</option>
+			        						<option>씨티카드</option>
+			        						<option>우리카드</option>
+			        						<option>국민카드</option>
+			        					</select>
+			        				</div>
+			        			</td>
+			        			<th>
+			        				<input size="6" id="numbersOnly" maxlength="4" type="text">-
+			        				<input size="6" id="numbersOnly" maxlength="4" type="text">-
+			        				<input size="6" id="numbersOnly" maxlength="4" type="text">-
+			        				<input size="6" id="numbersOnly" maxlength="4" type="text">
+			        			</th>
+			        		</tr>
+			        		<tr>
+			        			<th>결재금액</th>
+			        			<td id="payPrice"></td>
+			        		</tr>
+			        	</thead>
+			        </table>
+			      </div>
+			      <div class="modal-footer">
+			      	<form action="ticketOrder.do" method="post">
+			      		<input type="hidden" name="ticketQty" value="1">
+			      		<input type="hidden" name="ticketNo" value="${ticket.info.no }">
+				        <button class="btn btn-default" id="addPayment">결제하기</button>
+				        <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+			      	</form>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			<div id="neLogin" class="modal fade" role="dialog">
+			  <div class="modal-dialog">
+			    <!-- Modal content-->
+			    <div class="modal-content">
+			      <div class="modal-header" style="background-color: #ac7339; color: white;">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+			        <h4 class="modal-title">로그인후 이용 가능한 서비스 입니다.</h4>
+			      </div>
+			      <div class="modal-body">
+			       <h4><a href="/user/login.do">로그인하러가기</a></h4>
+			       <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		</div>
+	</div>
+	<jsp:include page="../include/footer.jsp"/>
+</body>
+</html>

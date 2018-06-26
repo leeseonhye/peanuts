@@ -1,0 +1,313 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>ddangkong planer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+  <style type="text/css">
+  	th { text-align: center;}
+  </style>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%; margin-top: 20px;">
+	<div class="col-sm-8">
+		<div class="jumbotron" style="height: 150px; padding: 10px;">
+			<h5><img src="../resources/images/logo/peanutbw.png" style="width: 20px; height: 20px;">
+				 땅콩플래너 광장은 여행의 정보와 이야기를 자유롭게 공유하는 공간입니다.</h5>
+			<h5><img src="../resources/images/logo/peanutbw.png" style="width: 20px; height: 20px;">
+				 게시글 작성은 로그인한 회원만 작성 가능합니다.</h5>
+			<h5><img src="../resources/images/logo/peanutbw.png" style="width: 20px; height: 20px;">
+				 여행 고수인 왕땅콩님들에게 여행의 도움을 받아보세요.</h5>
+			<h5><img src="../resources/images/logo/peanutbw.png" style="width: 20px; height: 20px;">
+				 마음에 드는 글에는  <span class="glyphicon glyphicon-thumbs-up"></span> (추천)을 할 수 있습니다.</h5>
+		</div>
+		<div class="row" style="margin-right: 30px; margin-bottom: 5px;">
+			<form id="search-form" class="form-group form-inline" action="allplaza.do" method="post">
+				<div class="form-group pull-right">
+					<input type="hidden" name="currentPageNo" value="1"/>
+					<select id="option">
+					    <option value='content' selected>내 용</option>
+					    <option value='userId'>아이디</option>
+					</select>
+					<input type="text" class="form-control" id="keyword" style="width: 200px; height: 25px;" />
+					<button id="searchbtn" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-search"></span></button>
+				</div>
+			</form>
+		</div>
+		<div class="row">
+			<c:choose>
+				<c:when test="${empty LOGIN_USER }">
+				</c:when>
+				<c:otherwise>
+					<form action="addplaza.do" class="form-inline" method="post">
+						<input type="hidden" name="id" value="${LOGIN_USER.id }"/>
+						<div class="form-group">											
+							<img width="60px;" src="../resources/images/profile/${LOGIN_USER.profile }">						
+						</div>
+						<div class="form-group">
+							<textarea id="" name="content" style="width: 580px;" rows="4"></textarea>
+						</div>
+						<button class="btn btn-default btn-sm" style="margin-top: 50px;">등록</button>
+					</form>
+				</c:otherwise>
+			</c:choose>	
+		</div>
+		<div class="row" id="plaza">			
+		</div>
+		<div id="PlazaPagination">
+						
+		</div>
+	</div>
+	<div class="col-sm-4">
+			<h4 style="margin-top: 20px;"><strong>광장 인기 게시글</strong></h4>
+			<p id="bestplaza" ></p>			
+			<hr />
+			<h4 style="margin-top: 30px;"><strong>최근 등록 댓글</strong></h4>
+			<p id="newplaza"></p>
+	</div>
+	
+</div>
+
+</body>
+<script type="text/javascript">
+
+	//날짜 패턴 지정
+	function date2str(x, y) {	// x는 데이터, y는 패턴
+	    var z = {
+	        M: x.getMonth() + 1,
+	        d: x.getDate(),
+	        h: x.getHours(),
+	        m: x.getMinutes(),
+	        s: x.getSeconds()
+	    };
+	    y = y.replace(/(M+|d+|h+|m+|s+)/g, function(v) {
+	        return ((v.length > 1 ? "0" : "") + eval('z.' + v.slice(-1))).slice(-2)
+	    });
+
+	    return y.replace(/(y+)/g, function(v) {
+	        return x.getFullYear().toString().slice(-v.length)
+	    });
+	}
+	
+	//작성날짜 표현
+	function datef(time){
+		var ntime = new Date(time);
+		var w = 604800;
+		var d = 86400;
+		var h = 3600;
+		var m = 60;
+		
+		var currentTime = new Date().getTime(); //현재시간(초)
+		var gap = (currentTime - time) / 1000;
+		if(gap > w){
+			return date2str(new Date(time), 'yyyy년 M월 d일');
+		}
+		if(gap > d){
+			return Math.round(gap/d)+"일전";
+		}
+		if(gap > h){
+			return Math.round(gap/h)+"시간전";
+		}
+		if(gap >= m){
+			return Math.round(gap/m)+"분전";
+		}
+		if(gap < m){
+			return (Math.ceil(gap))+"초전";
+		}
+	}
+
+	
+	function getPlazaList(event, j, no){
+		if ('${param.like}' == 'cancel'){
+			alert('좋아요 취소');
+			
+		}
+			
+		var currentPageNo = j;
+		var allplaza = $('#allplaza').val();
+		var option = $('#option').val();
+		var keyword = $('#keyword').val();
+		var currentNo = no;
+		
+		$.ajax({
+			type: 'GET',
+			url: '/board/allplaza.do',
+			dataType: 'json',
+			data: {currentPageNo:(currentPageNo || 1), option:option, keyword:keyword, currentNo: (no || 0)},
+			success: function(result){
+				var $pagenation = $('#PlazaPagination');
+				//최신댓글 top5
+				var newp = result.newRe;
+				$('#newplaza').empty();
+				$.each(newp, function(n, items){
+					var date = datef(items.createDate);
+					var row = "";
+					row += '<div class="row" style="margin: 10px;"><div class="col-sm-2">';
+					row += '<img width="40px;" height="40px;" src="../resources/images/profile/'+items.profile+'"></div>';
+					row += '<div class="col-sm-10" style="font-size: 13px;">';
+					row += '<strong>'+items.userId+'</strong> <a href="#" onclick="getplaza('+items.boardNo+')">'+items.contents+'</a><span style="color: gray; font-size: 12px;">..'+date+'</span>';
+					row += '</div></div>';
+					$('#newplaza').append(row);	
+				}); 
+				//인기글 top5
+				var best = result.best;
+				$('#bestplaza').empty();
+				$.each(best, function(j, items){
+					var date = datef(items.createDate);
+					var row = "";
+					row += '<div class="row" style="margin: 10px;"><div class="col-sm-2">';
+					row += '<img width="40px;" height="40px;" src="../resources/images/profile/'+items.profile+'"></div>';
+					row += '<div class="col-sm-10" style="font-size: 13px;">';
+					row += '<strong>'+items.id+'</strong> <span class="badge">'+items.likes+'</span> <a href="#" onclick="getplaza('+items.no+')">'+items.content+'</a><span style="color: gray; font-size: 12px;">..'+date+'</span>';
+					row += '</div>'; 
+				
+					$('#bestplaza').append(row);
+				});
+				//게시판 전체글
+				var list = result.list;
+				$('#plaza').empty();
+				$.each(list, function(i, item){
+					var date = datef(item.createDate);
+					var row = "";
+					row += '<div class="row"><hr width="720px;" style="border-color: #b3b3b3; margin: 5px;" /><div class="col-sm-2">';
+					row += '<img width="50px;" height="50px;" src="../resources/images/profile/'+item.profile+'"></div>';
+					row += '<div class="col-sm-9">';
+					row += '<div class="row">';
+					row += '<span id="userId"><strong style="font-size: 17px; color: #0066ff;">'+item.id+'</strong></span>';
+					row += ' <a href="addlike.do?no='+item.no+'" class="btn btn-default btn-xs" type="button">';
+					row += '<span class="glyphicon glyphicon-thumbs-up"></span></a><span class="badge">'+item.likes+'</span>'; //좋아요 개수
+					row += '<a href="listdel.do?no='+item.no+'" class="btn btn-default btn-xs pull-right" id="listdel-'+item.no+'">삭제</a>';
+					row += '<button class="btn btn-default btn-xs pull-right" id="listmodi-'+item.no+'">수정</button></div>';
+					row += '<div class="row" id="modidiv-"'+item.no+'>';
+					row += '<h5 id="replylist-'+item.no+'">'+item.content+'<span style="color: gray; font-size: 12px;">..'+date+'</span></h5>';
+					row += '<form id="modiform-'+item.no+'" class="form-group" action="listModi.do?no='+item.no+'" method="post" style="margin-top: 3px;">';
+					row += '<textarea  name="content" style="width: 500px;" rows="3">'+item.content+'</textarea>';
+					row += '<button class="btn btn-default btn-xs" style="margin-left: 5px;">저장</button></form>';
+					row += '<form class="form-group" action="addRe.do" method="post" style="margin-top: 10px;">'
+					row += '<input type="hidden" name="boardNo" value="'+item.no+'" />';
+					row += '<input type="text" name="contents" style="width: 530px; height: 28px;" placeholder="Write a Comment.." /></form>';
+					row += '</div></div></div>'
+					$('#plaza').append(row);
+					$('[id^="modiform-"]').hide();
+					
+					
+					if ('${LOGIN_USER.id}' != item.id){
+						$('#listdel-'+item.no).hide();
+						$('#listmodi-'+item.no).hide();
+					} else{
+						$('a[href="addlike.do?no='+item.no+'"]').click(function(){
+							alert('본인이 작성한 글에는 추천을 할 수 없습니다.');
+							return false;
+						});
+					}
+					
+					//댓글 ajax
+					$.ajax({	
+						type: 'GET',
+						url: '/board/reply.do',
+						data: {no:item.no }, 
+						dataType: 'json',
+						success: function(re){
+								$.each(re, function(i, item){
+									var date = datef(item.createDate);
+									var rows = '';
+									rows += '<div id="reply" class="row" style="margin-top: 10px; margin-left: 10px;">';
+									rows += '<img width="35px;" height="35px;" src="../resources/images/profile/'+item.profile+'">';
+									rows += '<span style="font-size: 14px; color: #0066ff;"> '+item.userId+'</span>';
+									rows += '<span id="relist-'+item.repNo+'" style="font-size: 13px;"> '+item.contents;
+									rows += '<span style="color: gray; font-size: 12px;">..'+date+'</span></span>';
+									rows += '<button class="btn btn-default btn-xs" id ="remodib-'+item.repNo+'"><span class="glyphicon glyphicon-pencil"></span></button>';
+									rows += ' <a href="redel.do?reno='+item.repNo+'" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-remove"></span></a>';
+									rows += '<form id="remodiform-'+item.repNo+'" class="form-group" action="reModi.do?reno='+item.repNo+'" method="post" style="margin-left: 40px;">'
+									rows += '<input type="hidden" name="boardNo" value="" />';
+									rows += '<input type="text" name="contents" style="width: 480px; height: 28px;" value="'+item.contents+'"></input></form>';
+									rows += '</div>';						
+									$('#modiform-' + item.boardNo).after(rows);
+									$('[id^="remodiform-"]').hide();
+									
+									$('button[id^="remodib-'+item.repNo+'"]').click(function(){
+										var reno = $(this).attr('id').replace('remodib-','');
+										
+										$('[id^="remodib-"]').hide();
+										$('#relist-'+reno).hide();
+										$('#remodiform-'+reno).show();
+									});
+									if ('${LOGIN_USER.id}' != item.userId){
+										$('#remodib-'+item.repNo).hide();
+										$('a[href^="redel.do?reno='+item.repNo+'"]').hide();
+									}
+								})	
+						}
+					});
+				})
+				//게시글 수정
+				$('button[id^="listmodi-"]').click(function(){
+					var no = $(this).attr('id').replace('listmodi-','');
+					$('#replylist-'+no).hide();
+					$('[id^="listmodi-"]').hide();
+					$('#modiform-'+no).show();
+				});
+				
+				
+				//pagination
+				var nav = 5; //페이지 단추 개수
+				var totalCnt = result.totalCnt;
+	            var totalPageNo = Math.ceil(totalCnt/10);
+	            var totalBlocks = Math.ceil(totalPageNo/nav);
+	            var currentBlock = Math.ceil(currentPageNo/nav);
+	            var beginPage = ((currentBlock-1)*nav)+1;
+	            var endPage = currentBlock*nav;
+	            var previousPage = Math.floor((currentPageNo-1)/5)*5;
+				var	nextPage = Math.ceil(currentPageNo/5)*5+1;
+				
+				var pagination = "<nav style='text-align: center;'>";
+				 	pagination += "<ul class='pagination'>";
+					if(currentBlock != 1){
+					    pagination += "<li><a href='#' onclick='getPlazaList(event,"+previousPage+")' aria-label='Previous'>";
+					    pagination += "<span aria-hidden='true'>&laquo;</span></a></li>";
+					}
+					if(currentBlock == totalBlocks) {
+						beginPage = ((totalBlocks-1)*nav)+1;
+						endPage = totalPageNo;
+					}
+					for (var i=beginPage; i<=endPage; i++) {
+					   if (currentPageNo == i){
+					      pagination += "<li class='active'><a href='#'>"+i+"</a></li>";
+					   } else {
+					      pagination += '<li><a href="#" onclick="getPlazaList(event,'+i+')">'+i+'</a></li>';
+					   }
+					}
+					if(currentBlock != totalBlocks){
+					    pagination += "<li><a href='#' onclick='getPlazaList(event,"+nextPage+")' aria-label='Next'>";
+					    pagination += "<span aria-hidden='true'>&raquo;</span></a></li>";
+					}
+					pagination += "</ul></nav>";
+					$pagenation.empty();
+					$pagenation.append(pagination);
+				
+			}
+			
+		});
+	} 
+
+	
+	$('#search-form').submit(function(event) {
+		getPlazaList(event,1);
+		return false;
+	});
+	
+	getPlazaList(event, 1);
+	
+	function getplaza(pno){
+		getPlazaList(event, 1, pno);
+		return false;
+	}
+</script>
+</html>

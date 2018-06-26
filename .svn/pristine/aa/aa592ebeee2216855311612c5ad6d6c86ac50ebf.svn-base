@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.UserDao">
+	<insert id="addUser" parameterType="User">
+		insert into planner_user (user_id, user_pwd, user_name, user_status, user_email, user_tel, user_profile, create_date)
+		 values ( '${id}', '${pwd}', '${name}', 'IN', '${email}', '${tel}', '${profile}', sysdate)
+	</insert>
+	
+	<select id="getUserDetail" parameterType="string" resultType="User">
+		select 	
+			user_id id,
+			user_pwd pwd,
+			user_name name,
+			user_status status,
+			user_email email,
+			user_tel tel,
+			user_profile profile,
+			create_date createDate
+		from 
+			planner_user
+		where 
+			user_id = #{value}
+	</select>
+	
+	<!-- 사용자 사진 변경 -->
+	<update id="imgModify" parameterType="User">
+		update planner_user
+		set user_profile = #{profile}
+		where user_id = #{id}
+	</update>
+</mapper>

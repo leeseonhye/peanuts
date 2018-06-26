@@ -1,0 +1,77 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>     
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>search result</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style>
+	p.pageTitle {font-size: 2em; color: #c68c53; margin-top: -20px; margin-bottom: -5px;}
+	p.pageSubTitle {font-size: 20px; color: #666666; margin-top: 0px; margin-bottom: -5px; letter-spacing: -3px;}
+	#mentoBox .mentoList {
+		width: 152px;
+		height: 150px; 
+		background-color: #996633; 
+		opacity: 0.7; 
+		border-radius: 50%; 
+		margin-top: -150px;
+	}
+	#mentoCircle {text-align: center; padding-top: 60px; padding-right: auto; padding-left: auto; font-size: 20px; color: #fff; letter-spacing: 3px;}
+</style>
+<body>
+<jsp:include page="../include/header.jsp" />
+<br/>
+<div class="container" style="width: 60%; min-height: 740px;">
+	<!-- 상단 사이드 결과 갯수 -->
+	<div class="row">
+		<p class="pageTitle">검색결과 [총<span style="font-weight: bolder; color: #996633;" id="resultCnt">${resultCnt }</span>건]</p>
+		<p class="pageSubTitle">원하는 여행을 다녀온 회원분들의 플래너를 살펴보고 문의해보세요!</p>
+	</div>
+	<div class="row" style="margin: 20px;" id="mentoBox">
+		<c:choose>
+			<c:when test="${not empty mentos}">
+				<div class="col-sm-1"></div>
+				<c:forEach var="mento" items="${mentos }">
+					<div class="col-sm-2">
+						<div class="row text-center" style="padding: 10px;" >
+							<img src="/resources/images/profile/${mento.profile }" width="150px;" height="150px;" style="border-radius: 50%" id="mentoInfo" />
+							
+							<div class="mentoList" id="miniUser-${mento.id }" style="display: none;">
+								<p id='mentoCircle'>${mento.id }</p>
+							</div>
+							
+						</div>
+					</div>
+				</c:forEach>
+			</c:when>
+		</c:choose>
+	</div>
+	<hr>
+	<div class="row">
+	
+	
+	</div>
+
+</div>
+<jsp:include page="../include/miniUser.jsp" />	
+<jsp:include page="../include/footer.jsp" />	
+</body>
+<script>
+$(function() {
+
+	//유저 아이디 보이기
+	$('#mentoBox img[id=mentoInfo]').mouseenter(function() {
+		$(this).siblings('.mentoList').fadeIn();
+	});
+	$('#mentoBox img[id=mentoInfo]').mouseleave(function() {
+		$(this).siblings('.mentoList').fadeOut();
+	});
+	
+})
+</script>
+</html>

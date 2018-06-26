@@ -1,0 +1,9 @@
+package kr.co.hta.peanuts.service;
+
+import kr.co.hta.peanuts.vo.User;
+
+public interface UserService {
+
+	void addUser(User user);
+	User getUserDetail(String id);
+}

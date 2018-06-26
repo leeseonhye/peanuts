@@ -1,0 +1,16 @@
+package kr.co.hta.peanuts.service;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.co.hta.peanuts.vo.Planner;
+import kr.co.hta.peanuts.vo.User;
+
+@Transactional
+public interface HomeService {
+	
+	Planner getPlannerInfo(int pno);
+	User getUserInfo(int pno);
+	int getPlannerLikes(int pno);
+	int getPlannerReply(int pno);	
+
+}

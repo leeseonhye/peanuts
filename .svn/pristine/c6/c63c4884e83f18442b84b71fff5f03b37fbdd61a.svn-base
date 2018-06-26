@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.HomeDao">
+	
+	<select id="getPlannerInfo" parameterType="int" resultType="Planner">
+		select
+			user_id								as userId
+		,	plan_title							as title
+		,	to_char(plan_start, 'yyyy-mm-dd')	as startDate
+		,	to_char(plan_end, 'yyyy-mm-dd')		as endDate
+		,	plan_member							as member
+		,	create_date							as createDate
+		,	plan_status							as status
+		from
+			planner
+		where
+			plan_no = #{value}	
+	</select>
+	
+	<select id="getUserInfo" parameterType="int" resultType="User">
+		select
+			U.user_id			as id
+		,	U.user_status		as status
+		,	U.user_profile		as profile
+		from
+			planner P
+		,	planner_user U
+		where
+			P.user_id = U.user_id
+		and
+			P.plan_no = #{value}	
+	</select>
+	
+	<select id="getPlannerLikes" parameterType="int" resultType="int">
+		select
+			count(*)
+		from
+			Planner P
+		,	Likes L
+		where
+			P.plan_no = L.no
+		and
+			L.likes_category = 'PLANNER'
+		and
+			P.plan_no = #{value}	
+	</select>
+	
+	<select id="getPlannerReply" parameterType="int" resultType="int">
+		select
+			count(*)
+		from
+			Planner P
+		,	Reply R
+		where
+			P.plan_no = R.no
+		and
+			R.rep_category = 'PLANNER'
+		and
+			P.plan_no = #{value}	
+	</select>
+	
+	<update id="modifyPlannerNm" parameterType="map">
+		update planner
+		set
+			plan_title = #{modifyPNm}
+		where
+			plan_no = #{pno}
+	</update>
+	
+	<update id="deletePlanner" parameterType="int">
+		update planner
+		set
+			plan_status = 'D'
+		where
+			plan_no = #{value}
+	</update>
+	
+	<select id="getBestMento" resultType="User">
+		select
+			user_id			as id
+		,	user_profile	as profile
+		from
+			planner_user
+		where
+			user_id in (select user_id
+						from (select user_id, likesCnt, row_number() over (order by likesCnt desc) as rn
+						      from (select P.user_id as user_id, count(*) as likesCnt
+									from planner P, likes L
+									where P.plan_no = L.no
+									and L.likes_category = 'PLANNER'
+									group by P.user_id)	)
+							  where rn &lt;= 5)
+		and user_status = 'IN'	
+	</select>
+	
+</mapper>

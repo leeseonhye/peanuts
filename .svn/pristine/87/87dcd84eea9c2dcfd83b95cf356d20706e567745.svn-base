@@ -1,0 +1,17 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.HashMap;
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Review;
+
+public interface ReviewDao {
+	
+	Integer getTicketReviewAmount(int ticketNo);
+	HashMap<String,Object> getTicketReviewAmountGroupByGrade(int ticketNo);
+	Double getTicketGradeAverage(int ticketNo);
+	List<HashMap<String,Object>> getReviewImagesByTicketNo(int ticketNo);
+	List<HashMap<String, Object>> getAllReviewByTicketNo(int ticketNo);
+	void addReview(Review review);
+	void addReviewImage(HashMap<String, Object> reviewImage);
+}

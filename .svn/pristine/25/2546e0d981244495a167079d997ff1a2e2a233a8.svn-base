@@ -1,0 +1,347 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title></title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	
+	$(function() {
+		$("a .small-box").click(function(event) {
+			var img = $(this).attr("src");
+			$(".big-box").attr("src" , img);
+			return false;
+		});
+		
+		
+		$('#grade-form').on('click', 'span[id$=Star]', function(event) {
+			var grade = parseInt($(this).attr('id').substring(0,1));
+			$(':input[name=grade]').val(grade);
+			
+			var $p = $(this).parent();
+			var row = "";
+			
+			$p.empty();
+			for (var i=1; i <= grade; i++) {
+				row += "<span class='glyphicon glyphicon-star' id='"+i+"Star'></span>";
+			}
+			for (var i = (grade+1); i <= 5; i++) {
+				row += "<span class='glyphicon glyphicon-star-empty' id='"+i+"Star'></span>";
+			}
+			$p.html(row);
+			
+		});
+		
+		$('#qtyProduct').on('change', function(event) {
+			var removeText = $('#dcPrice').text().split("원");
+			var removeComma = removeText[0].split(",");
+			var dcPrice = parseInt(removeComma[0] + removeComma[1]);
+			var qty = parseInt($(this).val());
+			if(!qty) {
+				qty = 0;
+			}
+			var sum = qty * dcPrice;
+			num = sum + "";
+			point = num.length % 3;
+			len = num.length;
+			str = num.substring(0, point);
+			while(point < len) {
+				if (str != "") {
+					str += ",";
+				}
+				str += num.substring(point, point+3);
+				point += 3;
+			}
+			$('#sumPrice').text(str);
+		})
+	})
+</script>
+</head>
+<body>
+	<jsp:include page="../include/header.jsp"/>
+	<div class="container" style="width: 60%">
+
+		<div class="row">
+		<div class="col-md-8" style="border: 1px solid black; margin-bottom: 30px;">
+			<div>
+				<img src="/resources/images/ticket/${ticket.images[0] }" class="big-box" width="100%" />
+			</div>
+			<div class="text-center">
+				<c:forEach items="${ticket.images }" var="image" begin="0" end="4">
+					<a href="/resources/images/ticket/${image }"><img src="/resources/images/ticket/${image }" class="small-box" width="62" height="63" /></a> 				
+				</c:forEach>
+			</div>
+
+		<div style="border: 1px solid black;">
+			<ul class="nav nav-tabs">
+				<li class="active"><a data-toggle="tab" href="#home">상품설명</a></li>
+				<li><a data-toggle="tab" href="#menu1">상품평</a></li>
+				<li><a data-toggle="tab" href="#menu2">상품문의</a></li>
+			</ul>
+			<div class="tab-content">
+				<div id="home" class="tab-pane fade in active">
+				<c:forEach items="${ticket.images }" var="image" begin="5">
+					<img src="/resources/images/ticket/${image }" width="100%">
+				</c:forEach>
+				</div>
+				<div id="menu1" class="tab-pane fade">
+					<div>
+						<h3>상품평</h3>
+						<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#addReview">상품평 등록</button>
+						
+						<div id="addReview" class="modal fade" role="dialog">
+						  <div class="modal-dialog">
+						    <!-- Modal content-->
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <button type="button" class="close" data-dismiss="modal">&times;</button>
+						        <h4 class="modal-title">상품평 등록</h4>
+						      </div>
+						      <div class="modal-body">
+						        <form action="addReview.do" method="post" class="well" enctype="multipart/form-data" id='grade-form'>
+						        	<div class="form-group">
+						        		<label>평점</label>
+						        		<input type="hidden" value="0" name="grade">
+						        		<input type="hidden" value="${ticket.info.no }" name="ticketNo">
+						        		<p>
+						        			<span class="glyphicon glyphicon-star-empty" id="1Star"></span>
+						        			<span class="glyphicon glyphicon-star-empty" id="2Star"></span>
+						        			<span class="glyphicon glyphicon-star-empty" id="3Star"></span>
+						        			<span class="glyphicon glyphicon-star-empty" id="4Star"></span>
+						        			<span class="glyphicon glyphicon-star-empty" id="5Star"></span>
+						        		</p>
+						        	</div>
+						        	<div class="form-group">
+						        		<label>내용</label>
+						        		<textarea rows="4" class="col-sm-12" name="contents"></textarea>
+						        	</div>
+						        	<div class="form-group">
+						        		<label>이미지 등록</label>
+						        		<input type="file" name="images" multiple accept="image/*"><span><small style="color: red">이미지 파일만 등록 해주세요.(10Mb제한)</small></span>
+						        	</div>
+						        	<button class="btn btn-default">등록</button>
+						        	<a type="button" class="btn btn-default" data-dismiss="modal">취소</a>
+						        </form>
+						      </div>
+						    </div>
+						  </div>
+						</div>
+						<div class="col-md-6">
+							<h3>
+								<c:forEach begin="1" end="${review.avg }">
+									<span class="glyphicon glyphicon-star"></span>
+								</c:forEach>
+								<c:forEach begin="1" end="${5-review.avg }">
+									<span class="glyphicon glyphicon-star-empty"></span>
+								</c:forEach>
+							</h3>
+							<h3>${review.avg }</h3>
+							<span>${review.sum }개의 상품평이 있습니다.</span>
+						</div>
+						<div class="col-md-6">
+							<span>5점</span>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" aria-valuenow="${grades.FIVE }" aria-valuemin="0" aria-valuemax="100" style="width: ${review.ratio.FIVE }%;">
+									  ${review.ratio.FIVE }%
+								</div>
+							</div>
+							<span>4점${grades.one }</span>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" aria-valuenow="${grades.FOUR }" aria-valuemin="0" aria-valuemax="100" style="width: ${review.ratio.FOUR }%;">
+									  ${review.ratio.FOUR }%
+								</div>
+							</div>
+							<span>3점</span>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" aria-valuenow="${grades.THREE }" aria-valuemin="0" aria-valuemax="100" style="width: ${review.ratio.THREE }%;">
+									  ${review.ratio.THREE }%
+								</div>
+							</div>
+							<span>2점</span>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" aria-valuenow="${grades.TWO }" aria-valuemin="0" aria-valuemax="100" style="width: ${review.ratio.TWO }%;">
+									  ${review.ratio.TWO }%
+								</div>
+							</div>
+							<span>1점</span>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" aria-valuenow="${grades.ONE }" aria-valuemin="0" aria-valuemax="100" style="width: ${review.ratio.ONE }%;">
+									  ${review.ratio.ONE }%
+								</div>
+							</div>
+						</div>
+					</div>
+					<div style="margin:10px; border-bottom:1px solid gray;">
+							<h3>상품평 이미지</h3>
+							<c:forEach var="image" items="${review.images }">
+								<img src="/resources/images/review/${image.NAME }" width="12.5%" height="100px;">
+							</c:forEach>
+					</div>
+					<h3>상품평</h3>
+					<div>
+						<c:forEach var="list" items="${review.list }">
+							<div class="col-sm-12" style="border-bottom: 1px solid gray;">
+								<div class="col-sm-4">
+									<img src="/resources/images/user.png" class="img-circle" width="100%">
+								</div>
+								<div class="col-sm-8">
+									<span>${list.USERNAME }님</span>
+									<p>
+									<c:forEach begin="1" end="${list.TICKETGRADE }">
+										<span class="glyphicon glyphicon-star"></span>
+									</c:forEach>
+									<c:forEach begin="1" end="${5-list.TICKETGRADE }">
+										<span class="glyphicon glyphicon-star-empty"></span>
+									</c:forEach>
+									</p>
+									<p><small>${list.CREATEDATE }</small></p>
+								</div>
+								<div>
+								<c:forEach items="${review.images }" var="image">
+									<c:if test="${image.USERID == list.USERID }">
+										<img src="/resources/images/review/${image.NAME }" width="25%" height="80px;">
+									</c:if>
+								</c:forEach>
+									
+									<p>
+										${list.REVIEWCONTENTS }
+									</p>
+								</div>
+							</div>
+						</c:forEach>
+					</div>
+				</div>
+				<div id="menu2" class="tab-pane fade">
+					<div style=" margin: 10px; border-bottom: 1px solid black;">
+					<h3>상품에 대해 궁금한 점 있으시면 문의해주세요!</h3>
+						<ul>
+							<li>구매한 상품의 취소/반품은 구매내역에서 신청 가능합니다.</li>
+							<li>상품문의 및 후기게시판을 통해 취소나 환불, 반품 등은 처리되지 않습니다.</li>
+							<li>가격, 판매자, 교환/환불 및 배송 등 해당 삼품 자체와 관련 없는 문의는 받지 않습니다.</li>
+							<li>해당 상품 자체와 관계없는 글, 양도, 광고성, 욕설, 비방, 도배 등의 글은 예고 없이 이동, 노출제한, 삭제등의 조치가 취해질 수 있습니다.</li>
+							<li>공개 게시판이므로 전화번호, 메일 주소 등 고객님의 소중한 개인정보는 절대 남기지 말아주세요.</li>
+						</ul>
+						<form method="post" action="addQna.do">
+							<input type="hidden" value="${ticket.info.no }" name="ticketNo">
+							<textarea rows="2" class="col-sm-10" name="questionContents"></textarea> <button class="btn btn-default">등록</button>
+						</form>
+					</div>
+					<div style="margin-bottom: 10px; border-bottom: 1px solid black;">
+						<c:forEach var="qna" items="${qnas }">
+							<div style="border: 1px solid black; background-color: gray;">
+								질문
+							</div>
+							<c:if test="${empty qna.answerContents }">
+								<div>
+									<span class="col-sm-6">${qna.user.name }님</span><span class="text-center"><fmt:formatDate value="${qna.questionDate }" pattern="yyyy.MM.dd HH:mm:ss" /><button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#qnaAnswer">답변</button></span>
+									<p>${qna.questionContents }</p>
+								</div>
+								<div id="qnaAnswer" class="modal fade" role="dialog">
+								  <div class="modal-dialog">
+								    <!-- Modal content-->
+								    <div class="modal-content">
+								      <div class="modal-header">
+								        <button type="button" class="close" data-dismiss="modal">&times;</button>
+								        <h4 class="modal-title">문의 답변</h4>
+								      </div>
+								      <div class="modal-body">
+								      	<form action="addQnaAnswer.do" method="post">
+									        <table class="table">
+									        	<thead>
+									        		<tr>
+									        			<th>문의자</th>
+									        			<td>${qna.user.name }</td>
+									        			<th>문의내용</th>
+									        			<td>${qna.questionContents }</td>
+									        		</tr>
+									        	</thead>
+									        	<tbody>
+									        		<tr>
+									        			<th colspan="2">답변내용</th>
+									        			<th colspan="2">
+									        				<input type="hidden" value="${qna.qnaNo }" name="qnaNo">
+									        				<input type="hidden" value="${ticket.info.no }" name="ticketNo">
+									        				<textarea name="answerContents"></textarea>
+									        			</th>
+									        		</tr>
+									        	</tbody>
+									        </table>
+									      	<button class="btn btn-info">등록</button>
+									        <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+								      	</form>
+								      </div>
+								      <div class="modal-footer">
+								      </div>
+								    </div>
+								  </div>
+								</div>
+							</c:if>
+							<c:if test="${not empty qna.answerContents}">
+								<div>
+									<span class="col-sm-6">${qna.user.name }님</span><span class="text-center"><fmt:formatDate value="${qna.questionDate }" pattern="yyyy.MM.dd HH:mm:ss" /></span>
+									<p>${qna.questionContents }</p>
+								</div>
+								<div style="border: 1px solid black; background-color: Aqua;">
+									답변
+								</div>
+								<div>
+									<span class="col-sm-6">피넛매니저</span><span class="text-center"><fmt:formatDate value="${qna.answerDate }" pattern="yyyy.MM.dd HH:mm:ss" /></span>
+									<p>${qna.answerContents }</p>
+								</div>
+							</c:if>
+						</c:forEach>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		<div id="sidebox" class="col-md-3" style="position:fixed; top:200px; margin-right:-500px; right:40%">
+			<div style="border: 1px solid black;">
+				<h3>[${ticket.info.locationCity}] ${ticket.info.name }</h3>
+				<span>${review.avg }점</span><span>${review.sum }개의 상품평</span> <br />
+				<span>${ticket.info.discountRate }%</span><span style="text-decoration: line-through;"><fmt:formatNumber value="${ticket.info.price }" pattern="#,###" /></span><br />
+				<span id="dcPrice"><fmt:formatNumber value="${ticket.info.price*((100 - ticket.info.discountRate)/100) }" pattern="#,###" />원</span>	<br />
+		 		<span>남은시간 <span>04일 08:50:00</span></span>
+		 		<form>
+			 		<div style="border: 1px solid black; margin: 1px; margin-top: 50px; margin-bottom: 50px;">
+				 		<span>수량을 입력해주세요</span>
+				 		<input type="number" value="1" min="1" name="qty" id="qtyProduct">
+							<input type="hidden" name="title">
+							<p>총 상품가: <strong class="text-right"><span id="sumPrice"><fmt:formatNumber value="${ticket.info.price*((100 - ticket.info.discountRate)/100) }" pattern="#,###" /></span>원</strong></p>
+							<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myOrder">바로구매</button>
+			 		</div>
+			 	</form>
+			</div>
+		</div>
+			<!-- Modal -->
+			<div id="myOrder" class="modal fade" role="dialog">
+			  <div class="modal-dialog">
+			    <!-- Modal content-->
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+			        <h4 class="modal-title">상품 결제</h4>
+			      </div>
+			      <div class="modal-body">
+			        <table class="table">
+			        </table>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		</div>
+	</div>
+	<jsp:include page="../include/footer.jsp"/>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>qnaList</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+	a:link, a:visited {
+		color: #000000;
+	}
+	a:hover {
+		color: #ac7339;
+	}
+</style>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%; min-height: 740px;">
+	<div class="row">
+		<div class="col-sm-1"></div>
+		<div class="col-sm-10">
+			<h1>
+				<strong>QnA</strong>
+				<img src="/resources/images/logo/peanutbw.png" width="40px">
+				<img src="/resources/images/logo/peanutbw.png" width="40px">
+				<img src="/resources/images/logo/peanutbw.png" width="40px">
+				<a href="qnaForm.do" class="btn btn-default pull-right btn-sm">새 글 작성</a>
+			</h1>
+			
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>번호</th>
+						<th>제목</th>
+						<th>작성자</th>
+						<th>작성일</th>
+						<th>답변상태</th>
+					</tr>
+				</thead>
+				<tbody>
+				<c:forEach var="board" items="${boards }">
+					<c:if test="${LOGIN_USER.id eq board.userId || LOGIN_USER.status eq 'ADMIN'}">
+						<tr>
+							<td>${board.no }</td>
+							<td>
+								<a href="qnaDetail.do?no=${board.no }">
+									${board.title }
+									<c:if test="${board.isSameDate}">
+										 <span style="background-color: #b22222;" class="badge"> New</span>
+									</c:if>
+								</a>
+							</td>
+							<td>${board.userId }</td>
+							<td><fmt:formatDate value="${board.createDate }" pattern="yyyy-MM-dd" /></td>
+							<td>
+							<c:if test="${board.hasReply eq true }">
+								<button class="btn btn-xs btn-info">완료</button>
+							</c:if>
+							<c:if test="${board.hasReply eq false }">
+								<button class="btn btn-xs btn-warning">대기</button>
+							</c:if>
+							</td>
+						</tr>
+					</c:if>
+				</c:forEach>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<jsp:include page="../include/footer.jsp" />
+</body>
+<script>
+$(function() {
+	//공용변수
+	var pno = $('#pno').text();
+	var totalCnt;		//전체 컨텐츠 수
+	var totalPageNo;	//전체 페이지수 (컨텐츠수 / 10)
+	var totalBlocks;	//전체 블록수 (페이지수/nav 반올림)
+	var currentBlock;	//현재 블록
+	var beginModalPage;	//시작 페이지
+	var endModalPage;	//끝 페이지
+	var currentModalPageNo = 1;
+	var nav = 5;	
+	var dailyNo;
+})
+</script>
+</html>

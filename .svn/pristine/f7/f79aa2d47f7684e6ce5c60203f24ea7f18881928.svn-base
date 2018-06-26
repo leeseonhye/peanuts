@@ -1,0 +1,88 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.co.hta.peanuts.service.ScheduleService;
+import kr.co.hta.peanuts.vo.Daily;
+import kr.co.hta.peanuts.vo.DailyHotel;
+import kr.co.hta.peanuts.vo.DailyTour;
+import kr.co.hta.peanuts.vo.Planner;
+import kr.co.hta.peanuts.vo.PlannerLocation;
+import kr.co.hta.peanuts.vo.TransLocation;
+import kr.co.hta.peanuts.vo.Transportation;
+import kr.co.hta.peanuts.web.form.TransportationForm;
+
+@Controller
+@RequestMapping("/schedule")
+public class ScheduleController {
+
+	@Autowired
+	ScheduleService scheduleService;
+	
+	@RequestMapping("/list.do")
+	public String list(int pno, Model model) {
+		//전체 daily key 가져오기
+		List<Daily> allDaily = scheduleService.dailyByPlanNo(pno);
+		model.addAttribute("pno", pno);
+		model.addAttribute("allDaily", allDaily);
+		return "schedule/list.jsp";
+	}
+	
+	@RequestMapping("/dailyList.do")
+	@ResponseBody
+	public Map<String, Object> dailyLocations(int key) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<PlannerLocation> locations = scheduleService.locationByDaily(key);
+		List<TransLocation> transportations = scheduleService.transByDaily(key);
+		List<DailyTour> tours = scheduleService.tourByDaily(key);
+		List<DailyHotel> hotels = scheduleService.hotelByDaily(key);		
+		map.put("locations", locations);
+		map.put("transportations", transportations);
+		map.put("tours", tours);
+		map.put("hotels", hotels);
+		return map;
+	}
+
+	@RequestMapping("/delTrans.do")
+	public String delTrans(int pno, int tno) {
+		scheduleService.delTransBy(tno);
+		return "redirect:/schedule/list.do?pno="+pno;
+	}
+	
+	@RequestMapping("/getTrans.do")
+	@ResponseBody
+	public Map<String, Object> getTrans(int key) {
+		int transKey = key;
+		// 해당 트랜스키의 이동정보 
+		TransLocation orgTrans = scheduleService.getTrans(transKey);
+		// 해당 일의 도시정보
+		List<PlannerLocation> orgLocations = scheduleService.locationByDaily(orgTrans.getKey());
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("orgTrans", orgTrans);
+		map.put("orgLocations", orgLocations);
+		return map;
+	}
+	
+	@RequestMapping("/getCities.do")
+	@ResponseBody
+	public List<PlannerLocation> getCities(int key) {
+		return scheduleService.locationByDaily(key);
+	}
+	
+	@RequestMapping("/addTrans.do")
+	@ResponseBody
+	public String addTrans(TransportationForm transportationForm) {
+		return "redirect:/schedule/list.do?pno="+transportationForm.getPno();
+	}
+	
+	
+}

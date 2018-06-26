@@ -1,0 +1,55 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<style type="text/css">
+/* body {
+    position: relative;
+} */
+ul.nav-pills {
+	/* position: relative; */
+    top: 140px;
+    /* position: fixed; */
+}
+div.col-sm-9 div {
+    height: 250px;
+    font-size: 28px;
+}
+a:link, a:visited {
+	color: #000000;
+}
+
+/* @media screen and (max-width: 810px) {
+  #section1, #section2, #section3, #section41, #section42  {
+      margin-left: 150px;
+  }
+} */
+
+</style>
+<ul class="nav nav-pills nav-stacked" style="overflow-y: scroll; height:680px;">
+	<li><a href="/admin/userList.do">회원관리</a></li>
+	<li><a href="/advertising/list.do">업체관리</a></li>
+	<li><a href="/admin/repoList.do">신고댓글</a></li>
+	<li><a href="/admin/planList.do">플래너 관리</a></li>
+	<li class="dropdown">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#">게시판 관리<span class="caret"></span></a>
+		<ul class="dropdown-menu">
+			<li><a href="/admin/qnaList.do">QNA</a></li>
+			<li><a href="/admin/PlazaList.do">광장게시판</a></li>
+			<li><a href="/admin/togetherList.do">동행게시판</a></li>
+			<li><a href="#">티켓게시판</a></li>
+			<li><a href="#">광고게시판</a></li>
+		</ul>
+	</li>
+	<hr/>
+	<li><a href="#">인기 많은 동행 게시글</a></li>
+	<li><a href="#">많이 여행한 여행지(지역명)</a></li>
+	<li><a href="#">오래 여행한 여행지(할수 있으면 하기)</a></li>
+	<li><a href="#">많이 방문한 관광지</a></li>
+	<li><a href="#">오래 여행한 유저</a></li>
+	<li><a href="#">많이 여행한 유저</a></li>
+	<li><a href="#">도시별 많이 이용한 교통수단(도시명으로 검색해서 location)</a></li>
+	<li><a href="#"></a></li>
+	<li><a href="#"></a></li>
+	<li><a href="/admin/main.do">메인 메뉴로</a></li>
+	<li><a href="#"></a></li>
+	<li><a href="#top">△ 맨 위로</a></li>
+</ul>

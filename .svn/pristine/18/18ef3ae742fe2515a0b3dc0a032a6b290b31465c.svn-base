@@ -1,0 +1,26 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.co.hta.peanuts.vo.Board;
+import kr.co.hta.peanuts.vo.Reply;
+import kr.co.hta.peanuts.vo.User;
+import kr.co.hta.peanuts.web.form.BoardForm;
+
+public interface AdminQnaService {
+
+	List<BoardForm> getQnaList(Map<String, Object> getList);
+	Board getQnaByNo(int no);
+	void addNewQna(Board board);
+	List<Reply> getReplyByBoardNo(int boardNo);
+	void answerQna(Reply re);
+	
+	void delBoardByNo(int no);
+	void updateBoardByNo(Board board);
+	
+	User getUserByUserId(String userId);
+	
+	// 페이징
+	int listCnt(String userId);
+}

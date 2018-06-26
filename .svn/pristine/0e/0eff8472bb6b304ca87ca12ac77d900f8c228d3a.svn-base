@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+  <configuration>
+  
+  	<settings>
+  		<setting name="jdbcTypeForNull" value="NULL" />
+  	</settings>
+  
+  	<typeAliases>
+  		<typeAlias type="kr.co.hta.peanuts.vo.Daily" alias="Daily"/>
+  		<typeAlias type="kr.co.hta.peanuts.vo.DailyHotel" alias="DailyHotel"/>
+  		<typeAlias type="kr.co.hta.peanuts.vo.DailyTour" alias="DailyTour"/>
+  		<typeAlias type="kr.co.hta.peanuts.vo.Images" alias="Images"/>
+  		<typeAlias type="kr.co.hta.peanuts.vo.Planner" alias="Planner"/>
+  		<typeAlias type="kr.co.hta.peanuts.vo.PlannerLocation" alias="PlannerLocation"/>
+  		<typeAlias type="kr.co.hta.peanuts.vo.Ticket" alias="Ticket"/>
+  		<typeAlias type="kr.co.hta.peanuts.vo.User" alias="User"/>
+  		<typeAlias type="kr.co.hta.peanuts.vo.Wallet" alias="Wallet"/>
+  	</typeAliases>
+	
+  </configuration>
+  
+  

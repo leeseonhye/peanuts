@@ -1,0 +1,226 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import kr.co.hta.peanuts.service.AdminService;
+import kr.co.hta.peanuts.vo.Board;
+import kr.co.hta.peanuts.vo.OrderBy;
+import kr.co.hta.peanuts.vo.Pagination;
+import kr.co.hta.peanuts.vo.Reply;
+import kr.co.hta.peanuts.vo.User;
+import kr.co.hta.peanuts.web.form.BoardForm;
+
+@Controller
+@RequestMapping("/admin")
+public class AdminController {
+
+	@Autowired
+	private AdminService adminService;
+	
+	// 공통으로 사용하는 기능
+	// 삭제된 게시글을 검색할 수 있는 기능(할까말까 고민된다)
+	@RequestMapping("/getDelBoard.do")
+	public String getDelBoard(String category, Model model, HttpSession session, String currentPageNo, String currentBlock) {
+		User loginUser = (User) session.getAttribute("LOGIN_USER");
+		if (!"ADMIN".equals(loginUser.getStatus())) {
+			return "redirect:/home.do";
+		}
+		
+		int cnt = adminService.boardlistCnt(category);
+		
+		Pagination page = new Pagination();
+		Map<String, Object> getList = new HashMap<>();
+		if (currentPageNo != null && currentBlock != null) {
+			getList = page.pagination(cnt, Integer.parseInt(currentPageNo), Integer.parseInt(currentBlock));
+		} else {
+			getList = page.pagination(cnt);
+		}
+		getList.put("category", category);
+		model.addAttribute("page", getList);
+		
+		List<BoardForm> boards = adminService.getBoardList(getList);
+		model.addAttribute("boards", boards);
+		
+		// 카테고리별로 지운 글들 
+		if ("QNA".equals(category)) {
+			return "";
+		}
+		
+		return "redirect:/admin/main.do";
+	}
+	
+	// 특정 category에 따른 검색(title, userId, contents)
+	@RequestMapping("/searchBoards.do")
+	@ResponseBody
+	public List<BoardForm> searchBoards(String category, String keyword) {
+		System.out.println(category);
+		System.out.println(keyword);
+		
+		Map<String, Object> searchKeyword = new HashMap<>();
+		searchKeyword.put("category", category);
+		searchKeyword.put("keyWord", keyword);
+		List<BoardForm> boards = adminService.searchBoards(searchKeyword);
+		
+		return boards;
+	}
+	
+	// admin main 페이지 관련 기능
+	// admin main 페이지로 이동
+	@RequestMapping("/main.do")
+	public String main() {
+		return "admin/main.jsp";
+	}
+	
+	// qna 게시판 페이지 관련 기능
+	// qna list 페이지로 이동
+	@RequestMapping("/qnaList.do")
+	public String qnaList(Model model, HttpSession session, String currentPageNo, String currentBlock) {
+		User loginUser = (User) session.getAttribute("LOGIN_USER");
+		if (!"ADMIN".equals(loginUser.getStatus())) {
+			return "redirect:/home.do";
+		}
+		
+		int cnt = adminService.boardlistCnt("QNA");
+		
+		Pagination page = new Pagination();
+		Map<String, Object> getList = new HashMap<>();
+		if (currentPageNo != null && currentBlock != null) {
+			getList = page.pagination(cnt, Integer.parseInt(currentPageNo), Integer.parseInt(currentBlock));
+		} else {
+			getList = page.pagination(cnt);
+		}
+		getList.put("category", "QNA");
+		model.addAttribute("page", getList);
+		
+		List<BoardForm> boards = adminService.getBoardList(getList);
+		model.addAttribute("boards", boards);
+		
+		return "admin/qnaList.jsp";
+	}
+	
+	// qna detail 페이지로 이동
+	@RequestMapping("/qnaDetail.do")
+	public String qnaDetail(int no, HttpSession session, Model model, String currentPageNo, String currentBlock) {
+		User loginUser = (User) session.getAttribute("LOGIN_USER");
+		if (!("ADMIN".equals(loginUser.getStatus()))) {
+			return "redirect:/home.do";
+		}
+		
+		BoardForm board = adminService.getBoardByNo(no);
+		model.addAttribute("board", board);
+		model.addAttribute("currentPageNo", currentPageNo);
+		model.addAttribute("currentBlock", currentBlock);
+		
+		return "admin/qnaDetail.jsp";
+	}
+	
+	// 게시글을 삭제하는 기능
+	@RequestMapping("/delBoardByNo.do")
+	public String delBoardNo(int no) {
+		adminService.delBoardByNo(no);
+		return "redirect:/admin/qnaList.do";
+	}
+	
+	// qna에 댓글을 추가하는 기능
+	@RequestMapping("/answerQna.do")
+	public String answerQna(Reply re, HttpSession session, RedirectAttributes redirectAttributes, String currentPageNo, String currentBlock) {
+		User loginUser = (User) session.getAttribute("LOGIN_USER");
+		re.setUserId(loginUser.getId());
+		re.setCategory("QNA");
+		
+		adminService.answerQna(re);
+		
+		redirectAttributes.addAttribute("no", re.getBoardNo());
+		redirectAttributes.addAttribute("currentPageNo", currentPageNo);
+		redirectAttributes.addAttribute("currentBlock", currentBlock);
+		
+		return "redirect:/admin/qnaDetail.do";
+	}
+	
+	// 댓글을 삭제하는 기능
+	@RequestMapping("/delQnaReply.do")
+	public String delQnaReply(int no, int repNo, RedirectAttributes redirectAttributes, String currentPageNo, String currentBlock) {
+		adminService.delQnaReply(repNo);
+		
+		redirectAttributes.addAttribute("no", no);
+		redirectAttributes.addAttribute("currentPageNo", currentPageNo);
+		redirectAttributes.addAttribute("currentBlock", currentBlock);
+		
+		return "redirect:/admin/qnaDetail.do";
+	}
+	
+	// 댓글을 수정하는 기능
+	@RequestMapping("/updateQnaReply.do")
+	public String updateQnaReply(Reply re, RedirectAttributes redirectAttributes, String currentPageNo, String currentBlock) {
+		adminService.updateQnaReply(re);
+		
+		redirectAttributes.addAttribute("no", re.getBoardNo());
+		redirectAttributes.addAttribute("currentPageNo", currentPageNo);
+		redirectAttributes.addAttribute("currentBlock", currentBlock);
+		
+		return "redirect:/admin/qnaDetail.do";
+	}
+	
+	// repNo로 댓글 정보를 가져오는 기능
+	@RequestMapping("/getReplyByRepNo.do")
+	@ResponseBody
+	public Reply getReplyByRepNo(String repNo) {
+		Reply reply = new Reply();
+		if (repNo != null) {
+			reply = adminService.getReplyByRepNo(Integer.parseInt(repNo));
+		}
+		return reply;
+	}
+	
+	// 댓글 단 유저(관리자)의 정보를 가져오는 기능
+	@RequestMapping("/getUserByUserId.do")
+	@ResponseBody
+	public User getUserByUserId(String userId) {
+		return adminService.getUserByUserId(userId);
+	}
+	
+	// qna detail 페이지 아래 댓글을 가져오는 기능
+	@RequestMapping("/getReplyByBoardNo.do")
+	@ResponseBody
+	public List<Reply> getReplyByBoardNo(int boardNo) {
+		return adminService.getReplyByBoardNo(boardNo);
+	}
+
+	
+	
+	
+	// 회원관리 페이지로 이동
+	@RequestMapping("/userList.do")
+	public String userManag() {
+		// 회원 목록 출력하면서 넘어가기
+		//OrderBy o = new OrderBy();
+		
+		// 정렬 어떻게 할지 여기서 거르기??
+		// 어떻게 하지요?
+		
+		//adminService.getAllReply(o);
+		//adminService.getAllUser(o);
+		return "admin/userList.jsp";
+	}
+	
+	// 신고댓글관리 페이지로 이동
+	@RequestMapping("/repoList.do")
+	public String repoList() {
+		// 신고댓글들 출력하면서 넘어가기
+		//OrderBy o = new OrderBy();
+		//adminService.getAllReply(o);
+		return "admin/repoList.jsp";
+	}
+	
+}

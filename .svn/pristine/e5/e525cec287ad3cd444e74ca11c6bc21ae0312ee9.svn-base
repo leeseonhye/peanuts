@@ -1,0 +1,21 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.WalletDao;
+import kr.co.hta.peanuts.vo.Wallet;
+
+@Service
+public class WalletServiceImpl {
+
+	@Autowired
+	private WalletDao walletDao;
+	
+	public List<Wallet> allWalletByNo(int planNo){
+		List<Wallet> allWallet =  walletDao.allWalletByNo(planNo);
+		return allWallet;
+	}	
+}

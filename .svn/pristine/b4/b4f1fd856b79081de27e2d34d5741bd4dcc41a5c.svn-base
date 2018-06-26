@@ -1,0 +1,43 @@
+package kr.co.hta.peanuts.dao;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import kr.co.hta.peanuts.vo.Planner;
+
+@Repository
+public class MapDaoImpl implements MapDao {
+
+	@Autowired
+	private JdbcTemplate t;
+	
+	private RowMapper<Planner> rowMapper = new RowMapper<Planner>() {
+		@Override
+		public Planner mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Planner planner = new Planner();
+			planner.setNo(rs.getInt("plan_no"));
+			planner.setUserId(rs.getString("user_id"));
+			planner.setTitle(rs.getString("plan.title"));
+			planner.setStartDate(rs.getDate("plan_start"));
+			planner.setEndDate(rs.getDate("plan_end"));
+			planner.setMember(rs.getInt("plan_member"));
+			planner.setCreateDate(rs.getDate("create_date"));
+			
+			return planner;
+		}
+	};
+	
+	@Override
+	public void addNewPlan(Planner planner) {
+		String sql = "insert into planner"
+				+ " (plan_no, user_id, plan_title, plan_start, plan_end, plan_member)"
+				+ " values"
+				+ " (planner_seq.nextval, ?, ?, ?, ?, ?)";
+		t.update(sql, planner.getUserId(), planner.getTitle(), planner.getStartDate(), planner.getEndDate(), planner.getMember());
+	}
+}

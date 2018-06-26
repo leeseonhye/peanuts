@@ -1,0 +1,88 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.UserDao;
+import kr.co.hta.peanuts.vo.Message;
+import kr.co.hta.peanuts.vo.User;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+	@Autowired
+	private UserDao userDao;
+	
+	@Override
+	public void addUser(User user) {
+		userDao.addUser(user);
+	}
+	@Override
+	public User getUserDetail(String id) {
+		User user = userDao.getUserDetail(id);
+		return user;
+	}
+	@Override
+	public void imgModify(User user) {
+		userDao.imgModify(user);
+	}
+	@Override
+	public List<Message> getMessages(Message message) {
+		List<Message> temp = userDao.getMessages(message);
+		return temp;
+	}
+	@Override
+	public List<Message> getSentMessages(String id) {
+		return userDao.getSentMessages(id);
+	}
+	@Override
+	public List<Message> getDelMessages(String id) {
+		return userDao.getDelMessages(id);
+	}
+	@Override
+	public Message getMessageDetail(int msgKey) {
+		return userDao.getMessageDetail(msgKey);
+	}
+	@Override
+	public void delMessages(int msgKey) {
+		Message msg = userDao.getMessageDetail(msgKey);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("key", msgKey);
+		if(msg.getMark().equals("Y")) {
+			map.put("mark", "Y");
+		} else {
+			map.put("mark", "N");
+		}
+		userDao.markMessage(map);
+		userDao.delMessages(msgKey);
+	}
+	@Override
+	public void markMessage(int msgKey) {
+		Message msg = userDao.getMessageDetail(msgKey);		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("key", msgKey);
+		if(msg.getMark().equals("Y")) {
+			map.put("mark", "Y");
+		} else {
+			map.put("mark", "N");
+		}		
+		userDao.markMessage(map);
+	}
+	@Override
+	public void cancelSendMessage(int msgKey) {
+		userDao.cancelSendMessage(msgKey);
+	}
+	@Override
+	public void recoveryMessage(int msgKey) {
+		userDao.recoveryMessage(msgKey);
+	}
+	@Override
+	public void sendMessages(Message message) {
+		userDao.sendMessages(message);
+	}
+	
+}

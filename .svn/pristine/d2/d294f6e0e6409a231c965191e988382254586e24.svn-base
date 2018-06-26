@@ -1,0 +1,19 @@
+package kr.co.hta.peanuts.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.MapDao;
+import kr.co.hta.peanuts.vo.Planner;
+
+@Service
+public class MapServiceImpl implements MapService {
+
+	@Autowired
+	private MapDao mapDao;
+	
+	@Override
+	public void addNewPlan(Planner planner) {
+		mapDao.addNewPlan(planner);
+	}
+}

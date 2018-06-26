@@ -1,0 +1,308 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title></title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script>
+		function getlist(evnet,j,k,l) {
+			var currentModalPageNo = j;
+			var currentModalPageNo2 = k;
+			var currentModalPageNo3 = l;
+			var criteria = $('#criteria').val();
+			var value = $('#val').val();
+			var category = $('#category').val();
+			$.ajax({
+				type: "GET",
+				url: "/ticket/list.do",
+				dataType: 'json',
+				data:{currentModalPageNo:currentModalPageNo,criteria:criteria,value:value,category:category,currentModalPageNo2:currentModalPageNo2,currentModalPageNo3:currentModalPageNo3},
+				success: function(result) {
+					var tickets = result.tickets;
+					var newTickets = result.nTickets;
+					var deadLineTickets = result.deadLineTickets;
+					var $tfooter = $('div#homeNav');
+					$('#list').empty();
+					$('#newList').empty();
+					$('#deadlineList').empty();
+					$.each(tickets, function(index, ticket) {
+						var row = "";
+						row +=	"<div class='col-md-6'>";
+						row +=	"<div class='thumnail'>";
+						row +=	"<a href='detail.do?ticketNo="+ticket.no+"'><img src='/resources/images/ticket/"+ticket.images+"' width='460' height='296'></a>";
+						row +=	"<div class='caption'>";
+						row +=  "<span>["+ticket.locationCity+"]"+ticket.name+"</span><br />";
+						row +=  "<span>"+(ticket.price * (100 - ticket.discountRate)/100 )+"원</span>";
+						row +=	"</div>";
+						row +=	"</div>";
+						row +=	"</div>";
+						$('#list').append(row);
+					})
+					
+					var nav = 5;
+					var totalCnt = result.totalCnt;
+					var totalPageNo = Math.ceil(totalCnt/10);
+					var totalBlocks = Math.ceil(totalPageNo/nav);
+					var currentBlock = Math.ceil(currentModalPageNo/nav);
+					var beginModalPage = ((currentBlock-1)*nav)+1;
+					var endModalPage = currentBlock*nav;
+					var previousPage = Math.floor((currentModalPageNo-1)/5)*5;
+					var	nextPage = Math.ceil(currentModalPageNo/5)*5+1;
+					
+					var pagination = "<nav>";
+					 	pagination += "<ul class='pagination'>";
+						if(currentBlock != 1){
+						    pagination += "<li><a href='#' onclick='getlist(event,"+previousPage+",1,1)' aria-label='Previous'>";
+						    pagination += "<span aria-hidden='true'>&laquo;</span></a></li>";
+						}
+						if(currentBlock == totalBlocks) {
+						   beginModalPage = ((totalBlocks-1)*nav)+1;
+						   endModalPage = totalPageNo;
+						}
+						for (var i=beginModalPage; i<=endModalPage; i++) {
+						   if (currentModalPageNo == i){
+						      pagination += "<li class='active'><a href='#'>"+i+"</a></li>";
+						   } else {
+						      pagination += '<li><a href="#" onclick="getlist(event,'+i+',1,1)">'+i+'</a></li>';
+						   }
+						}
+						if(currentBlock != totalBlocks){
+						    pagination += "<li><a href='#' onclick='getlist(event,"+nextPage+",1,1)' aria-label='Next'>";
+						    pagination += "<span aria-hidden='true'>&raquo;</span></a></li>";
+						}
+					pagination += "</ul></nav>";
+					$tfooter.empty();
+					if(totalCnt != 0) {						
+						$tfooter.append(pagination);
+					}
+					
+					$.each(newTickets, function(index, ticket) {
+						var row = "";
+						row +=	"<div class='col-md-6'>";
+						row +=	"<div class='thumnail'>";
+						row +=	"<a href='detail.do?ticketNo="+ticket.no+"'><img src='/resources/images/ticket/"+ticket.images+"' width='460' height='296'></a>";
+						row +=	"<div class='caption'>";
+						row +=  "<span>["+ticket.locationCity+"]"+ticket.name+"</span><br />";
+						row +=  "<span>"+(ticket.price * (100 - ticket.discountRate)/100 )+"원</span>";
+						row +=	"</div>";
+						row +=	"</div>";
+						row +=	"</div>";
+						$('#newList').append(row);
+					})
+					
+					var totalCnt2 = result.nTicketCnt;
+					var totalPageNo2 = Math.ceil(totalCnt2/10);
+					var totalBlocks2 = Math.ceil(totalPageNo2/nav);
+					var currentBlock2 = Math.ceil(currentModalPageNo2/nav);
+					var beginModalPage2 = ((currentBlock2-1)*nav)+1;
+					var endModalPage2 = currentBlock2*nav;
+					var previousPage2 = Math.floor((currentModalPageNo2-1)/5)*5;
+					var	nextPage2 = Math.ceil(currentModalPageNo2/5)*5+1;
+					
+					var pagination2 = "<nav>";
+					 	pagination2 += "<ul class='pagination'>";
+						if(currentBlock2 != 1){
+						    pagination2 += "<li><a href='#' onclick='getlist(event,1,"+previousPage2+",1)' aria-label='Previous'>";
+						    pagination2 += "<span aria-hidden='true'>&laquo;</span></a></li>";
+						}
+						if(currentBlock2 == totalBlocks2) {
+						   beginModalPage2 = ((totalBlocks2-1)*nav)+1;
+						   endModalPage2 = totalPageNo2;
+						}
+						for (var i=beginModalPage2; i<=endModalPage2; i++) {
+						   if (currentModalPageNo2 == i){
+						      pagination2 += "<li class='active'><a href='#'>"+i+"</a></li>";
+						   } else {
+						      pagination2 += '<li><a href="#" onclick="getlist(event,1,'+i+',1)">'+i+'</a></li>';
+						   }
+						}
+						if(currentBlock2 != totalBlocks2){
+						    pagination2 += "<li><a href='#' onclick='getlist(event,1,"+nextPage2+",1)' aria-label='Next'>";
+						    pagination2 += "<span aria-hidden='true'>&raquo;</span></a></li>";
+						}
+					pagination2 += "</ul></nav>";
+					$('#menu1Nav').empty();
+					if(totalCnt2 != 0){						
+						$('#menu1Nav').append(pagination2);
+					}
+					
+					$.each(deadLineTickets, function(index, ticket) {
+						var row = "";
+						row +=	"<div class='col-md-6'>";
+						row +=	"<div class='thumnail'>";
+						row +=	"<a href='detail.do?ticketNo="+ticket.no+"'><img src='/resources/images/ticket/"+ticket.images+"' width='460' height='296'></a>";
+						row +=	"<div class='caption'>";
+						row +=  "<span>["+ticket.locationCity+"]"+ticket.name+"</span><br />";
+						row +=  "<span>"+(ticket.price * (100 - ticket.discountRate)/100 )+"원</span>";
+						row +=	"</div>";
+						row +=	"</div>";
+						row +=	"</div>";
+						$('#deadlineList').append(row);
+					})
+					
+					var totalCnt3 = result.deadLineTicketCnt;
+					var totalPageNo3 = Math.ceil(totalCnt3/10);
+					var totalBlocks3 = Math.ceil(totalPageNo3/nav);
+					var currentBlock3 = Math.ceil(currentModalPageNo3/nav);
+					var beginModalPage3 = ((currentBlock3-1)*nav)+1;
+					var endModalPage3 = currentBlock3*nav;
+					var previousPage3 = Math.floor((currentModalPageNo3-1)/5)*5;
+					var	nextPage3 = Math.ceil(currentModalPageNo3/5)*5+1;
+					
+					var pagination3 = "<nav>";
+					 	pagination3 += "<ul class='pagination'>";
+						if(currentBlock3 != 1){
+						    pagination3 += "<li><a href='#' onclick='getlist(event,1,1,"+previousPage3+")' aria-label='Previous'>";
+						    pagination3 += "<span aria-hidden='true'>&laquo;</span></a></li>";
+						}
+						if(currentBlock3 == totalBlocks3) {
+						   beginModalPage3 = ((totalBlocks3-1)*nav)+1;
+						   endModalPage3 = totalPageNo3;
+						}
+						for (var i=beginModalPage3; i<=endModalPage3; i++) {
+						   if (currentModalPageNo3 == i){
+						      pagination3 += "<li class='active'><a href='#'>"+i+"</a></li>";
+						   } else {
+						      pagination3 += '<li><a href="#" onclick="getlist(event,1,1,'+i+')">'+i+'</a></li>';
+						   }
+						}
+						if(currentBlock3 != totalBlocks3){
+						    pagination3 += "<li><a href='#' onclick='getlist(event,1,1,"+nextPage3+")' aria-label='Next'>";
+						    pagination3 += "<span aria-hidden='true'>&raquo;</span></a></li>";
+						}
+					pagination3 += "</ul></nav>";
+					$('#menu2Nav').empty();
+					if(totalCnt3 != 0) {						
+						$('#menu2Nav').append(pagination3);
+					}
+				}
+			})
+		}
+		
+	$(function() {
+		$('a[id^=list-]').click(function() {
+			$('#criteria').val('list');
+			var value = $(this).attr('id').replace('list-','');
+			$('#val').val(value);
+			getlist(event,1,1,1);
+		})
+		$('#search-form').submit(function() {
+			$('#criteria').val('search');
+			var value = $('#search-value').val();
+			$('#val').val(value);
+			getlist(event,1,1,1);
+			return false;
+		})
+		
+		$('#search-btn').click(function() {
+			$('#search-form').submit();
+		})
+		
+		$('#categorySelector').on('change',function() {
+			var category = $('#categorySelector').val();
+			$('#category').val(category);
+		})
+		
+		getlist(event,1,1,1);
+	})
+	</script>
+</head>
+<body>
+	<jsp:include page="../include/header.jsp">
+		<jsp:param value="ticket" name="header"/>
+	</jsp:include>
+	<div class="container" style="width: 60%">
+		<h1>티켓팅
+		<c:if test="${LOGIN_USER.status == 'ADMIN' }">
+			<span class="pull-right"><a class="btn btn-primary" href="addTicket.do">티켓등록</a></span>
+		</c:if>
+		</h1>
+		<form style="margin: 20px;" id="search-form">
+			<div class="form-group">
+				<div class="input-group">
+					<div class="input-group-addon">
+					<input type="hidden" id="criteria" value="list" />
+					<input type="hidden" id="val" value="all" />
+					<input type="hidden" id="category" value="All" />
+						<select id="categorySelector">
+							<option value="All">전체</option>
+							<option value="TEMA_PARK">테마파크</option>
+							<option value="AQUARIUM">아쿠아리움</option>
+							<option value="WATER_PARK">워터파크</option>
+							<option value="SPA">스파</option>
+						</select>
+					</div>
+					<input type="text" class="form-control" placeholder="Search" id="search-value">
+					<a class="input-group-addon btn" id="search-btn">
+						<span class="glyphicon glyphicon-search"></span>
+					</a>
+				</div>
+			</div>
+		</form>
+		<table class="table table-bordered">
+		<colgroup>
+			<col width="25%">
+			<col width="25%">
+			<col width="25%">
+			<col width="25%">
+		</colgroup>
+			<thead>
+				<tr>
+					<th><a href="#" id="list-all">전체</a></th>
+					<th><a href="#" id="list-seoul">서울/경기/인천</a></th>
+					<th><a href="#" id="list-kangwon">강원</a></th>
+					<th><a href="#" id="list-chungcheong">충청/전라</a></th>
+				</tr>
+				<tr>
+					<th><a href="#" id="list-kyeongsang">경상/부산</a></th>
+					<th><a href="#" id="list-jeju">제주</a></th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+		</table>
+
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#home">베스트</a></li>
+			<li><a data-toggle="tab" href="#menu1">신규상품</a></li>
+			<li><a data-toggle="tab" href="#menu2">오늘마감</a></li>
+		</ul>
+
+		<div class="tab-content">
+			<div id="home" class="tab-pane fade in active">
+				<div id="list" class="text-center">
+				
+				</div>
+				<div id="homeNav" class="col-sm-12 text-center">
+				
+				</div>
+			</div>
+			<div id="menu1" class="tab-pane fade">
+				<div id="newList" class="text-center">
+				
+				</div>
+				<div id="menu1Nav" class="col-sm-12 text-center">
+				
+				</div>
+			</div>
+			<div id="menu2" class="tab-pane fade">
+				<div id="deadlineList" class="text-center">
+				
+				</div>
+				<div id="menu2Nav" class="col-sm-12 text-center">
+				
+				</div>				
+			</div>
+		</div>
+	</div>
+	<jsp:include page="../include/footer.jsp" />
+</body>
+</html>

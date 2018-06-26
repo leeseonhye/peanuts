@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.PlazaDao">
+	
+	<!-- 플래너별 한눈에보기 출력 -->
+	<select id="addPlaza" parameterType="int" resultType="Plaza" >
+		SELECT 
+			D.PLAN_NO as planNo,
+			D.DAILY_KEY as daily, 
+			D.DAILY_INDEX as dailyIndex,
+			W.WALLET_TITLE as title,
+			W.WALLET_CATEGORY as category, 
+			W.WALLET_MONEY as money, 
+			W.WALLET_MEMO as memo,
+			W.WALLET_KEY as walletKey,
+			W.WALLET_FRG_KEY as frgKey
+		FROM 
+			PLANNER_DAILY D, PLANNER_WALLET W
+		WHERE 
+			D.DAILY_KEY = W.DAILY_KEY
+		AND 
+			D.PLAN_NO = #{value}
+		order by d.daily_key asc, w.wallet_key
+	</select>
+
+	
+</mapper>

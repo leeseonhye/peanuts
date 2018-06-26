@@ -1,0 +1,8 @@
+package kr.co.hta.peanuts.dao;
+
+import kr.co.hta.peanuts.vo.Planner;
+
+public interface MapDao {
+
+	void addNewPlan(Planner planner);
+}

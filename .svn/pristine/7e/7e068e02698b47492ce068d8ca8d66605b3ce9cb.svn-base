@@ -1,0 +1,19 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/wallet")
+public class WalletController {
+	
+	// 가계부 메인 이동
+	@RequestMapping("/view.do")
+	public String allWalletView(Model model) {
+
+		return "wallet/view.jsp";
+	}
+}

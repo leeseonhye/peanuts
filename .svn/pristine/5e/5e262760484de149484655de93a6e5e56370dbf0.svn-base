@@ -1,0 +1,69 @@
+package kr.co.hta.peanuts.web.form;
+
+public class SearchForm {
+
+	private String searchTitle;
+	private String searchId;
+	private String searchLocations;
+	private Integer searchMemebers;
+	private String searchTerm;
+	private String searchHashtags;
+	
+	public String getSearchTitle() {
+		return searchTitle;
+	}
+	public void setSearchTitle(String searchTitle) {
+		this.searchTitle = searchTitle;
+	}
+	public String getSearchId() {
+		return searchId;
+	}
+	public void setSearchId(String searchId) {
+		this.searchId = searchId;
+	}
+	public String getSearchLocations() {
+		return searchLocations;
+	}
+	public String[] getSearchLocationsInArray() {
+		String[] locations = null;
+		if(searchLocations != null) {
+			locations = searchLocations.split(",");
+		}
+		return locations;
+	}
+ 	public void setSearchLocations(String searchLocations) {
+		this.searchLocations = searchLocations;
+	}
+	public int getSearchMemebers() {
+		return searchMemebers;
+	}
+	public void setSearchMemebers(int searchMemebers) {
+		this.searchMemebers = searchMemebers;
+	}
+	public String getSearchTerm() {
+		return searchTerm;
+	}
+	public void setSearchTerm(String searchTerm) {
+		this.searchTerm = searchTerm;
+	}
+	public String getSearchHashtags() {
+		return searchHashtags;
+	}
+	public String[] getSearchHashtagsInArray() {
+		String[] hashtags = null;
+		if(searchHashtags != null) {
+			hashtags = searchHashtags.split(",");
+		}
+		return hashtags;
+	}	
+	public void setSearchHashtags(String searchHashtags) {
+		this.searchHashtags = searchHashtags;
+	}
+	@Override
+	public String toString() {
+		return "SearchForm [searchTitle=" + searchTitle + ", searchId=" + searchId + ", searchLocations="
+				+ searchLocations + ", searchMemebers=" + searchMemebers + ", searchTerm=" + searchTerm
+				+ ", searchHashtags=" + searchHashtags + "]";
+	}
+	
+}

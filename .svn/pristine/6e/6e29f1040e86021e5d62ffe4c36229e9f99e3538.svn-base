@@ -1,0 +1,369 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>  
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>schedule</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style type="text/css">
+	table th, table td {font-size: 12px;}
+	.label {font-size: 11px;}
+	#schedule-body p, #accom-body p {margin: 2px;}
+	input[name=accomDtfrm], input[name=accomDtto], input[name=accomNm] {border: 1px solid lightgray;}
+</style>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%; min-height: 740px;">
+	<jsp:include page="../include/top.jsp" />
+
+	<div class="row">
+		<h2>
+			<strong>요약표 - 일정표</strong>
+		</h2>
+		<p class="pull-right">
+			<a class="btn btn-xs btn-warning" href="javascript:window.print()"><span class="glyphicon glyphicon-print"></span> 일정표 인쇄</a>
+			<a class="btn btn-xs btn-default" href="#"><span class="glyphicon glyphicon-floppy-save"></span> 일정표 pdf 저장</a>
+		</p>	
+	</div>
+	<br/>
+	<table class="table pull-left daily-table">
+		<colgroup>
+			<col width="5%">
+			<col width="15%">
+			<col width="10%">
+			<col width="15%">
+			<col width="23%">
+			<col width="*">
+		</colgroup>
+		<tbody>
+			<tr>
+				<th>-</th>
+				<th>날짜</th>
+				<th>지역</th>
+				<th>교통</th>
+				<th>관광일정</th>
+				<th>숙박</th>
+			</tr>
+			<c:forEach var="daily" items="${allDaily }">
+				<tr id="daily-${daily.key }">
+					<td>${daily.index }</td>
+					<td>
+						<div class="col-sm-3"><h1 style="font-weight: bolder; margin: -2px;">${daily.day }</h1></div>
+						<div class="col-sm-9" style="font-size: 12px;">${daily.month }월<br/>${daily.weekDay }</div>					
+					</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>			
+			</c:forEach>
+		</tbody>
+	</table>
+
+	<!-- Modal -->
+	<div id="dailyModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	    
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title" id="tour-title"><span class="glyphicon glyphicon-plus">일정추가</span></h4>
+	        <h4 class="modal-title" id="accom-title"><span class="glyphicon glyphicon-pencil">숙소정보</span></h4>
+	      </div>
+	    
+	      <div class="modal-body">
+	      	<table class="table" id="tour-body">
+	      		<tbody></tbody>
+	      	</table>
+	      	<table class="table" id="accom-body">
+	      		<tbody></tbody>
+	      	</table>
+	      </div>
+	    
+	      <div class="modal-footer">
+	        <button class="btn btn-default" data-dismiss="modal">닫기</button>
+	      </div>
+	    
+	    </div>
+	  </div>
+	</div>	
+</div>
+<jsp:include page="../include/footer.jsp" />	
+</body>
+<script>
+$(function() {	
+	
+	//페이지 준비됐을 때, 우선 모든 리스트가리기
+	var $ttitle = $('#tour-title').hide();
+	var $tbody = $('#tour-body').hide();
+	var $atitle = $('#accom-title').hide();
+	var $abody = $('#accom-body').hide();
+	
+	//Modal 꺼질때마다 api 리스트 표시되는 modal body 지우기
+	$('#dailyModal').on('hide.bs.modal',function(){
+		$tbody.find('tbody').empty();
+		$abody.find('tbody').empty();
+	});		
+	
+	$('tr[id^=daily-]').each(function() {
+		var $tr = $(this);
+		var keyword = $tr.attr('id').replace('daily-', '');
+		
+		$.ajax({
+			type: 'GET',
+			url: 'dailyList.do',
+			data: {key:keyword},
+			dataType: 'json',
+			success: function(result){
+				var locations = result.locations;			//List<PlannerLocation>
+				var transportations = result.transportations//List<TransLocation>
+				var tours = result.tours;					//List<DailyTour>
+				var hotels = result.hotels;					//List<DailyHotel>
+				
+				// 해당일 지역목록
+				var row1 = "";
+				if(locations.lenth != 0){
+					for(var i=0; i<locations.length; i++) {
+						row1 += "<p style='margin-bottom: 0px;'>"+locations[i].locationName+"</p>";
+						var code = locations[i].locationCode.split(".");
+					}
+				}
+				$tr.find("td:eq(2)").append(row1);
+
+				// 해당일 이동수단 목록
+				var row2 = "";
+				if (transportations.length != 0) {
+					for(var i=0; i<transportations.length; i++){
+						row2 += "<p>";
+						row2 += transportations[i].startlocationName;
+						if(transportations[i].category == 'ETC'){
+							row2 += "<label class='label label-default'>이동</label>";	
+						}
+						if(transportations[i].category == 'AIR'){
+							row2 += "<label class='label label-primary'>항공</label>";							
+						}
+						if(transportations[i].category == 'TRAIN'){
+							row2 += "<label class='label label-success'>기차</label>";							
+						}
+						if(transportations[i].category == 'TAXI'){
+							row2 += "<label class='label label-warning'>택시</label>";							
+						}
+						if(transportations[i].category == 'BUS'){
+							row2 += "<label class='label label-info'>버스</label>";							
+						}	
+						row2 += transportations[i].endlocationName;
+						row2 += "<span class='caret' id=''></span>";
+						row2 += "</p>";
+					}
+				}
+				row2 += "<button id='trans-"+keyword+"' class='btn btn-xs btn-default'><span class='glyphicon glyphicon-plus'>이동추가</span></button>";					
+				$tr.find("td:eq(3)").append(row2);
+				
+				// 해당일 관광 목록
+				var row3 = "";
+				if (tours.length != 0) {
+					for(var i=0; i<tours.length; i++) {
+						row3 += "<p>"+tours[i].title+"</p>";
+					}
+				}
+				if(locations.length != 0){
+					for (var i=0; i<locations.length; i++) {
+						row3 += "<button id='tour-"+locations[i].locationCode+"' class='btn btn-xs btn-default'><span class='glyphicon glyphicon-plus'>"+locations[i].locationName+"관광추가</span></button><br/>";					
+					}
+				}
+				$tr.find("td:eq(4)").append(row3);
+				
+				// 해당일 숙박 목록
+				var row4 = "";
+				if (hotels.length != 0) {
+					for(var i=0; i<hotels.length; i++){
+						row4 += "<p>"+hotels[i].title+"("+hotels[i].term+"박)"+"</p>";
+					}
+				}
+				row4 += "<button id='accom-"+keyword+"' class='btn btn-xs btn-default'><span class='glyphicon glyphicon-pencil'>숙박추가</span></button>";					
+				$tr.find("td:eq(5)").append(row4);
+			}
+		})
+	
+	});
+	
+	//리스트에서 +일정추가를 클릭했을 경우 modal show()
+	$('.daily-table tbody').on('click', '[id^=tour-]', function() {
+		$ttitle.show();
+		$tbody.show();
+		$atitle.hide();
+		$abody.hide();
+		$('#dailyModal').modal('show');
+		
+		//해당 지역 알아내기
+		var locationCode = $(this).attr('id').replace('tour-','').trim().split(".");
+		var areaCode = locationCode[0];
+		var sigunguCode = locationCode[1];
+		console.log(areaCode);
+		console.log(sigunguCode);
+		
+		$.ajax({
+			type:'GET',
+			url:'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?'
+				 +'MobileOS=ETC&'
+				 +'MobileApp=AppTest&'
+				 +'ServiceKey=MPb4CUSvtcuGivPnZ40jwAOelh5vfHPpZZhYVPadMz2vTZ1BuWcKp3721wDvCpeVe3LnQJEbVNLclZrvkMAG4A%3D%3D&'
+				 +'_type=json&'
+				 +'areaCode='+areaCode
+				 +'&sigunguCode='+sigunguCode,
+			dataType:'json',
+			success: function(result) {
+				var tourlist = result.response.body.items.item;
+				
+				var rows = "";
+				$.each(tourlist, function(index, tour){
+					var addr = '주소: ';
+					var addr1 = tour.addr1;
+					var addr2 = tour.addr2;
+					if (addr1) {
+						addr += addr1;
+					}
+					if (addr2) {
+						addr += addr2;
+					}
+					if (addr1 == null && addr2 == null) {
+						addr += "<a href='http://map.daum.net/' class='btn btn-xs btn-default'>위치검색</a>";
+					}
+				
+					var image = tour.firstimage2; 
+					if (!image) {
+						image = "<img src='/resources/images/defaultTourImage.jpg' width='150px;' height='100px;'/>"; 
+					} else {
+						image = "<img src='"+tour.firstimage2+"' width='150px;' height='100px;'/>";
+					}
+					
+					var tel = '연락처: ';
+					var tel1 = tour.tel;
+					if(tel1){
+						tel += tel1;
+					} else {
+						tel += '등록된 연락처가 존재하지 않습니다.';
+					}
+					
+					var title = tour.title;
+					var code = tour.contentid;
+					
+					rows = "<tr id='"+code+"'>";
+					rows += "<td style='width=180px; height=100px;'>"+image+"</td>";
+					rows += "<td>";
+					rows += "<p id='title'><strong>"+title+"</strong></p>";
+					rows += "<p id='addr'>"+addr+"</p>";
+					rows += "<p id='tel'>"+tel+"</p>";
+					rows += "<button class='btn btn-xs btn-info label pull-right' id='add-tour-"+code+"' ><span class='glyphicon glyphicon-ok'>일정추가</span></button>";
+					rows += "</td>";
+					rows += "</tr>";
+					$tbody.find('tbody').append(rows);
+				});
+			}
+		});
+		
+	});		
+ 
+	//리스트에서 +숙소추가를 클릭했을 경우 modal show()
+	$('.daily-table tbody').on('click', '[id^=accom-]', function() {
+		$ttitle.hide();
+		$tbody.hide();
+		$atitle.show();
+		$abody.show();
+		$('#dailyModal').modal('show');
+		
+		/*
+			본래는 버튼을 클릭했을 때, 해당하는 지역명을 받고, 
+			해당 지역의 지역코드를 찾아서 api url에 추가해줘야합니다.
+		*/
+		
+		//해당일자알아내기 - 행 알아내기
+		var rowNum = $(this).attr('id').replace('accom-','').trim();
+
+		$.ajax({
+			type:'GET',
+			url:'http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchStay?'
+				+'serviceKey=MPb4CUSvtcuGivPnZ40jwAOelh5vfHPpZZhYVPadMz2vTZ1BuWcKp3721wDvCpeVe3LnQJEbVNLclZrvkMAG4A%3D%3D&'
+				+'numOfRows=10&'
+				+'pageSize=10&'
+				+'pageNo=1&'
+				+'startPage=1&'
+				+'MobileOS=ETC&'
+				+'MobileApp=AppTest&'
+				+'arrange=A&'
+				+'listYN=Y&'
+				+'_type=json',
+			dataType:'json',
+			success: function(result) {
+				var accomlist = result.response.body.items.item;
+				
+				$.each(accomlist, function(index, accom){
+					var addr = '주소: ';
+					var addr1 = accom.addr1;
+					var addr2 = accom.addr2;
+					if (addr1) {
+						addr += addr1;
+					}
+					if (addr2) {
+						addr += addr2;
+					}
+					if (addr1 == null && addr2 == null) {
+						addr += "<a href='http://map.daum.net/' class='btn btn-xs btn-default'>위치검색</a>";
+					}
+				
+					var image = accom.firstimage2; 
+					if (!image) {
+						image = "<img src='/resources/images/defaultTourImage.jpg' width='150px;' height='100px;'/>"; 
+					} else {
+						image = "<img src='"+accom.firstimage2+"' width='150px;' height='100px;'/>";
+					}
+					
+					var tel = '연락처: ';
+					var tel1 = accom.tel;
+					if(tel1){
+						tel += tel1;
+					} else {
+						tel += '등록된 연락처가 존재하지 않습니다.';
+					}
+					
+					var title = accom.title;
+					var code = accom.contentid;
+					
+					var rows = "<tr id='"+code+"'>";
+					rows += "<td style='width=180px; height=100px;'>"+image+"</td>";
+					rows += "<td>";
+					rows += "<p id='title'><strong>"+title+"</strong></p>";
+					rows += "<p id='addr'>"+addr+"</p>";
+					rows += "<p id='tel'>"+tel+"</p>";
+					rows += "<a href='https://www.agoda.com/ko-kr/?cid=1430285&tag=911ebde7-5036-68"
+							+"5e-58fa-9c8b7e2e4bdb&gclid=CjwKCAjwiurXBRAnEiwAk2GFZg7TC8xg1PfacRdtikxB"
+							+"EM0drg5W5hEb3dMLjPG8Be-NWQoNZpQtuxoCYhcQAvD_BwE'"
+							+" class='btn btn-xs btn-success pull-right'>숙소예약</a>";
+					rows += "</td>";
+					rows += "</tr>";
+					$abody.find('tbody').append(rows);
+				});
+			}
+		});
+		
+	});
+	
+	
+	//관광지 리스트에서 일정 추가 버튼을 누르면 다시 ajax정의해서 
+	//db에 저장하고 + complete {modal(hide)} * 페이지 이동없이 특정부분 내용변경시키기
+	
+	//숙소예약을 했을 수도 있으니까 기본 form 생성해주고
+	//숙소정보 저장버튼 클릭하면 db에 저장하고 redirect시키기
+	//이미 db저장된 숙소정보가 잇으면 출력하고 + 수정버튼 넣어주기
+	
+	
+
+})
+</script>
+</html>

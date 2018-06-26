@@ -1,0 +1,517 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title></title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style>
+    #messageModal a, #messageModal td, #messageModal th, #messageModal option {color: #808080; font-size: 13px;}
+    #messageModal a:link {color: #808080;}
+    #messageModal a:hover {color: #ac7339;}
+    
+    .modal-header {background-color: #ac7339; color: #ffffff;}
+	#left-menu li:hover {color: #ac7339;}  
+	.selected {background-color: #c68c53; color: #ffffff;}
+	.badge {background-color: #ac7339; color: #ffffff;}
+</style>
+<body>
+<div class="container">
+	<h2>Modal Example</h2>
+	<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#messageModal">메세지함</button>
+
+	<div class="modal fade" id="messageModal" role="dialog">
+		<div class="modal-dialog modal-lg">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">메시지함</h4>
+					<p style="display: none" id="today">${today }</p>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-3">
+							<div class="panel panel-default">
+								<ul class="list-group" id="left-menu">
+									<!-- 읽지않는 수신메시지 갯수 뱃지표시, 최대갯수 99개, 그 이상이여도 99 
+                     							각 리스트 누르면 active 클래스 추가, 나머지 다 remove                   -->
+									<li class="list-group-item" id="recievedMsg">받은메시지함 <span class="badge" id="newAlertBadge"></span></li>
+									<li class="list-group-item" id="sentMsg">보낸 메시지함</li>
+									<li class="list-group-item" id="delMsg">삭제 메시지함</li>
+									<li class="list-group-item" id="newMsg">새 메시지</li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-sm-9" id="right-menu">
+							<!-- ajax를 사용해서 변경될위치, 모달 오픈시에는 받은메시지함이 default -->
+							<!-- 각 메시지함마다 페이징 필요 선택삭제, 전체 삭제(비우기) 그리고 1페이지로 돌아오기 
+               			    	* 선택정렬 : 전체메시지, 즐겨찾기 메시지 : 읽은 메시지 : 안읽음 메시지-->
+							<div id="recievedBox" style="display: none">
+								<table class="table">
+									<colgroup>
+										<col width="10%">
+										<col width="7%">
+										<col width="*">
+										<col width="23%">
+									</colgroup>
+									<thead>
+										<tr>
+											<th colspan="3" class="text-left">
+												<button class="btn btn-xs btn-danger">전체삭제</button>
+												<button class="btn btn-xs btn-default">선택삭제</button>
+											</th>
+											<th class="text-right">
+												<!-- criteria 사용 : where절용 -->
+												<select name="listBy" class="btn btn-xs">
+													<option value="all" selected>모든메시지</option>
+													<option value="mark">즐겨찾기</option>
+													<option value="unread">안읽은메시지</option>
+													<option value="read">읽은메시지</option>
+												</select>
+											</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+									<tfoot></tfoot>
+								</table>
+							</div>
+							<div id="sentBox" style="display: none">
+								<!-- 발송메시지 수정불가, 발송취소는 가능 발송취소하면 삭제되는 것
+                       				발송메시지는 상대가 삭제를 했던 말던 리스트에 다 출력시킴-->
+								<table class="table">
+									<colgroup>
+										<col width="15%">
+										<col width="7%">
+										<col width="*">
+										<col width="23%">
+									</colgroup>	
+									<thead>
+										<tr>
+											<th></th>
+											<th>수신</th>
+											<th>내용</th>
+											<th>보낸날짜</th>
+										</tr>
+									</thead>							
+									<tbody></tbody>
+									<tfoot></tfoot>
+								</table>
+							</div>
+							<div id="delBox" style="display: none">
+								<table class="table">
+									<colgroup>
+										<col width="10%">
+										<col width="7%">
+										<col width="*">
+										<col width="23%">
+									</colgroup>
+									<thead>
+										<tr>
+											<th colspan="2" class="text-left">
+												<button class="btn btn-xs btn-danger">전체삭제</button>
+												<button class="btn btn-xs btn-default">선택삭제</button>
+											</th>
+											<th colspan="2" class="text-right" style="color: #e60000; font-weight: bolder;">
+												※ 삭제일 기준 30일 이후 완전삭제 됩니다.
+											</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+									<tfoot></tfoot>
+								</table>							
+							</div>
+							<div id="newBox" style="display: none">
+								<!-- 수신 유저가 존재하는지부터 확인해줘야함 
+                       	수신 아이디 ','로 구분해서 다중 발송가능하게 하기-->
+								<form method="POST" action="">
+									<div class="form-group">
+										<input type="text" class="form-control" name="reciever"
+											placeholder="받는 사용자 닉네임" style="width: 80%" />
+										<button class="btn btn-sm btn-primary">찾기</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script>
+$(function() {
+	
+	//공용변수
+	var today = $('#today').text();
+	var totalMsg;		//전체 메시지 수
+	var totalPageNo;	//전체 페이지수 (컨텐츠수 / 10)
+	var totalBlocks;	//전체 블록수 (페이지수/nav 반올림)
+	var currentBlock;	//현재 블록
+	var start;
+	var end;
+	var beginPage;	//시작 페이지
+	var endPage;	//끝 페이지
+	var currentModalPageNo = 1;
+	var nav = 5;	
+	
+	var listBy;
+	var $rbox = $('#recievedBox');
+	var $sbox = $('#sentBox');
+	var $dbox = $('#delBox');
+	var $nbox = $('#newBox');
+	
+	//Modal 꺼질때마다 api 리스트 표시되는 modal body 지우기
+	$('#messageModal').on('hide.bs.modal',function(){
+		currentModalPageNo = 1;
+		$('div[id$="Box"]').css('display', 'none');
+		$rbox.find('tbody').empty();
+		$rbox.find('tfoot').empty();
+		$sbox.find('tbody').empty();
+		$sbox.find('tfoot').empty();
+		$dbox.find('tbody').empty();
+		$dbox.find('tfoot').empty();
+		$nbox.empty();
+	});		
+
+	//사용자가 읽지않은 메시지 갯수 (메시지 읽을때마다 실행해야함)
+	//기존의 읽음여부에 상관없이 매번 실행해서 확인해야함
+	function newAlertBadge() {
+		$.ajax({
+				type: 'GET',
+				url: 'getMessages.do',
+				data: {keyword: 'unread'},
+				dateType: 'json',
+				success: function(result) {
+					$('#newAlertBadge').text(result.length);
+				}
+		});
+	}
+	newAlertBadge();
+	
+	//left-menu selected 시키고, right-menu show시키기
+	$('#left-menu li').on('click', function() {
+		currentModalPageNo = 1;
+		$('select[name=listBy]').val('all');
+		$('#left-menu li').removeClass('selected');
+        $(this).addClass('selected');
+        
+        var msgId = $(this).attr('id').replace('Msg', '').trim();
+        $('div[id$="Box"]').css('display', 'none');
+		$('div[id="'+msgId+'Box"]').css('display', 'block');
+		
+		if(msgId == 'recieved'){
+			recievedBox();
+		}
+		if(msgId == 'sent'){
+			sentBox();
+		}
+		if(msgId == 'del'){
+			delBox();
+		}
+		if(msgId == 'new'){
+			newBox();
+		}
+	});
+	
+	$('select[name=listBy]').change(function() {
+		recievedBox();
+	});
+	
+	//수신 메시지함 ajax
+	function recievedBox() {
+		$rbox.find('tbody').empty();
+		$rbox.find('tfoot').empty();
+		$sbox.find('tbody').empty();
+		$sbox.find('tfoot').empty();
+		$dbox.find('tbody').empty();
+		$dbox.find('tfoot').empty();
+		$nbox.empty();
+		
+		listBy = $('select[name=listBy]').val();
+		$.ajax({
+			type: 'GET',
+			url: 'getMessages.do',
+			data: {keyword: listBy},
+			dataType: 'json',
+			success: function(result) {
+				start = (currentModalPageNo-1)*10;
+				end = (currentModalPageNo*10);
+				//var rows;
+				if(result.length != 0) {
+					if(currentModalPageNo == totalPageNo){
+						end = result.length
+					}
+					totalMsg = result.length;
+					var rows;
+					for(var i=start; i<end; i++){
+ 						rows += "<tr>";
+						rows += "<td><input type='checkbox' id='check-"+result[i].msgKey+"' />";
+						rows += "<span class='glyphicon glyphicon-star' style='color: #bfbfbf;' id='mark-"+result[i].msgKey+"'></span></td>";
+						rows += "<td><a href='mypage.do?id='>"+result[i].userId+"</a></td>";
+						if(result[i].createDateToString == today) {
+							rows += "<td><a href='#' style='color: #ac7339;'>■ "+result[i].contentsWithDots+"<a></td>";
+						} else {
+							rows += "<td><a href='#'>"+result[i].contentsWithDots+"<a></td>";
+						}
+						rows += "<td>"+result[i].createDateToString+"</td>";
+						rows += "</tr>";	
+					}
+				} else {
+					rows += '<tr><td colspan="4" class="text-center">수신메시지가 존재하지 않습니다.</td></tr>';
+				}
+				$rbox.find('tbody').append(rows);
+				
+				totalPageNo = Math.ceil(totalMsg/10);
+				totalBlocks = Math.ceil(totalPageNo/nav);
+				currentBlock = Math.ceil(currentModalPageNo/nav);
+				beginPage = ((currentBlock-1)*nav)+1;
+				endPage = currentBlock*nav;		
+				 
+				pagination = "<tr><td colspan='4' style='text-align: center;'><nav>";
+			    pagination += "<ul class='pagination'>";
+				if(currentBlock != 1){
+				    pagination += "<li><a href='#' aria-label='Previous'>";
+				    pagination += "<span aria-hidden='true'>&laquo;</span></a></li>";
+				}
+				if(currentBlock == totalBlocks) {
+					beginPage = ((totalBlocks-1)*nav)+1;
+					endPage = totalPageNo;
+				}
+				for (var i=beginPage; i<=endPage; i++) {
+					if (currentModalPageNo == i){
+						pagination += "<li class='selected'><a href='#'>"+i+"</a></li>";
+					} else {
+						pagination += "<li><a href='#'>"+i+"</a></li>";
+					}
+				}
+				if(currentBlock != totalBlocks){
+				    pagination += "<li><a href='#' aria-label='Next'>";
+				    pagination += "<span aria-hidden='true'>&raquo;</span></a></li>";
+				}
+			    pagination += "</ul></nav></td></tr>";
+			    $rbox.find('tfoot').append(pagination);				
+			}
+		});
+	}
+	
+	//rbox pagination 클릭한경우
+	$rbox.find('tfoot').on('click', 'a', function(){
+		currentModalPageNo = $(this).text();
+		recievedBox();
+		return false;
+	});		
+	$rbox.find('tfoot').on('click', 'a[aria-label="Previous"]', function(){
+		currentBlock = currentBlock == 1 ? currentBlock : currentBlock-1;
+		currentModalPageNo = ((currentBlock-1)*nav)+1;	
+		recievedBox();
+		return false;
+	});		
+	$rbox.find('tfoot').on('click', 'a[aria-label="Next"]', function(){
+		currentBlock = currentBlock+1;
+		currentModalPageNo = ((currentBlock-1)*nav)+1;		
+		recievedBox();
+		return false;
+	});		
+	
+	//발신 메시지함 ajax
+	function sentBox() {
+		$rbox.find('tbody').empty();
+		$rbox.find('tfoot').empty();
+		$sbox.find('tbody').empty();
+		$sbox.find('tfoot').empty();
+		$dbox.find('tbody').empty();
+		$dbox.find('tfoot').empty();
+		$nbox.empty();
+		
+		$.ajax({
+			type: 'GET',
+			url: 'getSentMessages.do',
+			dataType: 'json',
+			success: function(result) {
+				start = (currentModalPageNo-1)*10;
+				end = (currentModalPageNo*10);
+				var rows;
+				if(result.length != 0) {
+					if(currentModalPageNo == totalPageNo){
+						end = result.length
+					}
+					totalMsg = result.length;
+					for(var i=start; i<end; i++) {
+						rows += "<tr>";
+							if(result[i].status == 'Y') {
+								rows += "<td style='color: #39ac39; font-size: 12px; padding-left: 27px;'><strong>읽음</strong></td>";
+							}
+							if(result[i].status == 'N') {	
+								rows += "<td><button class='btn btn-xs btn-danger'>발송취소</button></td>";
+							}
+							rows += "<td><a href='mypage.do?id='>"+result[i].receiver+"</a></td>";
+							rows += "<td><a href='#'>"+result[i].contentsWithDots+"<a></td>";
+							rows += "<td>"+result[i].createDateToString+"</td>";
+							rows += "</tr>";	
+					}
+				} else {
+					rows += "<tr><td colspan='4' class='text-center'>발신메시지가 존재하지 않습니다.</tr>";
+				}
+				$sbox.find('tbody').append(rows);
+				
+				totalPageNo = Math.ceil(totalMsg/10);
+				totalBlocks = Math.ceil(totalPageNo/nav);
+				currentBlock = Math.ceil(currentModalPageNo/nav);
+				beginPage = ((currentBlock-1)*nav)+1;
+				endPage = currentBlock*nav;		
+				 
+				pagination = "<tr><td colspan='4' style='text-align: center;'><nav>";
+			    pagination += "<ul class='pagination'>";
+				if(currentBlock != 1){
+				    pagination += "<li><a href='#' aria-label='Previous'>";
+				    pagination += "<span aria-hidden='true'>&laquo;</span></a></li>";
+				}
+				if(currentBlock == totalBlocks) {
+					beginPage = ((totalBlocks-1)*nav)+1;
+					endPage = totalPageNo;
+				}
+				for (var i=beginPage; i<=endPage; i++) {
+					if (currentModalPageNo == i){
+						pagination += "<li class='selected'><a href='#'>"+i+"</a></li>";
+					} else {
+						pagination += "<li><a href='#'>"+i+"</a></li>";
+					}
+				}
+				if(currentBlock != totalBlocks){
+				    pagination += "<li><a href='#' aria-label='Next'>";
+				    pagination += "<span aria-hidden='true'>&raquo;</span></a></li>";
+				}
+			    pagination += "</ul></nav></td></tr>";
+			    $sbox.find('tfoot').append(pagination);				
+			}
+		});
+	}	
+	
+	//sbox pagination 클릭한경우
+	$sbox.find('tfoot').on('click', 'a', function(){
+		currentModalPageNo = $(this).text();
+		sentBox();
+		return false;
+	});		
+	$sbox.find('tfoot').on('click', 'a[aria-label="Previous"]', function(){
+		currentBlock = currentBlock == 1 ? currentBlock : currentBlock-1;
+		currentModalPageNo = ((currentBlock-1)*nav)+1;	
+		sentBox();
+		return false;
+	});		
+	$sbox.find('tfoot').on('click', 'a[aria-label="Next"]', function(){
+		currentBlock = currentBlock+1;
+		currentModalPageNo = ((currentBlock-1)*nav)+1;		
+		sentBox();
+		return false;
+	});		
+
+	//삭제 메시지함 ajax
+	function delBox() {
+		$rbox.find('tbody').empty();
+		$rbox.find('tfoot').empty();
+		$sbox.find('tbody').empty();
+		$sbox.find('tfoot').empty();
+		$dbox.find('tbody').empty();
+		$dbox.find('tfoot').empty();
+		$nbox.empty();
+		
+		$.ajax({
+			type: 'GET',
+			url: 'getdelMessages.do',
+			dataType: 'json',
+			success: function(result) {
+				start = (currentModalPageNo-1)*10;
+				end = (currentModalPageNo*10);
+				
+				var rows;
+				if(result.length != 0) {
+					if(currentModalPageNo == totalPageNo){
+						end = result.length
+					}
+					totalMsg = result.length;
+					for(var i=start; i<end; i++) {
+						rows += "<tr>";
+						rows += "<td><input type='checkbox' id='check-"+result[i].msgKey+"' />";
+						rows += "<span class='glyphicon glyphicon-star' style='color: #bfbfbf;' id='mark-"+result[i].msgKey+"'></span></td>";
+						rows += "<td><a href='mypage.do?id='>"+result[i].userId+"</a></td>";
+						rows += "<td><a href='#'>"+result[i].contentsWithDots+"<a></td>";
+						rows += "<td>"+result[i].createDateToString+"</td>";
+						rows += "</tr>";	
+					}
+				} else {
+					rows += "<tr><td colspan='4' class='text-center'>삭제메시지가 존재하지 않습니다.</tr>";
+				}
+				$dbox.find('tbody').append(rows);
+				
+				totalPageNo = Math.ceil(totalMsg/10);
+				totalBlocks = Math.ceil(totalPageNo/nav);
+				currentBlock = Math.ceil(currentModalPageNo/nav);
+				beginPage = ((currentBlock-1)*nav)+1;
+				endPage = currentBlock*nav;		
+				 
+				pagination = "<tr><td colspan='4' style='text-align: center;'><nav>";
+			    pagination += "<ul class='pagination'>";
+				if(currentBlock != 1){
+				    pagination += "<li><a href='#' aria-label='Previous'>";
+				    pagination += "<span aria-hidden='true'>&laquo;</span></a></li>";
+				}
+				if(currentBlock == totalBlocks) {
+					beginPage = ((totalBlocks-1)*nav)+1;
+					endPage = totalPageNo;
+				}
+				for (var i=beginPage; i<=endPage; i++) {
+					if (currentModalPageNo == i){
+						pagination += "<li class='selected'><a href='#'>"+i+"</a></li>";
+					} else {
+						pagination += "<li><a href='#'>"+i+"</a></li>";
+					}
+				}
+				if(currentBlock != totalBlocks){
+				    pagination += "<li><a href='#' aria-label='Next'>";
+				    pagination += "<span aria-hidden='true'>&raquo;</span></a></li>";
+				}
+			    pagination += "</ul></nav></td></tr>";
+			    $dbox.find('tfoot').append(pagination);				
+			}
+		});
+	}
+	
+	//dbox pagination 클릭한경우
+	$dbox.find('tfoot').on('click', 'a', function(){
+		currentModalPageNo = $(this).text();
+		delBox();
+		return false;
+	});		
+	$dbox.find('tfoot').on('click', 'a[aria-label="Previous"]', function(){
+		currentBlock = currentBlock == 1 ? currentBlock : currentBlock-1;
+		currentModalPageNo = ((currentBlock-1)*nav)+1;	
+		delBox();
+		return false;
+	});		
+	$dbox.find('tfoot').on('click', 'a[aria-label="Next"]', function(){
+		currentBlock = currentBlock+1;
+		currentModalPageNo = ((currentBlock-1)*nav)+1;		
+		delBox();
+		return false;
+	});		
+	
+})    
+</script>
+</html>

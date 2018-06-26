@@ -1,0 +1,15 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.User;
+
+public interface UserService {
+
+	void addUser(User user);
+	User getUserDetail(String id);
+	//사용자 프로필 사진 변경
+	void imgModify(User user);
+	//사용자 플래너 가져오기
+
+}

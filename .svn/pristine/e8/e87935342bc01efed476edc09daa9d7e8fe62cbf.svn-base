@@ -1,0 +1,51 @@
+package kr.co.hta.peanuts.web.controllerAdvice;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.co.hta.peanuts.service.MapService;
+import kr.co.hta.peanuts.vo.Location;
+import kr.co.hta.peanuts.vo.PlannerLocationForm;
+
+public class MapImageAdvice {
+	
+	@Autowired
+	private MapService mapService;
+
+	public String getMapImage(int planNo, String mapSize) {
+		List<PlannerLocationForm> pls = mapService.getPLByPno(planNo);
+		
+		mapSize = "600x300";
+		
+		List<Location> locations = new ArrayList<>();
+		for (PlannerLocationForm pl : pls) {
+			Location location = new Location();
+			location.setId(pl.getLocationId());
+			mapService.getLocation(location);
+		}
+		
+		String markers = "";
+		String path = "";
+		for (Location location : locations) {
+			markers += "&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C" + location.getLineX() + "," + location.getLineY();
+			path += "|" + location.getLineX() + "," + location.getLineY();
+		}
+		
+		String mapImg = "https://maps.googleapis.com/maps/api/staticmap"
+				+ "?autoscale=1"
+				+ "&size=" + mapSize
+				+ "&maptype=roadmap"
+				+ "&format=png"
+				+ "&visual_refresh=true"
+				+ markers
+				+ "&path=color:0xff0000|weight:1"
+				+ path;
+		
+		return mapImg;
+	}
+}

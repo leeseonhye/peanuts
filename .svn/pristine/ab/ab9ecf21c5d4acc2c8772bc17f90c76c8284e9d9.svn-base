@@ -1,0 +1,80 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<script type="text/javascript">
+$(function() {
+	var type = ${param.type};
+	var pno = ${param.pno};
+	$.ajax({
+		type: "GET",
+		url: "/ticket/dashboard.do",
+		dataType: 'json',
+		data: {type:type, pno:pno},
+		success: function(result) {
+			var list = result.list;
+			var row = "";
+			var row2 = "";
+			var index = 0;
+			$.each(list, function(index, ticket) {
+				
+				if(index == 0){
+					row2 += ' <div class="item active">';					
+				} else {
+					row2 += ' <div class="item">';
+				}
+				row2 += '<a href="/ticket/detail.do?ticketNo='+ticket.no+'"><img src="/resources/images/ticket/'+ticket.images+'"></a>';
+				row2 += '<p>';
+				row2 += '<h3>'+ticket.locationCity+'</h3>';
+				row2 += '<h7>'+ticket.name+'</h7>';
+				row2 += '</p>';
+	    		row2 += '</div>';
+			})
+			if(type == 'all') {
+				row2 += '<a class="left carousel-control" href="#myCarousel1" role="button" data-slide="prev">';
+				row2 += '<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>';
+				row2 += '<span class="sr-only">Previous</span></a>';
+				row2 += '<a class="right carousel-control" href="#myCarousel1" role="button" data-slide="next">';
+				row2 += '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>';
+				row2 += '<span class="sr-only">Next</span></a>';
+				
+				$('#myCarousel').attr('id', 'myCarousel1');
+				$('#carouselNo').attr('id', 'carouselNo1').append(row);
+				$('#ticket-box').attr('id','ticket-box1').append(row2);
+				$('#title').attr('id', 'title1').append("모든 지역의 인기티켓");
+				$('#carouselBtn1').attr('href','#myCarousel1');
+				$('#carouselBtn2').attr('href','#myCarousel1');
+			} else {
+				row2 += '<a class="left carousel-control" href="#myCarousel2" role="button" data-slide="prev">';
+				row2 += '<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>';
+				row2 += '<span class="sr-only">Previous</span></a>';
+				row2 += '<a class="right carousel-control" href="#myCarousel2" role="button" data-slide="next">';
+				row2 += '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>';
+				row2 += '<span class="sr-only">Next</span></a>';
+				
+				$('#myCarousel').attr('id', 'myCarousel2');
+				$('#carouselNo').attr('id', 'carouselNo2').append(row);
+				$('#ticket-box').attr('id','ticket-box2').append(row2);
+				$('#title').attr('id', 'title2').append("플래너 주변의 인기티켓");
+				$('#carouselBtn1').attr('href','#myCarousel2');
+				$('#carouselBtn2').attr('href','#myCarousel2');
+			}
+		}
+	})
+})
+</script>
+<div class="container">
+	<div class="col-sm-5">
+		<h3 id="title"></h3>
+		<div id="myCarousel" class="carousel slide" data-ride="carousel">
+			  <!-- Indicators -->
+			  <ol class="carousel-indicators" id="carouselNo">
+			  </ol>
+			
+			  <!-- Wrapper for slides -->
+			  <div class="carousel-inner" role="listbox" id="ticket-box">
+			    
+			  <!-- Left and right controls -->
+			  
+			</div>
+		</div>
+	</div>
+</div>

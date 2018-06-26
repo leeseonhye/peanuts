@@ -1,0 +1,72 @@
+package kr.co.hta.peanuts.dao;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import kr.co.hta.peanuts.vo.Images;
+import kr.co.hta.peanuts.vo.Ticket;
+
+
+@Repository
+public class TicketDaoImpl implements TicketDao {
+
+	@Autowired
+	private JdbcTemplate t;
+	
+	private RowMapper<Ticket> rowMapper = new RowMapper<Ticket>() {
+		@Override
+		public Ticket mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Ticket ticket = new Ticket();
+			ticket.setNo(rs.getInt("ticket_no"));
+			ticket.setName(rs.getString("ticket_name"));
+			ticket.setPrice(rs.getInt("ticket_price"));
+			ticket.setCategory(rs.getString("ticket_category"));
+			ticket.setImages(rs.getString("ticket_images"));
+			ticket.setDiscountRate(rs.getDouble("discount_rate"));
+			ticket.setSellingStart(rs.getDate("selling_start"));
+			ticket.setSellingEnd(rs.getDate("selling_end"));
+			return ticket;
+		}
+	};
+	private RowMapper<Images> rowMapperImage = new RowMapper<Images>() {
+		@Override
+		public Images mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Images image = new Images();
+			image.setNo(rs.getInt("no"));
+			image.setCategory(rs.getString("images_category"));
+			image.setName(rs.getString("images_name"));
+			return image;
+		}
+	};
+	
+	@Override
+	public void addTicket(Ticket ticket) {
+		String sql = "insert into ticket(ticket_no, ticket_name, ticket_price, ticket_category, ticket_images, discount_rate, selling_end) "
+				+ " values(ticket_seq.nextval, ?, ?, ?, ?, ?, ?)";
+		t.update(sql, ticket.getName(), ticket.getPrice(), ticket.getCategory(), ticket.getImages(), ticket.getDiscountRate(), ticket.getSellingEnd());
+	}
+	
+	@Override
+	public List<Ticket> getAllTicket() {
+		String sql = "select * from ticket order by ticket_no";
+		return t.query(sql, rowMapper);
+	}
+	
+	@Override
+	public Ticket getTicketByNo(int no) {
+		String sql = "select * from ticket where ticket_no = ?";
+		return t.queryForObject(sql, rowMapper, no);
+	}
+	
+	@Override
+	public List<Images> getTicketImageByNo(int no) {
+		String sql = "select no, images_category, images_name from images where no = ? and images_category = 'TICKET'";
+		return t.query(sql, rowMapperImage,no);
+	}
+}

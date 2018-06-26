@@ -1,0 +1,15 @@
+package kr.co.hta.peanuts.service;
+
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Plaza;
+import kr.co.hta.peanuts.vo.Reply;
+
+public interface PlazaService {
+
+	void addPlaza(Plaza plaza);
+	List<Plaza> getAllPlaza();
+	List<Reply> getReplyByNo(int no);
+	void addReply(Reply re);
+}

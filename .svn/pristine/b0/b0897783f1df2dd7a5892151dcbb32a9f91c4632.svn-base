@@ -1,0 +1,14 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.Date;
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Board;
+import kr.co.hta.peanuts.vo.OrderBy;
+import kr.co.hta.peanuts.web.form.BoardForm;
+
+public interface AdminQnaService {
+
+	List<BoardForm> getQnaList(OrderBy orderBy);
+	void addNewQna(Board board);
+}

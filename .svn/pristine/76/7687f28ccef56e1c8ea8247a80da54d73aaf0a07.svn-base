@@ -1,0 +1,235 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>  
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>ddangkong planer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+  <style type="text/css">
+	.blurb a {color: #734d26;}
+  </style>
+</head>
+<script type="text/javascript">
+$(function(){
+	$('#tagTooltip').ready(function(){
+	    $('[data-toggle="tooltip"]').tooltip(); 
+	});
+	
+	var locationType = 'seoul';
+	$('#locationType').find('li').on('click',function(){
+		
+		$('#locationType').find('li').removeClass('active');
+		$(this).addClass('active');
+		locationType = $('#locationType').find('.active').attr('id');
+		getTikcketList(locationType);
+	});
+	
+	getPlanList();
+	getTikcketList(locationType);
+	function hashT(tags){
+		if(tags != null){
+			var tag = tags.split(',');
+			var strTag = '';
+			for (var i in tag){
+				strTag += '#'+tag[i];
+			}
+			return strTag;
+		} else {
+			return '';
+		}	
+	}
+	
+	function getPlanList(){
+		var $planTopList = $('#planTopList');
+		
+		//인기 플래너 top4 출력
+		$.ajax({
+			type: 'GET',
+			url: 'planlist.do',
+			dataType: 'json',
+			success: function(result){
+				$.each(result.topList, function(n, items){
+					var tg = hashT(items.hashTag);
+					
+					var row = '';
+					row += '<div class="col-lg-2"><div class="card">';
+					if(!"${LOGIN_USER.id}"){
+						row += '<a data-toggle="tooltip" id="tagTooltip" title="'+tg+'" href="user/login.do">';
+					} else {
+						row += '<a data-toggle="tooltip" id="tagTooltip" title="'+tg+'" href="planner/dashboard.do?pno='+items.no+'">';	
+					}
+					row += '<img class="card-img-top img-rounded" style="opacity:0.7;" src="'+items.mapImg+'"></a>';
+					row += '<div class="card-body">';	
+					row += '<h5 class="card-title"><strong style="color: #666666;">'+items.title+'</strong></h5>';
+					//row += '<p style="font-size: 12px; color:#802b00;">'+tg+'</p>';
+					row += '<h6>2018년 5월 '+items.userId+' <img src="resources/images/profile/'+items.profile.profile+'" class="img-Circle" width="30px;" height="30px;"></h6>';		
+					row += '</div></div></div>';
+					
+					$planTopList.prepend(row); 
+				});
+			}
+		});
+	}
+});
+	// 인기 티켓 top6 출력	
+	function getTikcketList(locationType){
+		// 천단위 콤마 찍기
+		function comma(str) {
+	   		str = String(str);
+	    	return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+		}
+
+		$.ajax({
+			type: 'GET',
+			url: 'ticketlist.do',
+			dataType: 'json',
+			data: {value: locationType},
+			success: function(result){
+				$('#ticketTopList').empty();
+				var $ticketTopList = $('#ticketTopList');
+				
+				$.each(result, function(n, items){
+					var price = comma(items.price);
+					var orderPrice = comma(items.price*((100-items.discountRate)/100));
+					var row = '';
+					
+					row += '<li style="text-align: center;"><div class="col-lg-2" style="margin-left: 15px;">';
+					row += '<a href="ticket/detail.do?ticketNo='+items.no+'">';
+					row += '<img class="card-img-top img-rounded" style="opacity:0.9;" src="resources/images/ticket/'+items.images+'" width="180px" height="200px"></a>';
+					row += '<h5 class="card-title"><strong style="color: #595959;">'+items.name+'</h5>';
+					row += '<h5><small><del class=>￦ '+price+'원</del></small> <span style="color: red;">↓'+items.discountRate+'%</span>';
+					row += '<p><span>￦'+orderPrice+'</span>원<p></h5>';
+					row += '</div></li>';	
+					$ticketTopList.append(row);
+				});
+			}
+		});
+	}
+	function changImg(i) {
+		var no = i;
+		$('img[id^="blurb-img"]').css('display','none');
+		$('#blurb-img'+no).css('display','inline');
+	}
+</script>
+<body>
+<jsp:include page="include/header.jsp" />
+<div class="container" style="width: 100%; position: relative; margin-bottom: 50px; margin-top: -20px; overflow-x: hidden;">
+		<div class="row">
+		<!-- 상단 슬라이드 이미지 -->
+			<div id="myCarousel" class="carousel slide" data-ride="carousel">
+
+				<!--페이지-->
+				<ol class="carousel-indicators">
+					<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+					<li data-target="#myCarousel" data-slide-to="1"></li>
+					<li data-target="#myCarousel" data-slide-to="2"></li>
+				</ol>
+				<!--페이지-->
+
+				<div class="carousel-inner">
+					<!--슬라이드1-->
+					<div class="item active">
+						<img src="resources/images/maincsstop3.jpg" style="width: 100%; height: 500px;">
+						<div class="conatiner">
+							<div class="carousel-caption" style="margin-bottom: 220px;">
+								<h2 style="color: #fff"><strong>땅콩플래너에서 새로운 여행을 시작해보세요</strong></h2><br />
+								<a href="map/addPlanForm.do" class="btn btn-success btn-md">플래너 시작<span class="glyphicon glyphicon-arrow-right"></span></a>
+							</div>
+						</div>
+					</div>
+					<!--슬라이드2-->
+					<div class="item">
+						<img class="img" src="resources/images/busan.jpg" style="width: 100%; height: 500px;">
+					</div>
+					<!--슬라이드3-->
+					<div class="item">
+						<img src="resources/images/rf18_metadata.png" style="width: 100%; height: 500px;">
+					</div>
+					<!--슬라이드3-->
+				</div>
+
+				<!--이전, 다음 버튼-->
+				<a class="left carousel-control" href="#myCarousel" data-slide="prev">
+					<span class="glyphicon glyphicon-chevron-left"></span></a> 
+				<a class="right carousel-control" href="#myCarousel" data-slide="next">
+					<span class="glyphicon glyphicon-chevron-right"></span></a>
+			</div>
+		</div>
+		<div class="container" style="width: 60%;">
+			<div class="row col-lg-12">
+				<h3 style="color: #996633;"><img src="resources/images/logo/peanutbw.png" width="30px" height="30px"/> <strong>인기 플래너</strong></h3>
+				<hr />
+			</div>
+			<div class="row text-center" id="planTopList">
+				
+				<!-- 축제정보 -->
+				<div class="col-lg-4">
+					<div class="row text-center">
+						<img src="resources/images/chimac.jpg" height="300px;" width="280px;" >
+					</div>			
+				</div>
+			</div>
+			<div class="row pull-center;" style="margin-top: 0px; background-color: #f9f2ec; padding: 30px;">
+				<div class="row">
+					<h3 style="color: #996633;"><img src="resources/images/logo/peanutbw.png" width="30px" height="30px" /> <strong>BEST 인기상품</strong>
+					<a class="btn btn-success btn-xs" href="ticket/main.do">티켓 구매 바로가기<span class="glyphicon glyphicon-shopping-cart"></span></a></h3>	
+				</div>
+				<div class="row">
+					<ul class="nav nav-pills nav-justified" id="locationType">
+					  <li class="active" id="seoul"><a>서울/경기/인천</a></li>
+					  <li id="kangwon"><a>강원</a></li>
+					  <li id="chungcheong"><a>충청/전라</a></li>
+					  <li id="kyeongsang"><a>경상/부산</a></li>
+					  <li id="jeju"><a>제주</a></li>
+					</ul>
+				</div>
+				<div class="row text-center" style="margin-top: 20px; margin-left: 30px;">
+					<ul class="list-unstyled" id="ticketTopList">
+						
+					</ul>
+				</div>
+			</div>			
+			
+			
+			<div class="row">
+				<div class="row col-xs-8">
+					<div class="row" style="margin-top: 50px; margin-left: 20px; height: 300px;">
+						<div class="col-xs-3">
+							<p style="font-size: 20px; color: #595959;"><strong>SPECIAL  THEME</strong></p>
+							<p class="blurb"><a onclick="changImg(1)"><strong>2018년 화성 뱃놀이</strong> <span class="glyphicon glyphicon-chevron-right"></span></a><hr style="border-color: #996633; margin: 0px;"/></p>
+							<p class="blurb"><a onclick="changImg(2)"><strong>안성 썸머쿨 festival</strong> <span class="glyphicon glyphicon-chevron-right"></span></a><hr style="border-color: #996633; margin: 0px;"/></p>	
+							<p class="blurb"><a onclick="changImg(3)"><strong>춘천 마임 축제</strong> <span class="glyphicon glyphicon-chevron-right"></span></a><hr style="border-color: #996633; margin: 0px;"/></p>	
+						</div>
+						<div class="col-xs-9">
+							<img class="img-Rounded Corners" id="blurb-img1" src="resources/images/화성.jpg" width="500px;" height="80%" style="display: inline;">
+							<img class="img-Rounded Corners" id="blurb-img2" src="resources/images/ansung.jpg" width="500px;" height="80%" style="display: none;" >
+							<img class="img-Rounded Corners" id="blurb-img3" src="resources/images/춘천 마임.jpg" width="500px;" height="80%" style="display: none;">
+						</div>
+						
+					</div>
+				</div>
+				<div class="row col-xs-4" style="margin-left: 20px;">
+					<div class="row" style="margin-top: 35px; margin-left: 10px; margin-right: 10px; height: 300px;">
+						<div class="row">
+							<div style="margin-left: 15px;">
+								<img src="resources/images/강원헤더2.JPG" style="width: 324px; height: 70px;">
+							</div>
+						</div>
+						<div class="embed-responsive embed-responsive-16by9">
+							<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/WBH8uP_2mlA"></iframe>
+						</div>
+					</div>
+				</div>
+			</div>
+
+	</div>
+	
+</div>
+<jsp:include page="include/footer.jsp" />
+</body>
+</html>

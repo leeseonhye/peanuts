@@ -1,0 +1,56 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<div class="dashCalcontainer" style="width: 350px;">
+	<div id="pno" style="display: none;">${pno }</div>
+	<div id="dashCalendar"></div>
+</div>
+<script>
+$(function() {
+	
+	//공용변수
+	var pno = $('#pno').text();
+	$('#dashCalendar').fullCalendar({
+	    events: function(start, end, timezone, callback) {
+	    	var currMomentParam = {start: start.format(), end: end.format(), pno: pno};
+	        $.ajax({
+	            url: '/schedule/calEvent.do',
+	            data: currMomentParam,
+	            dataType: 'json',
+	            success: function(result) {
+               		callback(result);
+            	},
+	        });
+	    },
+	    contentHeight: 280,
+		defaultView: 'month'/* {month: {titleFormat: 'MMMM YYYY'}} */,
+		editable : false,
+		height: 'auto',
+		header: {
+			left:   'prev,today,next',
+			center: 'title',
+			right:  'month,listWeek,day '
+		},
+		buttonText : {
+			today: '이번달',
+			month : '월별',
+			listWeek : '주간',
+			day : '일별'
+		},
+		buttonIcons : {
+			  prev: 'left-single-arrow',	
+			  next: 'right-single-arrow'
+		}	    
+	});	
+	
+	//해당 플래너의 시작달로 처음에 표시하기
+	$.ajax({
+		type: 'GET',
+		url: '/schedule/getLoadMonth.do',
+		data: {pno: pno},
+		success: function(result){
+			currentDate = new Date(result);
+			$('#dashCalendar').fullCalendar('gotoDate', currentDate);
+		}
+	});
+})
+</script>	

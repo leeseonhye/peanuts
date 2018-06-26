@@ -1,0 +1,16 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Daily;
+import kr.co.hta.peanuts.vo.Location;
+import kr.co.hta.peanuts.vo.Planner;
+
+public interface MapDao {
+
+	void addNewPlan(Planner planner);
+	List<Location> getLocation(Location location);
+	int dailyNum(Planner planner);
+	void addNewDaily(Daily daily);
+	Planner getPlannerByNo(int no);
+}

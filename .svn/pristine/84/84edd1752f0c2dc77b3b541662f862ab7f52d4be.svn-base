@@ -1,0 +1,10 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Wallet;
+
+public interface WalletDao {
+	// 플래너별 한눈에보기 숙소정보 불러오기
+	List<Wallet> allWalletByNo(int planNo);
+}

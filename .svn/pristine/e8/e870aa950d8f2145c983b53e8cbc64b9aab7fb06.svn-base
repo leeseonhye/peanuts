@@ -1,0 +1,22 @@
+package kr.co.hta.peanuts.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.co.hta.peanuts.dao.PlazaDao;
+import kr.co.hta.peanuts.vo.Plaza;
+
+@Service
+@Transactional
+public class PlazaServiceImpl implements PlazaService{
+	
+	@Autowired
+	private PlazaDao plazaDao;
+	
+	@Override
+	public void addPlaza(Plaza plaza) {
+		plazaDao.addPlaza(plaza);
+	}
+	
+}

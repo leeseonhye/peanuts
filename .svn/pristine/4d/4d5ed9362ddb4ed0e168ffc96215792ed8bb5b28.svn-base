@@ -1,0 +1,21 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/map")
+public class MapController {
+
+	@RequestMapping("/addPlanForm.do")
+	public String addPlanForm() {
+		return "map/addNewPlan.jsp";
+	}
+	
+	@RequestMapping("/addPlan.do")
+	public String addPlan(Model model) {
+		
+		return "map/map.jsp";
+	}
+}

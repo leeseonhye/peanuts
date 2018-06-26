@@ -1,0 +1,27 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.co.hta.peanuts.annotation.LoginUser;
+import kr.co.hta.peanuts.service.PlazaService;
+import kr.co.hta.peanuts.vo.Plaza;
+import kr.co.hta.peanuts.vo.User;
+
+@Controller
+@RequestMapping("/board")
+public class PlazaController {
+	
+	@Autowired
+	private PlazaService plazaService;
+
+	@RequestMapping("/plaza.do")
+	public String view() {
+		return "board/plaza.jsp";
+	}
+	@RequestMapping("/addplaza.do")
+	public String addPlaza(@LoginUser User user, Plaza plaza) {
+		return "redirect:/board/plaza.do";
+	}
+}

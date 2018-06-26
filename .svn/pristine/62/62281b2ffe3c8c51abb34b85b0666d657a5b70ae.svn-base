@@ -1,0 +1,8 @@
+package kr.co.hta.peanuts.service;
+
+import kr.co.hta.peanuts.vo.Planner;
+
+public interface MapService {
+
+	void addNewPlan(Planner planner);
+}

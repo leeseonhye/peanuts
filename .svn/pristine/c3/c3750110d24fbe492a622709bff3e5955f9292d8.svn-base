@@ -1,0 +1,17 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Board;
+import kr.co.hta.peanuts.vo.OrderBy;
+import kr.co.hta.peanuts.vo.Reply;
+import kr.co.hta.peanuts.web.form.BoardForm;
+
+public interface AdminQnaDao {
+
+	List<BoardForm> getQnaList(OrderBy orderBy);
+	Board getQnaByNo(int no);
+	void addNewQna(Board board);
+	List<Reply> getReplyByBoardNo(int boardNo);
+	void answerQna(Reply re);
+}

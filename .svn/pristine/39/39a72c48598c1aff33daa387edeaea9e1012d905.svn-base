@@ -1,0 +1,49 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>admin :: qnaDetail</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%;">
+	<h1>detail page</h1>
+
+	<table class="table">
+		<colgroup>
+			<col width="20%">
+			<col width="30%">
+			<col width="20%">
+			<col width="30%">
+		</colgroup>
+	
+		<tr>
+			<th>제목</th>
+			<td colspan="2">테스트</td>
+			<td class="pull-center">view: 54</td>
+		</tr>
+		<tr>
+			<th>작성자</th>
+			<td>홍길동</td>
+			<th>작성일</th>
+			<td>2018-05-29</td>
+		</tr>
+		<tr>
+			<th colspan="4">내용</th>
+		</tr>
+		<tr>
+			<td colspan="4">테스트 내용입니다</td>
+		</tr>
+	</table>
+	
+	
+</div>
+<jsp:include page="../include/footer.jsp" />
+</body>
+</html>

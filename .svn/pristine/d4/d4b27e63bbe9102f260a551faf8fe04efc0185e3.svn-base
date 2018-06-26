@@ -1,0 +1,63 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel='stylesheet' href='/resources/fullcalendar/fullcalendar.css' />
+<script src='/resources/fullcalendar/lib/jquery.min.js'></script>
+<script src='/resources/fullcalendar/lib/moment.min.js'></script>
+<script src='/resources/fullcalendar/fullcalendar.js'></script>
+<script src='/resources/fullcalendar/locale/ko.js'></script>
+<body>
+<div class="dashCal-container" style="width: 350px;">
+	<div id="dashCalendar"></div>
+</div>
+</body>
+<script>
+$(function() {
+
+	//공용변수
+	var pno = $('#pno').text();
+	$('#dashCalendar').fullCalendar({
+	    events: function(start, end, timezone, callback) {
+	    	var currMomentParam = {start: start.format(), end: end.format(), pno: pno};
+	        $.ajax({
+	            url: 'calEvent.do',
+	            data: currMomentParam,
+	            dataType: 'json',
+	            success: function(result) {
+               			callback(result);
+            	},
+	        });
+	    },
+	    contentHeight: 200,
+		defaultView: 'month'/* {month: {titleFormat: 'MMMM YYYY'}} */,
+		editable : false,
+		height: 'auto',
+		header: {
+			left:   'prev,today,next',
+			center: 'title',
+		},
+		buttonText : {
+			today: '이번달',
+		},
+		buttonIcons : {
+			  prev: 'left-single-arrow',
+			  next: 'right-single-arrow'
+		}	    
+	});	
+	
+	//해당 플래너의 시작달로 처음에 표시하기
+	$.ajax({
+		type: 'GET',
+		url: '/schedule/getLoadMonth.do',
+		data: {pno: pno},
+		success: function(result){
+			currentDate = new Date(result);
+			$('#dashCalendar').fullCalendar('gotoDate', currentDate);
+		}
+	});
+	
+})
+</script>	

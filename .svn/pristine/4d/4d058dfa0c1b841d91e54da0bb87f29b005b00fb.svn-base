@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.AdvertisingDao">
+	<insert id="addAdvertising" parameterType="Advertising">
+		insert into advertising (advertising_id, advertising_category, advertising_name, advertising_tel, advertising_manager, advertising_email, advertising_pwd, advertising_serial)
+		values (#{id}, #{category}, #{name}, #{tel}, #{manager}, #{email}, #{pwd}, #{serial})
+	</insert>
+	
+	<select id="getAllAdvertising"  resultType="Advertising">
+		select 
+			advertising_id		as id,
+			advertising_category as category,
+			advertising_name	as name,
+			advertising_tel		as tel,
+			advertising_manager	as manager,
+			advertising_email	as email,
+			create_date			as createDate,
+			advertising_pwd		as pwd,
+			advertising_serial	as serial
+		from
+			advertising
+		order by
+			createDate desc
+	</select>
+
+</mapper>

@@ -1,0 +1,314 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>  
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>schedule</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style type="text/css">
+	table th, td {font-size: 13px;}
+	.label {font-size: 11px;}
+	#schedule-body p, #accom-body p {margin: 2px;}
+	input[name=accomDtfrm], input[name=accomDtto], input[name=accomNm] {border: 1px solid lightgray;}
+</style>
+<body>
+<div class="container" style="width: 60%;">
+<jsp:include page="../include/header.jsp" />
+	<div class="row">
+		<h2>
+			<strong>요약표 - 일정표</strong>
+			<a class="btn btn-xs btn-warning" href="javascript:window.print()"><span class="glyphicon glyphicon-print"></span> 일정표 인쇄</a>
+		</h2>
+	</div>
+
+	<jsp:include page="../include/top.jsp" />
+		
+	<br/>
+	
+	<table class="table pull-left daily-table">
+		<colgroup>
+			<col width="5%">
+			<col width="15%">
+			<col width="10%">
+			<col width="15%">
+			<col width="23%">
+			<col width="*">
+		</colgroup>
+		<tbody>
+			<tr>
+				<th>-</th>
+				<th>날짜</th>
+				<th>지역</th>
+				<th>교통</th>
+				<th>일정</th>
+				<th>숙박</th>
+			</tr>
+			<!-- tr id="daily-해당일YYMMdd"  -->
+			<tr id="daily-180514">
+				<td>1</td>
+				<td>
+					<div class="col-sm-3"><h1 style="font-weight: bolder; margin: -2px;">14</h1></div>
+					<div class="col-sm-9" style="font-size: 12px;">5월<br/>월요일</div>
+				</td>
+				<td>
+					<!-- 여러 도시가 있는 경우 <p>를 이용해서 추가 -->
+					<p>서울</p>
+					<p>담양</p>
+				</td>
+				<td>
+					<!-- 이동 경로에 따라 c:choose절을 이용해서 추가하기  -->
+					<!-- 출발지(or 전위치) -->서울<label class="label label-success"><!-- 교통수단 -->기차</label><!-- 도착지 -->담양</td>
+				<td>
+					<!-- 해당 일정들을 <p>태그로 생성해서 반복적으로 추가되는 위치 -->
+					<p>죽녹원가서 부채만들기</p>
+					<p>죽통밥 먹기</p>
+					<p>자전거 타기</p>
+					<p>메타세콰이어길 걷기</p>
+					<button id="schedule-180514" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-plus">일정추가</span></button>
+				</td>
+				<td>
+					<!-- 해당 일정들을 <p>태그로 생성해서 반복적으로 추가되는 위치 -->
+					<form class="form">
+						<div class="form-group">
+						<!--  숙소명(박수)로 입력 -->
+							<label class="label label-default" style="width: 45px;">숙소명</label>
+							<input type="text" name="accomNm" placeholder="숙소명" />
+						</div>
+						<div class="form-group">
+							<label class="label label-default" style="width: 45px;">기간</label>
+							<input type="date" name="accomDtfrm" placeholder="시작일"/> ~
+							<input type="date" name="accomDtto" placeholder="종료일"/>
+						</div>
+						<div class="form-group">
+							<button id="accom-180514" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil">숙소등록</span></button>
+						</div>
+					</form>
+					<button id="accom-180514" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil">숙소정보</span></button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<!-- Modal -->
+	<div id="dailyModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	    
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title" id="schedule-title"><span class="glyphicon glyphicon-plus">일정추가</span></h4>
+	        <h4 class="modal-title" id="accom-title"><span class="glyphicon glyphicon-pencil">숙소정보</span></h4>
+	      </div>
+	    
+	      <div class="modal-body">
+	      	<table class="table" id="schedule-body">
+	      		<tbody></tbody>
+	      	</table>
+	      	<table class="table" id="accom-body">
+	      		<tbody></tbody>
+	      	</table>
+	      </div>
+	    
+	      <div class="modal-footer">
+	        <button class="btn btn-default" data-dismiss="modal">닫기</button>
+	      </div>
+	    
+	    </div>
+	  </div>
+	</div>	
+	
+</div>
+</body>
+<script type="text/javascript">
+$(function() {
+	
+	//페이지 준비됐을 때, 우선 모든 리스트가리기
+	var $stitle = $('#schedule-title').hide();
+	var $sbody = $('#schedule-body').hide();
+	var $atitle = $('#accom-title').hide();
+	var $abody = $('#accom-body').hide();
+	
+	//Modal 꺼질때마다 api 리스트 표시되는 modal body 지우기
+	$('#thisModal').on('hide.bs.modal',function(){
+		$sbody.find('tbody').empty();
+		$abody.find('tbody').empty();
+	});	
+	
+	//리스트에서 +일정추가를 클릭했을 경우 modal show()
+	$('.daily-table tbody').on('click', '[id^=schedule-]', function() {
+		$stitle.show();
+		$sbody.show();
+		$atitle.hide();
+		$abody.hide();
+		$('#dailyModal').modal('show');
+		
+		/*
+			본래는 버튼을 클릭했을 때, 해당하는 지역명을 받고, 
+			해당 지역의 지역코드를 찾아서 api url에 추가해줘야합니다.
+		*/
+		
+		//해당일자알아내기 - 행 알아내기
+		var rowNum = $(this).attr('id').replace('schedule-','').trim();
+
+		$.ajax({
+			type:'GET',
+			url:'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?'
+				 +'MobileOS=ETC&'
+				 +'MobileApp=AppTest&'
+				 +'ServiceKey=MPb4CUSvtcuGivPnZ40jwAOelh5vfHPpZZhYVPadMz2vTZ1BuWcKp3721wDvCpeVe3LnQJEbVNLclZrvkMAG4A%3D%3D&'
+				 +'_type=json',
+			dataType:'json',
+			success: function(result) {
+				var tourlist = result.response.body.items.item;
+				
+				$.each(tourlist, function(index, tour){
+					var addr = '주소: ';
+					var addr1 = tour.addr1;
+					var addr2 = tour.addr2;
+					if (addr1) {
+						addr += addr1;
+					}
+					if (addr2) {
+						addr += addr2;
+					}
+					if (addr1 == null && addr2 == null) {
+						addr += "<a href='http://map.daum.net/' class='btn btn-xs btn-default'>위치검색</a>";
+					}
+				
+					var image = tour.firstimage2; 
+					if (!image) {
+						image = "<img src='resources/images/defaultTourImage.jpg' width='150px;'/>"; 
+					} else {
+						image = "<img src='"+tour.firstimage2+"' width='150px;'/>";
+					}
+					
+					var tel = '연락처: ';
+					var tel1 = tour.tel;
+					if(tel1){
+						tel += tel1;
+					} else {
+						tel += '등록된 연락처가 존재하지 않습니다.';
+					}
+					
+					var title = tour.title;
+					var code = tour.contentid;
+					
+					var rows = "<tr id='"+code+"'>";
+					rows += "<td width='180px;'>"+image+"</td>";
+					rows += "<td>";
+					rows += "<p id='title'><strong>"+title+"</strong></p>";
+					rows += "<p id='addr'><small>"+addr+"</small></p>";
+					rows += "<p id='tel'><small>"+tel+"</small></p>";
+					rows += "<button class='btn btn-xs btn-info label pull-right' id='add-tour-"+code+"' ><span class='glyphicon glyphicon-ok'>일정추가</span></button>";
+					rows += "</td>";
+					rows += "</tr>";
+					$sbody.find('tbody').append(rows);
+				});
+			}
+		});
+		
+	});
+	
+	//리스트에서 +숙소추가를 클릭했을 경우 modal show()
+	$('.daily-table tbody').on('click', '[id^=accom-]', function() {
+		$stitle.hide();
+		$sbody.hide();
+		$atitle.show();
+		$abody.show();
+		$('#dailyModal').modal('show');
+		
+		/*
+			본래는 버튼을 클릭했을 때, 해당하는 지역명을 받고, 
+			해당 지역의 지역코드를 찾아서 api url에 추가해줘야합니다.
+		*/
+		
+		//해당일자알아내기 - 행 알아내기
+		var rowNum = $(this).attr('id').replace('accom-','').trim();
+
+		$.ajax({
+			type:'GET',
+			url:'http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchStay?'
+				+'serviceKey=MPb4CUSvtcuGivPnZ40jwAOelh5vfHPpZZhYVPadMz2vTZ1BuWcKp3721wDvCpeVe3LnQJEbVNLclZrvkMAG4A%3D%3D&'
+				+'numOfRows=10&'
+				+'pageSize=10&'
+				+'pageNo=1&'
+				+'startPage=1&'
+				+'MobileOS=ETC&'
+				+'MobileApp=AppTest&'
+				+'arrange=A&'
+				+'listYN=Y&'
+				+'_type=json',
+			dataType:'json',
+			success: function(result) {
+				var accomlist = result.response.body.items.item;
+				
+				$.each(accomlist, function(index, accom){
+					var addr = '주소: ';
+					var addr1 = accom.addr1;
+					var addr2 = accom.addr2;
+					if (addr1) {
+						addr += addr1;
+					}
+					if (addr2) {
+						addr += addr2;
+					}
+					if (addr1 == null && addr2 == null) {
+						addr += "<a href='http://map.daum.net/' class='btn btn-xs btn-default'>위치검색</a>";
+					}
+				
+					var image = accom.firstimage2; 
+					if (!image) {
+						image = "<img src='resources/images/defaultTourImage.jpg' width='150px;'/>"; 
+					} else {
+						image = "<img src='"+accom.firstimage2+"' width='150px;'/>";
+					}
+					
+					var tel = '연락처: ';
+					var tel1 = accom.tel;
+					if(tel1){
+						tel += tel1;
+					} else {
+						tel += '등록된 연락처가 존재하지 않습니다.';
+					}
+					
+					var title = accom.title;
+					var code = accom.contentid;
+					
+					var rows = "<tr id='"+code+"'>";
+					rows += "<td width='180px;'>"+image+"</td>";
+					rows += "<td>";
+					rows += "<p id='title'><strong>"+title+"</strong></p>";
+					rows += "<p id='addr'><small>"+addr+"</small></p>";
+					rows += "<p id='tel'><small>"+tel+"</small></p>";
+					rows += "<a href='https://www.agoda.com/ko-kr/?cid=1430285&tag=911ebde7-5036-68"
+							+"5e-58fa-9c8b7e2e4bdb&gclid=CjwKCAjwiurXBRAnEiwAk2GFZg7TC8xg1PfacRdtikxB"
+							+"EM0drg5W5hEb3dMLjPG8Be-NWQoNZpQtuxoCYhcQAvD_BwE'"
+							+" class='btn btn-xs btn-success pull-right'>숙소예약</a>";
+					rows += "</td>";
+					rows += "</tr>";
+					$abody.find('tbody').append(rows);
+				});
+			}
+		});
+		
+	});
+	
+	
+	//관광지 리스트에서 일정 추가 버튼을 누르면 다시 ajax정의해서 
+	//db에 저장하고 + complete {modal(hide)} * 페이지 이동없이 특정부분 내용변경시키기
+	
+	//숙소예약을 했을 수도 있으니까 기본 form 생성해주고
+	//숙소정보 저장버튼 클릭하면 db에 저장하고 redirect시키기
+	//이미 db저장된 숙소정보가 잇으면 출력하고 + 수정버튼 넣어주기
+	
+	
+
+})
+</script>
+</html>

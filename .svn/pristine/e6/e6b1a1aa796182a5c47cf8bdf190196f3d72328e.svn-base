@@ -1,0 +1,110 @@
+package kr.co.hta.peanuts.vo;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Planner {
+
+	private int no;
+	private String userId;
+	private String title;
+	private String startDate;
+	private String endDate;
+	private int member;
+	private Date createDate;
+	private String status;
+	private String open;
+	
+	private boolean isSampDate;
+	
+	public int getNo() {
+		return no;
+	}
+	public void setNo(int no) {
+		this.no = no;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getStartDate() {
+		return startDate;
+	}
+	public String getStartMonth() {
+		String[] dates = startDate.split("-");
+		return dates[0]+"년 "+dates[1]+"월";
+	}
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+	public String getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	public int getMember() {
+		return member;
+	}
+	public void setMember(int member) {
+		this.member = member;
+	}
+	public Date getCreateDate() {
+		return createDate;
+	}
+	public String getCreateDateWithSDF() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(this.createDate);
+	}
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getOpen() {
+		return open;
+	}
+	public void setOpen(String open) {
+		this.open = open;
+	}
+	
+	public String getOpenText() {
+		if ("N".equals(open)) {
+			return "비공개";
+		}
+		return "공개";
+	}
+	
+	public boolean getIsSameDate() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(new Date());
+		String day = sdf.format(createDate);
+		
+		if (today.equals(day)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	@Override
+	public String toString() {
+		return "Planner [no=" + no + ", userId=" + userId + ", title=" + title + ", startDate=" + startDate
+				+ ", endDate=" + endDate + ", member=" + member + ", createDate=" + createDate + ", status=" + status
+				+ ", open=" + open + ", isSampDate=" + isSampDate + "]";
+	}
+	
+	
+	
+}

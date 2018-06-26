@@ -1,0 +1,5 @@
+package kr.co.hta.peanuts.dao;
+
+public interface UserDao {
+
+}

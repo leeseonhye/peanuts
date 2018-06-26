@@ -1,0 +1,29 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.co.hta.peanuts.service.SearchService;
+import kr.co.hta.peanuts.vo.Planner;
+import kr.co.hta.peanuts.web.form.SearchForm;
+
+@Controller
+@RequestMapping("/search")
+public class SearchController {
+
+	@Autowired
+	SearchService searchService;
+	
+	@RequestMapping("/search.do")
+	public String globalSearch(SearchForm searchForm, Model model) {
+		List<Planner> result =  searchService.searchPlanners(searchForm);
+		model.addAttribute("keyword", searchForm);
+		model.addAttribute("resultCnt", result.size());
+		model.addAttribute("result", result);
+		return "/planner/result.jsp";
+	}
+}

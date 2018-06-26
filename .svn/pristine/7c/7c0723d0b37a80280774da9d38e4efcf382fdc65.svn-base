@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.AdminDao">
+<!-- 
+	<select id="getAllUser" parameterType="boolean" resultType="User">
+		select
+			user_id				as id
+			,	user_pwd		as pwd
+			,	user_name		as name
+			,	user_status		as status
+			,	user_email		as email
+			,	user_tel		as tel
+			,	user_profile	as profile
+			,	create_date		as createDate
+		from
+			planner_user
+		order by
+			<if test="date==true">
+				create_date desc
+			</if>
+			<if test="status==true">
+				, user_status
+			</if>
+			<if test="userId==true">
+				, user_id
+			</if>
+	</select> -->
+	
+	<!-- view 수를 높이는 기능 -->
+	<update id="plusView" parameterType="int">
+		update board
+		set
+			board_view = board_view+1
+		where
+			board_no = #{value} 
+	</update>
+	
+	<!-- no에 따른 댓글을 가져오는 기능 -->
+	<select id="getReplyByBoardNo" parameterType="int" resultType="Reply">
+		select
+			no					as boardNo
+			,	rep_no			as repNo
+			,	rep_category	as "category"
+			,	user_id			as userId
+			,	rep_contents	as "contents"
+			,	rep_status		as status
+			,	create_date		as createDate
+		from
+			reply
+		where
+			no = #{value}
+	</select>
+	
+	<!-- category별 글 갯수를 알아내는 기능 -->
+	<select id="boardlistCnt" parameterType="string" resultType="int">
+		select count(*)
+		from board
+		where
+			board_category = #{value}
+		and
+			board_status = 'E'
+	</select>
+	
+	<!-- category별 boardList를 받아와서 저장하는 기능 -->
+	<!-- category, beginIndex, endIndex가 들어간 map 객체가 필요하다 -->
+	<select id="getBoardList" parameterType="map" resultType="BoardForm">
+		select 
+			board_no 			as "no"
+			,	user_id			as userId
+			,	board_category	as "category"
+			,	board_title		as title
+			,	board_contents	as "contents"
+			,	board_view		as "view"
+			,	create_date		as createDate
+			,	board_status	as status
+		from
+			(
+			select
+				board_no, user_id, board_category, board_title
+				, board_contents, board_view, create_date, board_status
+				, row_number() over (order by create_date desc) rn
+			from
+				board
+			where
+				board_category = #{category}
+			and
+				board_status = 'E'
+			)
+		where
+			rn >= #{beginIndex}
+		and
+			rn &lt;= #{endIndex}
+		order by
+			create_date desc
+	</select>
+	
+	<!-- no에 따른 BoardDetail을 받아오는 기능 -->
+	<select id="getBoardByNo" parameterType="int" resultType="BoardForm">
+		select 
+			board_no 			as "no"
+			,	user_id			as userId
+			,	board_category	as "category"
+			,	board_title		as title
+			,	board_contents	as "contents"
+			,	board_view		as "view"
+			,	create_date		as createDate
+			,	board_status	as status
+		from
+			board
+		where
+			board_no = #{value}
+	</select>
+	
+	<!-- no에 따른 게시물을 지운다(status를 D로 업데이트한다) -->
+	<update id="delBoardByNo">
+		update board
+		set
+			board_status = 'D'
+		where
+			board_no = #{value}
+	</update>
+	
+	<!-- 키워드와 카테고리를 통해서 게시글을 검색하는 기능 -->
+	<select id="searchBoards" parameterType="map" resultType="BoardForm">
+		select 
+			board_no 			as "no"
+			,	user_id			as userId
+			,	board_category	as "category"
+			,	board_title		as title
+			,	board_contents	as "contents"
+			,	board_view		as "view"
+			,	create_date		as createDate
+			,	board_status	as status
+		from
+			board
+		where
+			board_category = #{category}
+		and
+		(
+			board_title like '%'||#{keyword}||'%'
+			or
+			board_contents like '%'||#{keyword}||'%'
+			or
+			user_id like '%'||#{keyword}||'%'
+		)
+		and
+			board_status = 'E'
+		order by
+			create_date desc
+	</select>
+	
+	<!-- qna 게시판에 댓글을 추가하는 기능 -->
+	<insert id="answerQna" parameterType="Reply">
+		insert into reply
+			(no, rep_no, rep_category, user_id, rep_contents)
+		values
+			(#{boardNo}, reply_seq.nextval, 'QNA', #{userId}, #{contents})
+	</insert>
+	
+	<!-- qna 게시판의 댓글을 삭제하는 기능 -->
+	<delete id="delQnaReply" parameterType="int">
+		delete from reply
+		where rep_no = #{value}
+	</delete>
+	
+	<!-- qna 게시판의 댓글을 수정하는 기능 -->
+	<update id="updateQnaReply" parameterType="Reply">
+		update reply
+		set
+			rep_contents = #{contents}
+		where
+			rep_no = #{repNo}
+	</update>
+	
+	<!-- repNo를 통해서 댓글 정보를 불러오는 기능 -->
+	<select id="getReplyByRepNo" parameterType="int" resultType="Reply">
+		select
+			no					as boardNo
+			,	rep_no			as repNo
+			,	rep_category	as category
+			,	user_id			as userId
+			,	rep_contents	as contents
+			,	rep_status		as status
+			,	create_date		as createDate
+		from
+			reply
+		where
+			rep_no = #{value}	
+	</select>
+	
+	<!-- userId를 이용해서 user정보를 불러오는 기능 -->
+	<select id="getUserByUserId" parameterType="string" resultType="User">
+		select
+			user_id				as id
+			,	user_pwd		as pwd
+			,	user_name		as name
+			,	user_status		as status
+			,	user_email		as email
+			,	user_tel		as tel
+			,	user_profile	as profile
+			,	create_date		as createDate
+		from
+			planner_user
+		where
+			user_id = #{value}
+	</select>
+</mapper>

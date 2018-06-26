@@ -1,0 +1,21 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.TogetherDao;
+import kr.co.hta.peanuts.vo.TogetherPart;
+
+@Service
+public class TogetherServiceImpl implements TogetherService {
+
+	@Autowired
+	TogetherDao togetherDao;
+	
+	@Override
+	public List<TogetherPart> getAllParts(int boardNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

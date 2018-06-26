@@ -1,0 +1,85 @@
+package kr.co.hta.peanuts.vo;
+
+public class OrderBy {
+	
+	// 정렬 정할 때 사용하기
+
+	private boolean date;	// 날짜별 정렬
+	private boolean status;	// 상태별 정렬
+	private boolean name;	// 이름 가나다순으로 정렬
+	private boolean userId;	// userId순으로 정렬
+	private boolean likes;	// 좋아요 많은 순으로 정렬
+	private boolean reply;	// 댓글 많은 순으로 정렬
+	private boolean view;	// 게시글 많이 본 순으로 정렬
+	private boolean title;	// 제목 순으로 정렬
+	
+	public boolean isDate() {
+		return date;
+	}
+
+	public void setDate(boolean date) {
+		this.date = date;
+	}
+
+	public boolean isStatus() {
+		return status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
+
+	public boolean isName() {
+		return name;
+	}
+
+	public void setName(boolean name) {
+		this.name = name;
+	}
+
+	public boolean isUserId() {
+		return userId;
+	}
+
+	public void setUserId(boolean userId) {
+		this.userId = userId;
+	}
+
+	public boolean isLikes() {
+		return likes;
+	}
+
+	public void setLikes(boolean likes) {
+		this.likes = likes;
+	}
+
+	public boolean isReply() {
+		return reply;
+	}
+
+	public void setReply(boolean reply) {
+		this.reply = reply;
+	}
+
+	public boolean isView() {
+		return view;
+	}
+
+	public void setView(boolean view) {
+		this.view = view;
+	}
+
+	public boolean isTitle() {
+		return title;
+	}
+
+	public void setTitle(boolean title) {
+		this.title = title;
+	}
+
+	@Override
+	public String toString() {
+		return "OrderBy [date=" + date + ", status=" + status + ", name=" + name + ", userId=" + userId + ", likes="
+				+ likes + ", reply=" + reply + ", view=" + view + ", title=" + title + "]";
+	}
+}

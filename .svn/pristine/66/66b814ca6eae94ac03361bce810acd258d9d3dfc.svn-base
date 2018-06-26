@@ -1,0 +1,45 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.co.hta.peanuts.service.TogetherService;
+import kr.co.hta.peanuts.vo.Board;
+
+@Controller
+@RequestMapping("/together")
+public class TogetherController {
+
+	@Autowired
+	TogetherService togetherService;
+	
+	@RequestMapping("/together.do")
+	public String together(Model model) {
+		model.addAttribute("topTogethers", togetherService.getTopBoards());
+		return "/board/together.jsp";
+	}
+	
+	@RequestMapping("/getAllTogethers.do")
+	@ResponseBody
+	public List<Board> getAllTogethers(String by, String key) {
+		return togetherService.getTogetherBoards(by, key);
+	}
+	
+	@RequestMapping("/getTopJoin.do")
+	@ResponseBody
+	public List<Board> getTopJoin() {
+		return togetherService.getTogetherTopJoin();
+	}
+	
+	@RequestMapping("/getTopLikes.do")
+	@ResponseBody
+	public List<Board> getTopLikes() {
+		return togetherService.getTogetherTopLikes();
+	}
+
+}

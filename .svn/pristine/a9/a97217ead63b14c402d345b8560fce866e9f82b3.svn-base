@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.PlazaDao">
+	
+	<!-- 플래너별 한눈에보기 출력 -->
+	<insert id="addPlaza" parameterType="string">
+		INSERT INTO BOARD
+			(board_no, user_id, board_category, board_contents)
+		VALUES
+			(board_seq.nextval, #{id}, 'ALL', #{content})
+	</insert>
+
+	
+</mapper>

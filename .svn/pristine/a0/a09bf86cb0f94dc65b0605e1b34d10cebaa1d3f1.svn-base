@@ -1,0 +1,28 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>admin :: main</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%; min-height: 740px;">
+	<div class="row">
+		<nav class="col-sm-3" id="myScrollspy">
+			<!-- 왼쪽 메뉴바 -->
+			<jsp:include page="menu.jsp" />
+		</nav>
+		<div class="col-sm-9" style="overflow-y: scroll; height:680px;">
+			<!-- 오른쪽 통계 -->
+		</div>
+	</div>
+</div>
+<jsp:include page="../include/footer.jsp" />
+</body>
+</html>

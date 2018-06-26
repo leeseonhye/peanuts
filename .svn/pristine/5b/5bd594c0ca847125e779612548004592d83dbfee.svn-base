@@ -1,0 +1,380 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>  
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>ddangkong planer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+<body>
+<div class="container" style="width: 60%;">
+<jsp:include page="../include/header.jsp" />
+			<div class="row">
+				<h1><span class="glyphicon glyphicon-piggy-bank" style="color: #ac7339;"></span> 가계부</h1>
+					<ul class="nav nav-tabs">
+						<li class="active"><a data-toggle="tab" href="#home">한눈에보기</a></li>
+						<li><a data-toggle="tab" href="#menu1">5월 1일</a></li>
+						<li><a data-toggle="tab" href="#menu2">5월 2일</a></li>
+						<li><a data-toggle="tab" href="#menu3">5월 3일</a></li>
+						<li><a data-toggle="tab" href="#menu4">5월 4일</a></li>
+						<li><a data-toggle="tab" href="#menu5">5월 5일</a></li>
+					</ul>
+			</div>			
+			<div class="tab-content">
+				<div id="home" class="tab-pane fade in active">
+					<div class="row">
+						<div id="chart-table" class="col-sm-6"
+							style="height: 370px; width: 50%; margin-top: 80px;"></div>
+						<div id="total-table" class="col-sm-6 tab-pane fade in active"
+																style="width: 45%; margin-left: 5%">
+							<h3 style="text-align: center;">모아보기</h3>
+							<div>
+								<span class="glyphicon glyphicon-ok"></span> 합계 
+								<strong><span class="pull-right" style="font-size: 20px;">155,000원</span></strong>
+							</div>
+							<hr />
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-home"></span> 숙소 
+									<button id="btn-view" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-chevron-down"></span></button>
+									<strong><span class="pull-right"> 80,000원</span></strong>
+								</div>
+								<div class="panel-body" id="panel-bodyId">
+									<table class="table-condensed">
+										<tbody>
+											<tr>
+												<td>아리랑 호텔</td>
+												<td>50,000원</td>
+											</tr>
+											<tr>
+												<td>요지경 호스텔</td>
+												<td>30,000원</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-road"></span> 교통 
+									<button id="btn-view" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-chevron-down"></span></button>
+									<strong><span class="pull-right">35,000원</span></strong>
+								</div>
+								<div class="panel-body" id="panel-bodyId">
+									<table class="table-condensed">
+										<tbody>
+											<tr>
+												<td>기 차</td>
+												<td>35,000원</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-globe"></span> 관광 
+									<button id="btn-view" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-chevron-down"></span></button>
+									<strong><span class="pull-right">40,000원</span></strong>
+								</div>
+								<div class="panel-body" id="panel-bodyId">
+									<table class="table-condensed">
+										<tbody>
+											<tr>
+												<td>레일바이크 2인</td>
+												<td>40,000원</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-cutlery"></span> 식비 
+									<button id="btn-view" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-chevron-down"></span></button>
+									<strong><span class="pull-right">0원</span></strong>
+								</div>
+							</div>
+
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-shopping-cart"></span> 쇼핑 
+									<button id="btn-view" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-chevron-down"></span></button>
+									<strong><span class="pull-right">0원</span></strong>
+								</div>
+							</div>
+
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-folder-close"></span> Etc. 
+									<button id="btn-view" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-chevron-down"></span></button>
+									<strong><span class="pull-right">0원</span></strong>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="menu1" class="tab-pane fade">
+				<h3><span class="glyphicon glyphicon-calendar" style="color: gray;"></span> 5월 1일</h3>
+				<div>
+					<div class="panel-group">
+						<div class="row">
+							<div class="col-sm-6">
+							<div class="panel"> 
+								<div class="panel-heading" style="background-color: #4775d1; color: white;">
+									<span class="glyphicon glyphicon-home"></span> 숙소
+									<button id="btn-plus1" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+									<strong><span class="pull-right">80,000원 </span></strong>
+								</div>
+							  	<div class="panel-body">
+									<table class="table-condensed">
+										<tbody>
+											<tr>
+												<td>아리랑 호텔</td>
+												<td>50,000원</td>
+												<td>일이삼사오육칠팔구십일이삼사오</td>
+												<td><button class="btn btn-default btn-xs">수정</button></td>
+												<td>
+													<button class="btn btn-default btn-xs">
+														<span class="glyphicon glyphicon-remove"></span>
+													</button>
+												</td>
+											</tr>
+											<tr>
+												<td>요지경 호스텔</td>
+												<td>30,000원</td>
+												<td>가성비가 내려와</td>
+												<td><button class="btn btn-default btn-xs">수정</button></td>
+												<td>
+													<button class="btn btn-default btn-xs">
+														<span class="glyphicon glyphicon-remove"></span>
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							</div>
+							<div class="col-sm-6">
+							<div class="panel"> 
+								<div class="panel-heading" style="background-color: #a72b25; color: white;">
+									<span class="glyphicon glyphicon-road"></span> 교통
+									<button id="btn-plus2" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+									<strong><span class="pull-right">30,000원</span></strong>
+								</div>
+							  	<div class="panel-body">
+									<table class="table-condensed">
+										<tbody>
+											<tr>
+												<td>기차</td>
+												<td>30,000원</td>
+												<td>코레일 무궁화호</td>
+												<td><button class="btn btn-default btn-xs">수정</button></td>
+												<td>
+													<button class="btn btn-default btn-xs">
+														<span class="glyphicon glyphicon-remove"></span>
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<div class="col-sm-6">
+							<div class="panel"> 
+								<div class="panel-heading" style="background-color: #39ac39; color: white;">
+									<span class="glyphicon glyphicon-globe"></span> 관광
+									<button id="btn-plus3" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+									<strong><span class="pull-right">40,000원</span></strong>
+								</div>
+							  	<div class="panel-body">
+									<table class="table-condensed">
+										<tbody>
+											<tr>
+												<td>레일바이크 2인</td>
+												<td>40,000원</td>
+												<td>두명이서 으쌰으쌰</td>
+												<td><button class="btn btn-default btn-xs">수정</button></td>
+												<td>
+													<button class="btn btn-default btn-xs">
+														<span class="glyphicon glyphicon-remove"></span>
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							</div>
+							<div class="col-sm-6">
+							<div class="panel"> 
+								<div class="panel-heading" style="background-color: #00b3b3; color: white;">
+									<span class="glyphicon glyphicon-cutlery"></span> 식비
+									<button id="btn-plus4" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+									<strong><span class="pull-right">0원</span></strong>
+								</div>
+							  	<div class="panel-body">
+									<table class="table-condensed">
+										<tbody>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<div class="col-sm-6">
+							<div class="panel"> 
+								<div class="panel-heading" style="background-color: #5f00b3; color: white;">
+									<span class="glyphicon glyphicon-shopping-cart"></span> 쇼핑
+									<button id="btn-plus5" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+									<strong><span class="pull-right">0원</span></strong>
+								</div>
+							  	<div class="panel-body">
+									<table class="table-condensed">
+										<tbody>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							</div>
+							<div class="col-sm-6">
+							<div class="panel"> 
+								<div class="panel-heading" style="background-color: #00a3cc; color: white;">
+									<span class="glyphicon glyphicon-folder-close"></span> Etc
+									<button id="btn-plus6" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+									<strong><span class="pull-right">0원</span></strong>
+								</div>
+							  	<div class="panel-body">
+									<table class="table-condensed">
+										<tbody>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							</div>
+						</div>
+					</div>		
+				</div>
+			</div>
+			<div id="menu2" class="tab-pane fade">
+				<h3>5월 2일</h3>
+				<p>Some content in menu 2.</p>
+			</div>
+			<div id="menu3" class="tab-pane fade">
+				<h3>5월 3일</h3>
+				<p>Some content in menu 3.</p>
+			</div>
+			<div id="menu4" class="tab-pane fade">
+				<h3>5월 4일</h3>
+				<p>Some content in menu 4.</p>
+			</div>
+			<div id="menu5" class="tab-pane fade">
+				<h3>5월 5일</h3>
+				<p>Some content in menu 5.</p>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Modal -->
+	<div id="plus-modal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-md">
+	
+	<!-- Modal content-->
+	    <div class="modal-content">
+			<div class="modal-header" style="background-color: #ac7339; color: white;">
+	        	<button type="button" class="close" data-dismiss="modal">&times;</button>
+	        	<h4 class="modal-title">비용 등록</h4>
+	      	</div>
+	    	<div class="modal-body">
+	        	<form class="form-group" id="plus-form">
+	        		<div class="form-group plus-detail">
+	        			<label>목 록</label>
+	        			<input type="text" class="form-control" name="plus-list" />
+	        		</div>
+	        		<div class="form-group plus-detail">
+	        			<label>금 액</label>
+	        			<input type="text" class="form-control" name="plus-account" />
+	        		</div>
+	        		<div class="form-group plus-detail">
+	        			<label>한줄메모</label>
+	        			<input type="text" class="form-control" name="plus-memo" />
+	        		</div>
+	        	</form>
+	      	</div>
+	      	<div class="modal-footer">
+	      		<button class="btn btn-primary" id="btn-add-todo">등록</button>
+	        	<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+	      	</div>
+	    </div>
+	  </div>
+	</div>
+</body>
+<script type="text/javascript">
+	//차트 보여주기 이벤트
+	window.onload = function () {
+
+	var chart = new CanvasJS.Chart("chart-table", {
+		animationEnabled: true,
+		title:{
+			text: "",
+			horizontalAlign: "left"
+		},
+		data: [{
+			type: "doughnut",
+			startAngle: 60,
+			//innerRadius: 60,
+			indexLabelFontSize: 13,
+			indexLabel: "{label} - #percent%",
+			toolTipContent: "<b>{label}:</b> {y} (#percent%)",
+			dataPoints: [
+				{ y: 67, label: "숙소" },
+				{ y: 28, label: "교통" },
+				{ y: 10, label: "관광" },
+				{ y: 7, label: "식비"},
+				{ y: 15, label: "쇼핑"},
+				{ y: 6, label: "Etc."}
+			]
+		}]
+	});
+	chart.render();
+
+	}
+	
+$(function(){
+	//화살표 버튼 클릭 시 목록 펼치기
+	$('div[id=panel-bodyId]').hide();
+	
+	$('[id="btn-view"]').on('click',function(){	
+		$(this).parent().siblings().toggle();
+		var text = $(this).children().attr('class');
+		if(text == 'glyphicon glyphicon-chevron-down'){
+			$(this).children().removeClass();
+			$(this).children().addClass('glyphicon glyphicon-chevron-up');
+		} else {
+			$(this).children().removeClass();
+			$(this).children().addClass('glyphicon glyphicon-chevron-down');
+		}
+	});
+	
+	//modal 창 띄우는 이벤트 걸기
+	$('[id^="btn-plus"]').click(function(){
+		$('#plus-modal').modal('show');
+	});
+});
+
+</script>
+</html>

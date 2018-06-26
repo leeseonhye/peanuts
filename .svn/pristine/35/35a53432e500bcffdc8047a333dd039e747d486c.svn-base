@@ -1,0 +1,15 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Board;
+import kr.co.hta.peanuts.vo.OrderBy;
+import kr.co.hta.peanuts.vo.Reply;
+import kr.co.hta.peanuts.vo.User;
+
+public interface AdminService {
+
+	List<User> getAllUser(OrderBy o);
+	List<Reply> getAllReply(OrderBy o);
+	List<Board> getAllQna(OrderBy o);
+}

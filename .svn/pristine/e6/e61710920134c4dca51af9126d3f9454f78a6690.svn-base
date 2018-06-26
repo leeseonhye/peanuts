@@ -1,0 +1,91 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<script type="text/javascript">
+	getTicket('all');
+	getTicket('planner');
+function getTicket(type) {	
+	var pno = ${param.pno};
+	$.ajax({
+		type: "GET",
+		url: "/ticket/dashboard.do",
+		dataType: 'json',
+		data: {type:type, pno:pno},
+		success: function(result) {
+			var list = result.list;
+			var row = "";
+			var row2 = "";
+			var index = 0;
+			$.each(list, function(index, ticket) {
+				
+				if(index == 0){
+					row2 += ' <div class="item active">';					
+				} else {
+					row2 += ' <div class="item">';
+				}
+				row2 += '<a href="/ticket/detail.do?ticketNo='+ticket.no+'"><img src="/resources/images/ticket/'+ticket.images+'"></a>';
+				row2 += '<p>';
+				row2 += '<h3>'+ticket.locationCity+'</h3>';
+				row2 += '<h7>'+ticket.name+'</h7>';
+				row2 += '</p>';
+	    		row2 += '</div>';
+			})
+			if(type == 'all') {
+				
+				$('#carouselNo1').append(row);
+				$('#ticket-box1').append(row2);
+				$('#title1').append("모든 지역의 인기티켓");
+			} else {
+				
+				$('#carouselNo2').append(row);
+				$('#ticket-box2').append(row2);
+				$('#title2').append("플래너 주변의 인기티켓");
+				$('#carouselBtn1').attr('href','#myCarousel2');
+				$('#carouselBtn2').attr('href','#myCarousel2');
+			}
+		}
+	})
+}
+</script>
+<div class="container">
+	<div class="col-sm-5">
+		<h3 id="title1"></h3>
+		<div id="myCarousel1" class="carousel slide" data-ride="carousel">
+			  <!-- Indicators -->
+			  <ol class="carousel-indicators" id="carouselNo1">
+			  </ol>
+			
+			  <!-- Wrapper for slides -->
+			  <div class="carousel-inner" role="listbox" id="ticket-box1">
+			    
+			  <!-- Left and right controls -->
+				<a class="left carousel-control" href="#myCarousel1" role="button" data-slide="prev">
+				<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+				<span class="sr-only">Previous</span></a>
+				<a class="right carousel-control" href="#myCarousel1" role="button" data-slide="next">
+				<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				<span class="sr-only">Next</span></a>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col-sm-5 col-sm-offset-1">
+		<h3 id="title2"></h3>
+		<div id="myCarousel2" class="carousel slide" data-ride="carousel">
+			  <!-- Indicators -->
+			  <ol class="carousel-indicators" id="carouselNo2">
+			  </ol>
+			
+			  <!-- Wrapper for slides -->
+			  <div class="carousel-inner" role="listbox" id="ticket-box2">
+			    
+			  <!-- Left and right controls -->
+				<a class="left carousel-control" href="#myCarousel2" role="button" data-slide="prev">
+				<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+				<span class="sr-only">Previous</span></a>
+				<a class="right carousel-control" href="#myCarousel2" role="button" data-slide="next">
+				<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				<span class="sr-only">Next</span></a>
+			</div>
+		</div>
+	</div>
+</div>

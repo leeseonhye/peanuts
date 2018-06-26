@@ -1,0 +1,55 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.AdminQnaDao;
+import kr.co.hta.peanuts.vo.Board;
+import kr.co.hta.peanuts.vo.OrderBy;
+import kr.co.hta.peanuts.vo.Reply;
+import kr.co.hta.peanuts.web.form.BoardForm;
+
+@Service
+public class AdminQnaServiceImpl implements AdminQnaService {
+
+	@Autowired
+	private AdminQnaDao qnaDao;
+	
+	@Override
+	public List<BoardForm> getQnaList(OrderBy orderBy) {
+		List<BoardForm> boards = qnaDao.getQnaList(orderBy);
+		
+		for (BoardForm board : boards) {
+			List<Reply> replys = qnaDao.getReplyByBoardNo(board.getNo());
+			if (replys.size() != 0) {
+				board.setHasReply(true);
+			}
+		}
+		
+		return boards;
+	}
+	
+	@Override
+	public Board getQnaByNo(int no) {
+		return qnaDao.getQnaByNo(no);
+	}
+	
+	@Override
+	public void addNewQna(Board board) {
+		
+		qnaDao.addNewQna(board);
+	}
+	
+	@Override
+	public List<Reply> getReplyByBoardNo(int boardNo) {
+		return qnaDao.getReplyByBoardNo(boardNo);
+	}
+	
+	@Override
+	public void answerQna(Reply re) {
+		qnaDao.answerQna(re);
+	}
+	
+}

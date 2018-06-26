@@ -1,0 +1,119 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>addNewPlan</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+$(function() {
+	var clickk = 0;
+	$('#logo').click(function() {
+		clickk++;
+		if (clickk == 4) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_1.jpg');
+		}
+		if (clickk == 8) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_2.jpg');
+		}
+		if (clickk == 12) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_3.jpg');
+		}
+		if (clickk == 16) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_4.jpg');
+		}
+		if (clickk == 20) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_5.jpg');
+		}
+		if (clickk == 24) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_6.jpg');
+		}
+		if (clickk == 28) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_7.jpg');
+		}
+		if (clickk == 32) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts.png');
+			clickk = 0;
+		}
+	});
+	
+	// 전송 버튼을 눌렀을 때 실행되는 메소드
+	// 한 칸이라도 비어있으면 다음 단계로 못넘어가게 하기
+	$('#submit-button').click(function(event) {
+		event.preventDefault();
+		
+		var title = $('input[name="title"]').val();
+		var startDate = $('input[name="startDate"]').val();
+		var endDate = $('input[name="endDate"]').val();
+		var member = $('input[name="member"]').val();
+		
+		if (title == null) {
+			alert('title을 입력해 주세요');
+			return false;
+		} 
+		if (startDate == '') {
+			alert('여행 시작일을 입력해 주세요');
+			return false;
+		}
+		if (endDate == '') {
+			alert('여행 종료일을 입력해 주세요');
+			return false;
+		}
+		if (member == '') {
+			alert('여행 인원을 입력해 주세요');
+			return false;
+		}
+		
+		$('#add-plan-form').submit();
+	});
+	
+	// 여행 시작일을 누르면 여행 종료일이 활성화되고, 여행시작일을 min값으로 가진다
+	$('input[name="startDate"]').change(function() {
+		var strDate = $('input[name="startDate"]').val();
+		$('input[name="endDate"]').attr("disabled", false).attr("min", strDate);
+	});
+});
+</script>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%; min-height: 740px;">
+	<div class="row">
+		<div class="col-sm-8">
+			<form method="post" class="well" action="addPlan.do" style="color: #ac7339;" id="add-plan-form">
+				<div class="form-group">
+					<label>plan title</label>
+					<input type="text" class="form-control" name="title" />
+				</div>
+				<div class="form-group">
+					<label>여행 시작일</label>
+					<input type="date" class="form-control" name="startDate" />
+				</div>
+				<div class="form-group">
+					<label>여행 종료일</label>
+					<input type="date" class="form-control" name="endDate" disabled />
+				</div>
+				<div class="form-group">
+					<label>여행인원</label>
+					<input type="number" class="form-control" name="member" min="1" />
+				</div>
+				<div class="text-right">
+		            <button class="btn btn-default" id="submit-button">등록</button>
+		        </div>
+			</form>
+		</div>
+		<div class="col-sm-4">
+			<img src="/resources/images/logo/peanuts.png" width="100%" id="logo" />
+		</div>
+	</div>
+	<div class="row">
+		<h1>광고 합시다용(티켓같은거)</h1>
+	</div>
+</div>
+<jsp:include page="../include/footer.jsp" />
+</body>
+</html>

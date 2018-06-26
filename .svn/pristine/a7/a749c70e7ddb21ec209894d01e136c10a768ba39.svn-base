@@ -1,0 +1,28 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.co.hta.peanuts.vo.Daily;
+import kr.co.hta.peanuts.vo.Location;
+import kr.co.hta.peanuts.vo.Planner;
+import kr.co.hta.peanuts.vo.PlannerLocationForm;
+
+@Transactional
+public interface MapService {
+
+	void addNewPlan(Planner planner);
+	List<Location> getLocation(Location location);
+	Location getLocationById(String locationId);
+	int dailyNum(Planner planner);
+	void addNewDaily(Daily daily);
+	Planner getPlannerByNo(int no);
+	Planner addPL(PlannerLocationForm pl);
+	List<PlannerLocationForm> getPLByPno(int planNo);
+	void delPLByPnoAndLid(PlannerLocationForm pl);
+	
+	// dao에 없는 기능
+	String getMinDate(int planNo);
+	String getMapImage(int planNo, String mapSize);
+}

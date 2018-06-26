@@ -1,0 +1,13 @@
+package kr.co.hta.peanuts.vo;
+
+public class PlannerLocationAndTransportation {
+
+	private int key;
+	private int planNo;
+	private String category;
+	private String startDate;
+	private String endDate;
+	private String locationId;
+	
+	
+}

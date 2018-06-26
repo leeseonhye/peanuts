@@ -1,0 +1,84 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>addNewPlan</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+$(function() {
+	var clickk = 0;
+	$('#logo').click(function() {
+		clickk++;
+		if (clickk == 4) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_1.jpg');
+		}
+		if (clickk == 8) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_2.jpg');
+		}
+		if (clickk == 12) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_3.jpg');
+		}
+		if (clickk == 16) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_4.jpg');
+		}
+		if (clickk == 20) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_5.jpg');
+		}
+		if (clickk == 24) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_6.jpg');
+		}
+		if (clickk == 28) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts_7.jpg');
+		}
+		if (clickk == 32) {
+			$('#logo').attr('src', '/resources/images/logo/peanuts.png');
+			clickk = 0;
+		}
+		
+	});
+});
+</script>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%; min-height: 740px;">
+	<div class="row">
+		<div class="col-sm-8">
+			<form method="post" class="well" action="addPlan.do" style="color: #ac7339;">
+				<div class="form-group">
+					<label>plan title</label>
+					<input type="text" class="form-control" name="title" />
+				</div>
+				<div class="form-group">
+					<label>여행 시작일</label>
+					<input type="date" class="form-control" name="startDate" />
+				</div>
+				<div class="form-group">
+					<label>여행 종료일</label>
+					<input type="date" class="form-control" name="endDate" />
+				</div>
+				<div class="form-group">
+					<label>여행인원</label>
+					<input type="number" class="form-control" name="member" min="1" />
+				</div>
+				<div class="text-right">
+		            <button class="btn btn-default">등록</button>
+		        </div>
+			</form>
+		</div>
+		<div class="col-sm-4">
+			<img src="/resources/images/logo/peanuts.png" width="100%" id="logo" />
+		</div>
+	</div>
+	<div class="row">
+		<h1>여기에 뭘 더 넣을게 없을까</h1>
+	</div>
+</div>
+<jsp:include page="../include/footer.jsp" />
+</body>
+</html>

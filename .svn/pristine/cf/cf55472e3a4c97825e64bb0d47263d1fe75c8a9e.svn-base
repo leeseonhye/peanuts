@@ -1,0 +1,168 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>ddangkong planer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%;">
+	<h1>마이페이지</h1>
+	<div class="row">
+		<div class="col-sm-3">
+			<div class="well" style="text-align: center">
+				<img src="../resources/images/profile/${LOGIN_USER.profile }" class="img-circle center-block" width="200px;" height="200px;">
+				<h3><strong>eungsu</strong></h3>
+				<h5><img src="../resources/images/logo/peanutbw.png" style="width: 20px; height: 20px;"> 20개</h5>
+				<div class="btn-group" role="group">				
+					<button id="profile-img" class="btn btn-warning btn-sm">사진 변경</button>
+					<button id="modify-user" class="btn btn-warning btn-sm">정보 수정</button>
+				</div>
+			</div>
+			<div>
+				<div class="list-group">
+					<a href="#" class="list-group-item active">나의 플래너 <span class="badge">2</span></a>
+					<a href="#" class="list-group-item">관심 플래너</a>
+					<a href="#" class="list-group-item"><span class="glyphicon glyphicon-envelope"></span> 쪽지함<span class="badge">4</span></a>
+					<a href="#" class="list-group-item">주문내역</a>
+					<a href="#" class="list-group-item">정보수정</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-9">
+			<div class="col-sm-6 col-md-4">
+				<div class="thumbnail">
+					<div style="position: relative; height: 175px; overflow: hidden;">
+			    		<a href="#"><img width="242px" height="200px" style="border: 2px solid #e4e4e4" src="../images/main(sub1).JPG">
+			    		</a>
+			    	</div>
+			    	<div class="caption">
+			    		<ul class="list-unstyled">
+			    			<li style="text-align: center;"><h3><a href="#">전주 당일치기</a></h3></li>
+			    			<li style="text-align: center;">2018년 5월 초</li>
+			    			<li style="text-align: center; padding: 10px;">
+			    				<a href="#" class="btn btn-md btn-success">자세히</a>
+			    			</li>
+			    			<li style="text-align: center;">
+			    				<span class="glyphicon glyphicon-heart">20</span>
+			    			</li>
+			    		</ul>
+			    	</div>
+			    </div>
+			</div>
+			<div class="col-sm-6 col-md-4">
+				<div class="thumbnail">
+					<div style="position: relative; height: 175px; overflow: hidden;">
+			    		<a href="#"><img width="242px" height="200px" style="border: 2px solid #e4e4e4" src="../images/main(sub1).JPG">
+			    		</a>
+			    	</div>
+			    	<div class="caption">
+			    		<ul class="list-unstyled">
+			    			<li style="text-align: center;"><h3><a href="#">부산 먹방여행</a></h3></li>
+			    			<li style="text-align: center;">2018년 5월 초</li>
+			    			<li style="text-align: center; padding: 10px;">
+			    				<a href="#" class="btn btn-md btn-success">자세히</a>
+			    			</li>
+			    			<li style="text-align: center;">
+			    				<span class="glyphicon glyphicon-heart">20</span>
+			    			</li>
+			    		</ul>
+			    	</div>
+			    </div>
+			</div>
+			<div class="col-sm-6 col-md-4">
+				<div class="thumbnail">
+					<div style="position: relative; height: 175px; overflow: hidden;">
+			    		<a href="#"><img width="242px" height="200px" style="border: 2px solid #e4e4e4" src="../images/main(sub1).JPG">
+			    		</a>
+			    	</div>
+			    	<div class="caption">
+			    		<ul class="list-unstyled">
+			    			<li style="text-align: center;"><h3><a href="#">목포 가족여행</a></h3></li>
+			    			<li style="text-align: center;">2018년 5월 초</li>
+			    			<li style="text-align: center; padding: 10px;">
+			    				<a href="#" class="btn btn-md btn-success">자세히</a>
+			    			</li>
+			    			<li style="text-align: center;">
+			    				<span class="glyphicon glyphicon-heart">20</span>
+			    			</li>
+			    		</ul>
+			    	</div>
+			    </div>
+			</div>
+		</div>
+	</div>
+	<jsp:include page="../include/footer.jsp" />
+	
+	<!-- Modal -->
+	<div id="profile-modal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header"
+					style="background-color: #ac7339; color: white;">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">프로필 사진 변경</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-group" id="plus-form" action="imgModify.do" method="post" enctype="multipart/form-data">
+						<div class="form-group">
+							<div style="position: relative; overflow: hidden;">
+					    		<img id="img-preview" width="150px" height="150px" class="img-circle center-block" 
+					    			src="../resources/images/profile/${LOGIN_USER.profile }">
+					    	</div>
+						</div>
+						<div class="form-group">
+							<input id="imgInp" type="file" name="profile">
+						</div>
+						<div align="right">
+							<button class="btn btn-primary btn-sm" id="btn-profile">등록</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+$(function(){
+	//모달 창 띄우기
+	$('#profile-img').click(function(){
+		$('#profile-modal').modal('show');
+	});
+	//프로필사진 변경 미리보기
+	function readURL(input) {
+		  if (input.files && input.files[0]) {
+		    var reader = new FileReader();
+
+		    reader.onload = function(e) {
+		      $('#img-preview').attr('src', e.target.result);
+		    }
+
+		    reader.readAsDataURL(input.files[0]);
+		  }
+	}
+	$("#imgInp").change(function() {
+		readURL(this);
+	});
+	
+	//modal 기존 쓰레기값 지우기
+	$('#profile-modal').on("hide.bs.modal", function(){
+		$("[name=file-img]").val('');
+		$('#img-preview').attr('src', '../resources/images/profile/DEFAULT_PROFILE.JPG');
+	});
+	
+});
+</script>
+</html>

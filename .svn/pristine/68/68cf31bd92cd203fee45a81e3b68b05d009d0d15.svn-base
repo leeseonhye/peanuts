@@ -1,0 +1,42 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.co.hta.peanuts.vo.Message;
+import kr.co.hta.peanuts.vo.MessageUser;
+import kr.co.hta.peanuts.vo.User;
+
+public interface UserDao {
+
+	//사용자추가
+	void addUser(User user);
+	//사용자정보 가져오기
+	User getUserDetail(String id);
+	//사용자 사진 변경
+	void imgModify(User user);
+	//사용자가 수신한 모든 메시지 가져오기
+	List<Message> getMessages(Message message);
+	//사용자가 발신한 모든 메시지 가져오기
+	List<Message> getSentMessages(String id);
+	//사용자가 삭제처리한 모든 메시지 가져오기
+	List<Message> getDelMessages(String id);
+	//해당하는 메세지 정보 가져오기
+	Message getMessageDetail(int msgKey);
+	//해당하는 메시지 삭제하기(status => D)
+	void delMessages(int msgKey);
+	//메시지 즐겨찾기 추가,해제하기
+	Message markMessage(Map<String, Object> map);
+	//해당하는 메시지 발송취소하기(db삭제)
+	void cancelSendMessage(int msgKey);
+	//해당하는 메시지 복구하기(status D ==> Y or N)
+	void recoveryMessage(int msgKey);
+	//메시지 발송하기
+	void sendMessages(Message message);
+	//메시지 정보 가져오기 + 수/발신자 정보 : 수신, 삭제의 경우
+	MessageUser getMessageRD(Map<String, Object> map);
+	//메시지 정보 가져오기 + 발신의 경우
+	MessageUser getMessageS(Map<String, Object> map);
+	
+
+}

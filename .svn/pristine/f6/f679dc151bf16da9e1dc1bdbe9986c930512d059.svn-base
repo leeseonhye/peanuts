@@ -1,0 +1,31 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.Date;
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Daily;
+import kr.co.hta.peanuts.vo.DailyHotel;
+import kr.co.hta.peanuts.vo.DailyTour;
+import kr.co.hta.peanuts.vo.PlannerLocation;
+import kr.co.hta.peanuts.vo.TransLocation;
+
+public interface ScheduleDao {
+	
+	//해당 플래너의 Daily목록 가져오기
+	List<Daily> dailyByPlanNo(int planNo);
+	//해당 키의 날짜 가져오기
+	Date dailyByKey(int key);
+	//해당 키 날짜에 이용하는 교통편 가져오기
+	List<TransLocation> transByDaily(int key);
+	//해당 플래너 + 날짜에 방문하는 지역목록 가져오기(플래너도시-도시 조인)
+	List<PlannerLocation> locationByDaily(Date date);
+	//해당 키 날짜에 방문하는 관광일정 가져오기
+	List<DailyTour> tourByDaily(int key);
+	//해당 키 날짜에 방문하는 숙박일정 가져오기
+	List<DailyHotel> hotelByDaily(int key);
+	//해당 키 날짜에 관광일정 추가하기
+	void addDailyTour(DailyTour dailyTour);
+	//해당 키 날짜에 숙박정보 추가하기
+	void addDailyHotel(DailyHotel dailyHotel);
+	
+}

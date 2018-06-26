@@ -1,0 +1,36 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.AdminDao;
+import kr.co.hta.peanuts.vo.Board;
+import kr.co.hta.peanuts.vo.OrderBy;
+import kr.co.hta.peanuts.vo.Reply;
+import kr.co.hta.peanuts.vo.User;
+
+@Service
+public class AdminServiceImpl implements AdminService {
+
+	@Autowired
+	private AdminDao adminDao;
+	
+	@Override
+	public List<User> getAllUser(OrderBy o) {
+		return adminDao.getAllUser(o);
+	}
+
+	@Override
+	public List<Reply> getAllReply(OrderBy o) {
+		return adminDao.getAllReply(o);
+	}
+
+	@Override
+	public List<Board> getAllQna(OrderBy o) {
+		return adminDao.getAllQna(o);
+	}
+
+	
+}

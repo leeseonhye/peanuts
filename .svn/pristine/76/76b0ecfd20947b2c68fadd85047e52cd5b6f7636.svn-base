@@ -1,0 +1,14 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Images;
+import kr.co.hta.peanuts.vo.Ticket;
+
+
+public interface TicketService {
+
+	List<Ticket> getAllTickets();
+	Ticket getTicketByNo(int no);
+	List<Images> getTicketImagesByNo(int no);
+}

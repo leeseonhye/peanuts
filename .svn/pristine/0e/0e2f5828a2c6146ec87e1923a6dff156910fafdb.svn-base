@@ -1,0 +1,163 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+	  
+  	getOrderList(1,new Date(), getLastMonth(24));
+	  function getCommaNumber(number) {
+		  	var sum = number;
+			num = sum + "";
+			point = num.length % 3;
+			len = num.length;
+			str = num.substring(0, point);
+			while(point < len) {
+				if (str != "") {
+					str += ",";
+				}
+				str += num.substring(point, point+3);
+				point += 3;
+			}
+			return str;
+	  }
+  	
+  	function getOrderList(pno, startDate, endDate) {
+  				var row = "";
+  				row += '<h3>주문내역조회</h3>';
+				row += '<div class="row">';
+				row += '<form class="well">';
+				row += '<div style="margin: 10px" class="col-sm-4">';
+				row += '<p>조회할 날짜를 선택해주세요.</p>';
+				row += '<input type="date" id="startDate" value=""> -' 
+				row += '<input type="date" id="endDate" value="">'
+				row += '<div style="margin-top: 10px">';
+				row += '<a class="btn btn-primary btn-xs" onclick="insertDate(new Date(), new Date())">오늘</a>';
+				row += '<a class="btn btn-primary btn-xs" onclick="lastWeek()">1주일</a>';
+				row += '<a class="btn btn-primary btn-xs" onclick="lastMonth(1)">1개월</a>';
+				row += '<a class="btn btn-primary btn-xs" onclick="lastMonth(3)">3개월</a>';
+				row += '<a class="btn btn-primary btn-xs" onclick="lastMonth(12)">1년</a>';
+				row += '</div>';
+				row += '</div>';
+				row += '<div class="col-sm-7 pull-left" style="margin-top: 30px;"><a class="btn btn-warning btn-lg" onclick="lookUp()">조회</a></div>'
+				row += '<table class="table">';
+				row += '<thead>';
+				row += '<tr>';
+				row += '<th>주문번호</th>';
+				row += '<th>주문한 티켓</th>';
+				row += '<th>수량</th>';
+				row += '<th>가격</th>';
+				row += '<th>주문일</th>';
+				row += '<th>비고</th>';
+				row += '</tr>';
+				row += '</thead>';
+				row += '<tbody id="list-box">';
+  		$.ajax({
+  			type: "POST",
+  			url: "orderList.do",
+  			data: {startDate:formatDate(startDate), endDate:formatDate(endDate), pno:pno},
+  			success: function(result) {
+  				var list = result.list;
+  				if(result.success) {
+	  				$.each(list, function(index, item) {
+		  				row += "<tr>";
+		  				row += "<td>"+item.RN+"</td>";
+		  				row += "<td>"+item.TICKETNAME+"</td>";
+		  				row += "<td>"+item.ORDERQTY+"</td>";
+		  				row += "<td>"+getCommaNumber((item.TICKETPRICE*((100-item.DISCOUNTRATE)/100))*item.ORDERQTY)+"원</td>";
+		  				row += "<td>"+formatDate(item.ORDERDATE)+"</td>";
+		  				row += "<td><span><a class='btn btn-danger btn-xs'>취소</a></span></td>";
+		  				row += "</tr>";  					
+	  				}) 
+					row += '</tbody>';
+					row += '</table>';
+					row += '</form>';
+					row += '</div>';
+					$("#contents-box").empty();
+					$("#contents-box").append(row);
+				  	insertDate(new Date(), getLastMonth(24));
+  				} else {
+  					row += "<tr><td colspan='5'>해당기간의 주문내역이 존재하지 않습니다.</td></tr></tbody></table></form></div>";
+	  				$("#contents-box").empty();
+	  				$("#contents-box").append(row);
+	  				insertDate(startDate, endDate);
+  				}
+  			}
+  			
+  			
+  		})
+  	}
+
+  	function formatDate(date) {
+        var d = new Date(date),
+        	month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+        	hour = d.getHours();
+        	minute = d.getMinutes();
+        	second = d.getSeconds();
+
+        if(month.length < 2){ 
+        	month = '0' + month;
+        }
+        if(day.length < 2){
+        	day = '0' + day;
+        }
+        if(hour.length < 2 ){
+        	hour = '0' + hour;
+        }
+        if(minute.length  < 2) {
+        	minute = '0' + minute;
+        }
+        if(second.length < 2) {
+        	second = '0' + second;
+        }
+		var formattedDate = [year, month, day].join('-');
+        return formattedDate;
+    }
+    
+    function insertDate(startDate, endDate) {
+    	$("#startDate").val(formatDate(startDate));
+    	$("#endDate").val(formatDate(endDate));
+    }
+
+    /* 오늘로부터 1주일전 날짜 반환 */
+    function lastWeek() {
+      var d = new Date()
+      var dayOfMonth = d.getDate()
+      d.setDate(dayOfMonth - 7)
+      insertDate(new Date(), d);
+    }
+
+    /* 오늘로부터 n개월전 날짜 반환 */
+    function lastMonth(n) {
+      var d = new Date()
+      var monthOfYear = d.getMonth()
+      d.setMonth(monthOfYear - n)
+      insertDate(new Date(), d);
+    }
+    function getLastMonth(n) {
+        var d = new Date()
+        var monthOfYear = d.getMonth()
+        d.setMonth(monthOfYear - n)
+       return d;
+      }
+    
+    function lookUp() {
+    	var startDate = $("#startDate").val();
+    	var endDate = $("#endDate").val();
+    	getOrderList(1,startDate, endDate);
+    }
+  </script>
+</head>
+<body>
+	<div id="contents-box" class="container">
+	</div>	
+</body>
+</html>

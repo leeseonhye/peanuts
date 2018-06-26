@@ -1,0 +1,37 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.QnaDao;
+import kr.co.hta.peanuts.vo.Qna;
+
+@Service
+public class QnaServiceImpl implements QnaService {
+
+	@Autowired
+	private QnaDao qnaDao;
+	
+	@Override
+	public List<Qna> getAllQna(int ticketNo) {
+		List<Qna> qnas = qnaDao.getAllQna(ticketNo); 
+		return qnas;
+	}
+	
+	@Override
+	public void addQna(Qna qna) {
+		qnaDao.addQna(qna);
+	}
+	
+	@Override
+	public void addQnaAnswer(Qna qna) {
+		qnaDao.addQnaAnswer(qna);	
+	}
+	
+	@Override
+	public void deleteQna(int qnaNo) {
+		qnaDao.deleteQna(qnaNo);	
+	}
+}

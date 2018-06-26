@@ -1,0 +1,13 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Qna;
+
+public interface QnaService {
+
+	List<Qna> getAllQna(int ticketNo);
+	void addQna(Qna qna);
+	void addQnaAnswer(Qna qna);
+	void deleteQna(int qnaNo);
+}

@@ -1,0 +1,37 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.AdvertisingDao;
+import kr.co.hta.peanuts.vo.Advertising;
+
+@Service
+public class AdvertisingServiceImpl implements AdvertisingService {
+
+	@Autowired
+	private AdvertisingDao advertisingDao;
+	
+	@Override
+	public void addAdvertising(Advertising advertising) {
+		advertisingDao.addAdvertising(advertising);
+	}
+	
+	@Override
+	public List<Advertising> getAllAdvertising() {
+		return advertisingDao.getAllAdvertising();
+	}
+	
+	@Override
+	public List<Advertising> searchAdvertisingId(String id) {
+		return advertisingDao.searchAdvertisingId(id);
+	}
+
+	@Override
+	public Advertising getAdvertisingById(String id) {
+		return advertisingDao.getAdvertisingById(id);
+	}
+
+}

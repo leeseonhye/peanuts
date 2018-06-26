@@ -1,0 +1,175 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>admin :: qnaList</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+	a:link, a:visited {
+		color: #000000;
+	}
+	a:hover {
+		color: #ac7339;
+	}
+</style>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%; min-height: 740px;">
+	<div class="row">
+		<div class="col-sm-1"></div>
+		<div class="col-sm-10">
+			<h1>
+				<strong>QnA</strong>
+				<a href="qnaForm.do" class="btn btn-default pull-right btn-sm">새 글 작성</a>
+			</h1>
+			
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>번호</th>
+						<th>제목</th>
+						<th>작성자</th>
+						<th>작성일</th>
+						<th>답변상태</th>
+						<th></th>
+					</tr>
+				</thead>
+				<!-- 
+					<span class="badge badge-danger"> New</span>
+					작성일이 당일인 경우에만 표시하기
+				 -->
+				<tbody>
+					<c:forEach var="board" items="${boards }">
+						<tr>
+							<td>${board.no }</td>
+							<td>
+								${board.title }
+								<c:if test="${board.isSameDate}">
+									 <span class="badge badge-danger"> New</span>
+								</c:if>
+							</td>
+							<td>${board.userId }</td>
+							<td><fmt:formatDate value="${board.createDate }" pattern="yyyy-MM-dd" /></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</c:forEach>
+					<tr>
+						<td>3</td>
+						<td><a href="qnaDetail.do">테스트 <span class="badge badge-danger"> New</span></a></td>
+						<td>hong</td>
+						<td>2018-05-29</td>
+						<!-- 답변이 하나라도 존재할 때 -->
+						<td><button class="btn btn-xs btn-info">완료</button></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>테스트</td>
+						<td>hong</td>
+						<td>2018-05-29</td>
+						<!-- 답변이 하나도 존재하지 않을 때 -->
+						<td><button class="btn btn-xs btn-warning">대기</button></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>테스트</td>
+						<td>hong</td>
+						<td>2018-05-29</td>
+						<!-- 답변이 하나도 존재하지 않을 때 -->
+						<td><button class="btn btn-xs btn-warning">대기</button></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>테스트</td>
+						<td>hong</td>
+						<td>2018-05-29</td>
+						<!-- 답변이 하나도 존재하지 않을 때 -->
+						<td><button class="btn btn-xs btn-warning">대기</button></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>테스트</td>
+						<td>hong</td>
+						<td>2018-05-29</td>
+						<!-- 답변이 하나도 존재하지 않을 때 -->
+						<td><button class="btn btn-xs btn-warning">대기</button></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>테스트</td>
+						<td>hong</td>
+						<td>2018-05-29</td>
+						<!-- 답변이 하나도 존재하지 않을 때 -->
+						<td><button class="btn btn-xs btn-warning">대기</button></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>테스트</td>
+						<td>hong</td>
+						<td>2018-05-29</td>
+						<!-- 답변이 하나도 존재하지 않을 때 -->
+						<td><button class="btn btn-xs btn-warning">대기</button></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>테스트</td>
+						<td>hong</td>
+						<td>2018-05-29</td>
+						<!-- 답변이 하나도 존재하지 않을 때 -->
+						<td><button class="btn btn-xs btn-warning">대기</button></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>테스트</td>
+						<td>hong</td>
+						<td>2018-05-29</td>
+						<!-- 답변이 하나도 존재하지 않을 때 -->
+						<td><button class="btn btn-xs btn-warning">대기</button></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>테스트</td>
+						<td>hong</td>
+						<td>2018-05-29</td>
+						<!-- 답변이 하나도 존재하지 않을 때 -->
+						<td><button class="btn btn-xs btn-warning">대기</button></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<jsp:include page="../include/footer.jsp" />
+</body>
+<script>
+$(function() {
+	//공용변수
+	var pno = $('#pno').text();
+	var totalCnt;		//전체 컨텐츠 수
+	var totalPageNo;	//전체 페이지수 (컨텐츠수 / 10)
+	var totalBlocks;	//전체 블록수 (페이지수/nav 반올림)
+	var currentBlock;	//현재 블록
+	var beginModalPage;	//시작 페이지
+	var endModalPage;	//끝 페이지
+	var currentModalPageNo = 1;
+	var nav = 5;	
+	var dailyNo;
+})
+</script>
+</html>

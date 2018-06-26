@@ -1,0 +1,78 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.co.hta.peanuts.annotation.LoginUser;
+import kr.co.hta.peanuts.service.ReplyService;
+import kr.co.hta.peanuts.service.TogetherService;
+import kr.co.hta.peanuts.vo.Board;
+import kr.co.hta.peanuts.vo.Reply;
+import kr.co.hta.peanuts.vo.User;
+
+@Controller
+@RequestMapping("/reply")
+public class ReplyController {
+
+	@Autowired
+	private ReplyService replyService;
+	
+	@Autowired
+	private TogetherService togetherService;
+	
+	@RequestMapping("/reply.do")
+	public String reply(int pno, @LoginUser User user, Model model) {
+		if(user == null) {
+			return "redirect:/user/login.do?err=fail";
+		}
+		
+		List<Reply> reply = replyService.getAllSearchReplyByNo(pno);
+		model.addAttribute("replys", reply);
+		
+		return "reply/reply.jsp";
+	}
+	
+	@RequestMapping("/addReply.do")
+	public String addReply(Reply reply,  @LoginUser User user) throws Exception {
+		if(user == null) {
+			return "redirect:/user/login.do?err=fail";
+		}
+		reply.setUserId(user.getId());
+		System.out.println(reply.toString());
+		
+		
+		//replyService.addReply(reply);
+		
+		return "redirect:/reply/reply.do?pno=" + reply.getBoardNo();
+	}
+	
+	
+	/*
+	@RequestMapping("/getSearchReplyByNo.do")
+ 	public String getSearchReplyByNo(int repNo, String category) {
+		
+		Reply reply = new Reply();
+		reply.setRepNo(repNo);
+		reply.setCategory(category);
+		
+		return "redirect:/reply/reply.do";
+	}
+	*/
+
+	/*
+	// 조회
+	@RequestMapping("/replySearchByNo.do")
+	public String replySearchByNo(Model model) {
+
+		List<Reply> reply = replyService.getPlanerReply();
+		model.addAttribute("replys", reply);
+		
+		return "redirect:/reply/reply.do";
+	}
+	*/
+}

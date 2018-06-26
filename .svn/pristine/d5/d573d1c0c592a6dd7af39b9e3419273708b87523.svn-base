@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.ReplyDao">
+	
+	<!-- 전체 조회 -->
+	<select id="getAllSearchReplyByNo" parameterType="int" resultType="Reply">
+		select
+			rep_no			as repNo,
+			rep_category	as category,
+			user_id			as userId,
+			rep_contents	as contents,
+			rep_status		as status,
+			create_date		as createDate
+		from
+			reply
+		where
+			no = #{value}
+		and
+			rep_category = 'PLANNER'	
+	</select>
+
+	<!-- 댓글 등록 -->
+	<insert id="addReply" parameterType="Reply">
+		insert into reply (no, rep_no, user_id, rep_contents, rep_category)
+		values (#{boardNo}, reply_seq.nextval, #{userId}, #{contents}, #{category})
+			
+	</insert>
+</mapper>
+
+
+
+

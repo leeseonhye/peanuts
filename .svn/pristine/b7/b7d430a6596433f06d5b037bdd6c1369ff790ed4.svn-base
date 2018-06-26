@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.ScheduleDao">
+	
+	<select id="getPlanner" parameterType="int" resultType="Planner">
+		select
+			P.plan_no		as no
+		,	P.user_id		as userId
+		,	P.plan_title	as title
+		,	P.plan_start	as startDate
+		,	P.plan_end		as endDate
+		,	P.plan_member	as member
+		,	P.create_date	as createDate
+		from
+			planner P
+		,	planner_daily D
+		where
+			P.plan_no = D.plan_no
+		and
+			D.daily_key = #{value}		
+	</select>
+	
+	<select id="dailyByPlanNo" parameterType="int" resultType="Daily">
+		select
+			plan_no		as planNo
+		,	daily_key	as "key"
+		,	daily_index	as "index"
+		,	daily_date	as "date" 
+		from
+			planner_daily
+		where
+			plan_no = #{value}
+		order by
+			daily_index asc		
+	</select>
+	
+	<select id="dailyByKey" parameterType="int" resultType="date">
+		select
+			daily_date 
+		from
+			planner_daily
+		where
+			daily_key = #{value}
+	</select>
+	
+	<select id="transByDaily" parameterType="int" resultType="TransLocation">
+		select
+			T.daily_key			as "key"
+		,	T.trans_key			as transKey
+		,	T.trans_category	as category
+		,	L.location_name		as startLocation
+		,	L.location_id		as startlocationId
+		,	T.start_time		as startTime
+		,	C.location_name		as endLocation
+		,	C.location_id		as endlocationId
+		,	T.end_time			as endTime
+		,	T.trans_memo		as memo
+		,	T.create_date		as createDate
+		from
+			transportation T
+		,	locations L
+		,	locations C
+		where
+			T.start_location = L.location_id
+		and
+			T.end_location = C.location_id
+		and
+			T.daily_key = #{value}	
+	</select>
+	
+	<select id="locationByDaily" parameterType="map" resultType="PlannerLocation">
+		select
+				P.plan_no		as planNo
+			,	P.start_date	as startDate
+			,	P.end_date		as endDate
+			,	P.create_date	as createDate
+			,	P.location_id	as locationId
+			,	L.location_code	as locationCode
+			,	L.location_name	as locationName
+			from
+				planner_location P
+			,	Locations L
+			where
+				P.location_id = L.location_id
+			and
+				TO_DATE(TO_CHAR(#{day}, 'YYYY-MM-DD'),'YYYY-MM-DD') &gt;= P.start_date
+			and
+				TO_DATE(TO_CHAR(#{day}, 'YYYY-MM-DD'),'YYYY-MM-DD') &lt;= P.end_date
+			and
+				P.plan_no = #{pno}
+	</select>
+	
+	<select id="getCities" parameterType="int" resultType="PlannerLocation">
+		select
+				P.plan_no		as planNo
+			,	P.start_date	as startDate
+			,	P.end_date		as endDate
+			,	P.create_date	as createDate
+			,	P.location_id	as locationId
+			,	L.location_code	as locationCode
+			,	L.location_name	as locationName
+			from
+				planner_location P
+			,	Locations L
+			where
+				P.location_id = L.location_id
+			and
+				P.plan_no = #{value}		
+	</select>
+	
+	<select id="tourByDaily" parameterType="int" resultType="DailyTour">
+		select
+			daily_key		as "key"
+		,	tour_title		as title
+		,	create_date		as createDate
+		from
+			daily_tour
+		where
+			daily_key = #{value}
+		order by
+			create_date asc			
+	</select>
+	
+	<select id="hotelByDaily" parameterType="int" resultType="DailyHotel">
+		select
+			daily_key		as "key"
+		,	hotel_title		as title
+		,	hotel_term		as term
+		,	create_date		as createDate
+		from
+			daily_hotel
+		where
+			daily_key = #{value}
+		order by
+			create_date asc			
+	</select>
+	
+	<insert id="addDailyTour" parameterType="DailyTour">
+		insert into daily_hotel (daily_key, hotel_title, hotel_term, create_date)
+		values (#{key}, #{title}, #{term}, sysdate)	
+	</insert>
+	
+	<insert id="addDailyHotel" parameterType="DailyHotel">
+		insert into daily_tour (daily_key, tour_title, create_date)
+		values (#{key}, #{title}, sysdate)	
+	</insert>
+	
+	<delete id="delTransBy" parameterType="int">
+		delete from transportation
+		where trans_key = #{value}
+	</delete>
+	
+	<select id="getTrans" parameterType="int" resultType="TransLocation">
+		select
+			T.daily_key			as "key"
+		,	T.trans_key			as transKey
+		,	T.trans_category	as category
+		,	L.location_name		as startLocation
+		,	L.location_id		as startlocationId
+		,	T.start_time		as startTime
+		,	C.location_name		as endLocation
+		,	C.location_id		as endlocationId
+		,	T.end_time			as endTime
+		,	T.trans_memo		as memo
+		,	T.create_date		as createDate
+		from
+			transportation T
+		,	locations L
+		,	locations C
+		where
+			T.start_location = L.location_id
+		and
+			T.end_location = C.location_id
+		and
+			T.trans_key = #{value}		
+	</select>
+	
+</mapper>

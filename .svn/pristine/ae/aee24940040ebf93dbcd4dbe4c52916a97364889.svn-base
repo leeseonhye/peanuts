@@ -1,0 +1,8 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.HashMap;
+
+public interface OrderService {
+
+	void addOrder(HashMap<String, Object> order);
+}

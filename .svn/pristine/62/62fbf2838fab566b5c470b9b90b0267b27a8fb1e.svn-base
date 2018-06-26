@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.AdminQnaDao">
+	<select id="getQnaList" parameterType="OrderBy" resultType="Board">
+		select 
+			board_no 			as "no"
+			,	user_id			as userId
+			,	board_category	as "category"
+			,	board_title		as title
+			,	board_contents	as "contents"
+			,	board_view		as "view"
+			,	create_date		as createDate
+		from
+			board
+		order by
+			<if test="date==true">
+				create_date desc
+			</if>
+			<if test="view==true">
+				, view
+			</if>
+	</select>
+	<insert id="addNewQna" parameterType="Board">
+		insert into board
+			(board_no, user_id, board_category, board_title, board_contents)
+		values
+			(board_seq.nextval, 'park', 'QNA', #{title}, #{contents})
+	</insert>
+</mapper>

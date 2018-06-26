@@ -1,0 +1,26 @@
+package kr.co.hta.peanuts.service;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.springframework.stereotype.Service;
+
+@Service
+public class WeatherServiceImpl implements WeatherService {
+
+	@Override
+	public String getPastWeather(String locationId, String date) throws IOException {
+		
+		String path = "https://weather.naver.com/period/pastWetrMain.nhn?ym="+date+"&naverRgnCd="+ locationId;
+		
+		Document document = Jsoup.connect(path).get();
+		document.charset(Charset.forName("UTF-8"));
+
+		Element element = document.selectFirst("#print_content");
+				
+		return element.html();
+	}
+}

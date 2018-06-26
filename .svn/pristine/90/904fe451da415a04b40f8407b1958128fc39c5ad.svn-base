@@ -1,0 +1,64 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>내 글 보기</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%;">
+	<div class="row">
+		<form id="boardlist-form" class="form-horizonta"> 
+			<div class="form-group">
+				<h1>
+					내 게시물
+					<a href="/advertising/boardform.do" class="btn btn-default pull-right">등록</a>
+				</h1>
+				<table class="table">
+					<colgroup>
+						<col width="">
+						<col width="">
+						<col width="">
+						<col width="">
+						<col width="">
+						<col width="">
+						<col width="">
+					</colgroup>
+					<thead>
+						<tr class="table">
+							<th>번호</th>
+							<th>제목</th>
+							<th>아이디</th>
+							<th>상태</th>
+							<th>시작일</th>
+							<th>기간</th>
+							<th>신청일</th>
+						</tr>
+					</thead>
+					<tbody style="font-size: small;">
+						<c:forEach var="item" items="${advertisingBoards }">
+							<tr>
+								<th>${item.no }</th>
+								<th>${item.title }</th>
+								<th>${item.id }</th>
+								<th>${item.status }</th>
+								<th><fmt:formatDate value="${item.startDate }" pattern="yyyy-MM-dd" /></th>
+								<th>${item.term } 개월</th>
+								<th><fmt:formatDate value="${item.createDate }" pattern="yyyy-MM-dd" /></th>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>			
+			</div>
+		</form>
+	</div>
+</div>
+<jsp:include page="../include/footer.jsp" />
+</body>
+</html>

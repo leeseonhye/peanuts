@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.TicketDao">
+
+	<select id="getAllTicket" resultType="Ticket">
+		select
+			ticket_no as no,
+			ticket_name as name,
+			ticket_price as price,
+			ticket_category as category,
+			ticket_images as images,
+			discount_rate as discountRate,
+			selling_start as sellingStart,
+			selling_end as sellingEnd
+		from
+			ticket
+	</select>
+
+	<select id="getTicketByNo" parameterType="int" resultType="Ticket">
+		select
+			ticket_no as no,
+			ticket_name as name,
+			ticket_price as price,
+			ticket_category as category,
+			ticket_images as images,
+			discount_rate as discountRate,
+			selling_start as sellingStart,
+			selling_end as sellingEnd
+		from
+			ticket
+		where
+			ticket_no = #{value}
+	</select>
+	
+	<select id="getTicketImageByNo" parameterType="int" resultType="Images">
+		select
+			no,
+			images_category as category,
+			images_name as name
+		from
+			images
+		where
+			no = #{value}
+	</select>
+</mapper>

@@ -1,0 +1,177 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.AdminDao;
+import kr.co.hta.peanuts.vo.Board;
+import kr.co.hta.peanuts.vo.Planner;
+import kr.co.hta.peanuts.vo.Reply;
+import kr.co.hta.peanuts.vo.User;
+import kr.co.hta.peanuts.web.form.BoardForm;
+
+@Service
+public class AdminServiceImpl implements AdminService {
+
+	@Autowired
+	private AdminDao adminDao;
+
+	/////////////////////////////////////////////////////////////////////////////	
+	// 공통 메소드
+	@Override
+	public void plusView(int boardNo) {
+		adminDao.plusView(boardNo);
+	}
+	
+	@Override
+	public List<Reply> getReplyByBoardNo(int boardNo) {
+		return adminDao.getReplyByBoardNo(boardNo);
+	}
+	
+	@Override
+	public int boardlistCnt(String cetegory) {
+		return adminDao.boardlistCnt(cetegory);
+	}
+	
+	@Override
+	public List<BoardForm> getBoardList(Map<String, Object> getList) {
+		List<BoardForm> sampleBoards = adminDao.getBoardList(getList);
+		List<BoardForm> boards = new ArrayList<>();
+		
+		for (BoardForm board : sampleBoards) {
+			List<Reply> replys = adminDao.getReplyByBoardNo(board.getNo());
+			if (replys.size() != 0) {
+				board.setHasReply(true);
+			}
+			if (board.getStatus().equals("E")) {
+				boards.add(board);
+			}
+		}
+		
+		return boards;
+	}
+	
+	@Override
+	public BoardForm getBoardByNo(int boardNo) {
+		BoardForm board = adminDao.getBoardByNo(boardNo);
+		List<Reply> replys = adminDao.getReplyByBoardNo(board.getNo());
+		
+		if (replys.size() != 0) {
+			board.setHasReply(true);
+		}
+		
+		return board;
+	}
+	
+	@Override
+	public void delBoardByNo(int no) {
+		adminDao.delBoardByNo(no);
+	}
+	
+	@Override
+	public List<BoardForm> searchBoards(Map<String, Object> searchKeyword) {
+		List<BoardForm> boards = adminDao.searchBoards(searchKeyword);
+		
+		for (BoardForm board : boards) {
+			List<Reply> replys = adminDao.getReplyByBoardNo(board.getNo());
+			if (replys.size() != 0) {
+				board.setHasReply(true);
+			}
+		}
+		
+		return boards;
+	}
+	
+	@Override
+	public User getUserByUserId(String userId) {
+		return adminDao.getUserByUserId(userId);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////
+	// report reply 관련 메소드
+	@Override
+	public int repoCnt() {
+		return adminDao.repoCnt();
+	}
+	
+	@Override
+	public List<Reply> getRepoList(Map<String, Object> getList) {
+		return adminDao.getRepoList(getList);
+	}
+	
+	@Override
+	public List<Reply> searchRepo(String keyword) {
+		return adminDao.searchRepo(keyword);
+	}
+	
+	@Override
+	public void delRepoByNo(int repNo) {
+		adminDao.delRepoByNo(repNo);
+	}
+	
+	@Override
+	public void returnRepoByNo(int repNo) {
+		adminDao.returnRepoByNo(repNo);
+	}
+	
+	@Override
+	public Reply getRepoByRepNo(int repNo) {
+		return adminDao.getRepoByRepNo(repNo);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////
+	// planner 관련 메소드
+	@Override
+	public int planlistCnt() {
+		return adminDao.planlistCnt();
+	}
+	
+	@Override
+	public List<Planner> getPlanList(Map<String, Object> getList) {
+		return adminDao.getPlanList(getList);
+	}
+	
+	@Override
+	public List<Planner> searchPlan(String keyword) {
+		return adminDao.searchPlan(keyword);
+	}
+	
+	@Override
+	public void delPlanByNo(int no) {
+		adminDao.delPlanByNo(no);
+	}
+	
+	@Override
+	public Planner getPlanByNo(int no) {
+		return adminDao.getPlanByNo(no);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////	
+	// qna 관련 메소드 - list, detail 순서
+	@Override
+	public void answerQna(Reply re) {
+		adminDao.answerQna(re);
+	}
+	
+	@Override
+	public void delQnaReply(int reNo) {
+		adminDao.delQnaReply(reNo);
+	}
+	
+	@Override
+	public void updateQnaReply(Reply re) {
+		adminDao.updateQnaReply(re);
+	}
+	
+	@Override
+	public Reply getReplyByRepNo(int repNo) {
+		return adminDao.getReplyByRepNo(repNo);
+	}
+
+	
+	
+}

@@ -1,0 +1,26 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.co.hta.peanuts.vo.Message;
+import kr.co.hta.peanuts.vo.MessageUser;
+import kr.co.hta.peanuts.vo.User;
+
+public interface UserService {
+
+	void addUser(User user);
+	User getUserDetail(String id);
+	void imgModify(User user);
+	List<Message> getMessages(Message message);
+	List<Message> getSentMessages(String id);
+	List<Message> getDelMessages(String id);
+	Message getMessageDetail(int msgKey);
+	void delMessages(int msgKey);
+	Message markMessage(int msgKey);
+	void cancelSendMessage(int msgKey);
+	void recoveryMessage(int msgKey);
+	void sendMessages(Message message);
+	MessageUser getMessageRD(Map<String, Object> map);
+	MessageUser getMessageS(Map<String, Object> map);
+}

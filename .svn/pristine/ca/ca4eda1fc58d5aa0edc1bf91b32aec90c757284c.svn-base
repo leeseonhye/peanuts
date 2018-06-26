@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.TicketDao">
+
+	<select id="getAllTicket" resultType="Ticket">
+		select
+			ticket_no as no,
+			ticket_name as name,
+			ticket_price as price,
+			ticket_category as category,
+			ticket_images as images,
+			discount_rate as discountRate,
+			selling_start as sellingStart,
+			selling_end as sellingEnd,
+			location_city as locationCity
+		from
+			ticket
+	</select>
+
+	<select id="getTicketByNo" parameterType="int" resultType="Ticket">
+		select
+			ticket_no as no,
+			ticket_name as name,
+			ticket_price as price,
+			ticket_category as category,
+			ticket_images as images,
+			discount_rate as discountRate,
+			selling_start as sellingStart,
+			selling_end as sellingEnd,
+			location_city as locationCity
+		from
+			ticket
+		where
+			ticket_no = #{value}
+	</select>
+	
+	<select id="getTicketImageByNo" parameterType="int" resultType="string">
+		select
+			images_name as name
+		from
+			images
+		where
+			no = #{value}
+		and
+			images_category = 'TICKET'
+	</select>
+	
+	<select id="getCriteriaTicketByPageNo" parameterType="hashmap" resultType="ticket">
+		<include refid="criteriaTicket"></include>
+	</select>
+	
+	<sql id="criteriaTicket">
+		<if test="cirteria == null and value == null">
+			select 
+					no, name, price, category, images, discountRate, sellingStart, sellingEnd, locationCity
+				from(select 
+							row_number() over(order by ticket_no desc) as rn,
+							ticket_no as no,
+							ticket_name as name,
+							ticket_price as price,
+							ticket_category as category,
+							ticket_images as images,
+							discount_rate as discountRate,
+							selling_start as sellingStart,
+							selling_end as sellingEnd,
+							location_city as locationCity
+					from ticket)
+				where 
+					rn >= #{beginIndex}
+				and 
+					rn &lt;= #{endIndex}
+		</if>
+		<if test="criteria == 'list'">	
+			<if test="value == 'all'">
+				select 
+						no, name, price, category, images, discountRate, sellingStart, sellingEnd, locationCity
+					from(select 
+								row_number() over(order by ticket_no desc) as rn,
+								ticket_no as no,
+								ticket_name as name,
+								ticket_price as price,
+								ticket_category as category,
+								ticket_images as images,
+								discount_rate as discountRate,
+								selling_start as sellingStart,
+								selling_end as sellingEnd,
+								location_city as locationCity
+						from ticket)
+					where 
+						rn >= #{beginIndex}
+					and 
+						rn &lt;= #{endIndex}
+			</if>
+			<if test="value == 'seoul'">
+				select T.ticket_no no, T.ticket_name name, T.ticket_price price, T.ticket_category category, T.ticket_images images, T.discount_rate discountRate, T.selling_start sellingStart, T.selling_end sellingEnd, T.location_city locationCity
+				from(select distinct T.ticket_no, T.ticket_name, T.ticket_price, T.ticket_category, T.ticket_images, T.discount_rate, T.selling_start, T.selling_end, T.location_city
+						from ticket T, (select location_name
+											from locations
+											where location_city in ('서울특별시','인천광역시','경기도_경기북부','경기도_경기남부')) L
+						where (L.location_name like '%'||T.location_city||'_%')
+						or L.location_name = T.location_city)  T, (select ticket_no,sum(order_qty) sum
+																			from ticket_order
+																			group by ticket_no) O
+				where T.ticket_no = O.ticket_no(+)
+				order by sum desc
+			</if>
+			
+			<if test="value == 'chungcheong'">
+				select T.ticket_no no, T.ticket_name name, T.ticket_price price, T.ticket_category category, T.ticket_images images, T.discount_rate discountRate, T.selling_start sellingStart, T.selling_end sellingEnd, T.location_city locationCity
+				from(select distinct T.ticket_no, T.ticket_name, T.ticket_price, T.ticket_category, T.ticket_images, T.discount_rate, T.selling_start, T.selling_end, T.location_city
+						from ticket T, (select location_name
+											from locations
+											where location_city in ('충청북도','충청남도','전라북도','전라남도')) L
+						where (L.location_name like '%'||T.location_city||'_%')
+						or L.location_name = T.location_city)  T, (select ticket_no,sum(order_qty) sum
+																			from ticket_order
+																			group by ticket_no) O
+				where T.ticket_no = O.ticket_no(+)
+				order by sum desc
+			</if>
+			
+			<if test="value == 'kangwon'">
+				select T.ticket_no no, T.ticket_name name, T.ticket_price price, T.ticket_category category, T.ticket_images images, T.discount_rate discountRate, T.selling_start sellingStart, T.selling_end sellingEnd, T.location_city locationCity
+				from(select distinct T.ticket_no, T.ticket_name, T.ticket_price, T.ticket_category, T.ticket_images, T.discount_rate, T.selling_start, T.selling_end, T.location_city
+						from ticket T, (select location_name
+											from locations
+											where location_city in ('강원도')) L
+						where (L.location_name like '%'||T.location_city||'_%')
+						or L.location_name = T.location_city)  T, (select ticket_no,sum(order_qty) sum
+																			from ticket_order
+																			group by ticket_no) O
+				where T.ticket_no = O.ticket_no(+)
+				order by sum desc
+			</if>
+			
+			<if test="value == 'kyeongsang'">
+				select T.ticket_no no, T.ticket_name name, T.ticket_price price, T.ticket_category category, T.ticket_images images, T.discount_rate discountRate, T.selling_start sellingStart, T.selling_end sellingEnd, T.location_city locationCity
+				from(select distinct T.ticket_no, T.ticket_name, T.ticket_price, T.ticket_category, T.ticket_images, T.discount_rate, T.selling_start, T.selling_end, T.location_city
+						from ticket T, (select location_name
+											from locations
+											where location_city in ('경상북도','경상남도','부산광역시')) L
+						where (L.location_name like '%'||T.location_city||'_%')
+						or L.location_name = T.location_city)  T, (select ticket_no,sum(order_qty) sum
+																			from ticket_order
+																			group by ticket_no) O
+				where T.ticket_no = O.ticket_no(+)
+				order by sum desc
+			</if>
+			
+			<if test="value == 'jeju'">
+				select T.ticket_no no, T.ticket_name name, T.ticket_price price, T.ticket_category category, T.ticket_images images, T.discount_rate discountRate, T.selling_start sellingStart, T.selling_end sellingEnd, T.location_city locationCity
+				from(select distinct T.ticket_no, T.ticket_name, T.ticket_price, T.ticket_category, T.ticket_images, T.discount_rate, T.selling_start, T.selling_end, T.location_city
+						from ticket T, (select location_name
+											from locations
+											where location_city in ('제주특별자치도')) L
+						where (L.location_name like '%'||T.location_city||'_%')
+						or L.location_name = T.location_city)  T, (select ticket_no,sum(order_qty) sum
+																			from ticket_order
+																			group by ticket_no) O
+				where T.ticket_no = O.ticket_no(+)
+				order by sum desc
+			</if>	
+		</if>
+	</sql>
+	
+</mapper>

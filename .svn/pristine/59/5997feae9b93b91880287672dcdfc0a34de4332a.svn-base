@@ -1,0 +1,11 @@
+package kr.co.hta.peanuts.service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.co.hta.peanuts.vo.Plaza;
+
+public interface PlazaService {
+
+	void addPlaza(Plaza plaza);
+}

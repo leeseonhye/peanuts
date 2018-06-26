@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.SearchDao">
+
+	<select id="searchPlanners" parameterType="SearchForm" resultType="Planner">
+		select
+		distinct
+			P.plan_no 		as "no"
+		,	P.user_id		as userId
+		,	P.plan_title	as title
+		,	P.plan_start	as startDate
+		, 	p.plan_end		as endDate
+		,	P.plan_member	as "member"
+		,	P.plan_status	as status
+		,	P.plan_open		as "open"
+		,	P.plan_hashtag	as hashTag
+		,	P.create_date	as createDate
+		from
+			planner P
+		,	planner_location C
+		,	locations L
+		,	(select plan_no, count(*) as cnt
+		     from planner_daily
+		     group by plan_no) N
+		where
+			P.plan_no = C.plan_no
+		and
+			C.location_id = L.location_id
+		and
+			P.plan_status = 'Y'
+		and	
+			P.plan_open = 'Y'
+		and
+			P.plan_no = N.plan_no
+			<if test='searchTitle != ""'>
+				and P.plan_title like '%' || #{searchTitle} || '%'
+			</if>
+			<if test='searchId != ""'>
+				and P.user_id like '%' || #{searchId} || '%'
+			</if>
+			<if test="arrayLocations != null">
+					and L.location_name in
+				<foreach item="item" index="index" open="(" close=")" separator="," collection="arrayLocations">
+					#{item}
+				</foreach>
+			</if>
+			<if test="searchMemebers != null">
+				and P.plan_member = #{searchMemebers}
+			</if>
+			<if test='searchTerm != ""'>
+				and N.cnt = #{searchTerm}
+			</if>
+			<if test="arrayHashtags != null">
+					and P.plan_hashtag in
+				<foreach item="item" index="index" open="(" close=")" separator="," collection="arrayHashtags">
+					#{item}
+				</foreach>				
+			</if>
+		order by
+			P.plan_no desc
+	</select>
+	
+</mapper>

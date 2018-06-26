@@ -1,0 +1,41 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.ReviewDao;
+import kr.co.hta.peanuts.vo.Review;
+
+@Service
+public class ReviewServiceImpl implements ReviewService {
+
+	@Autowired
+	ReviewDao reviewDao;
+	
+	@Override
+	public HashMap<String, Object> detail(int ticketNo) {
+		List<HashMap<String, Object>> reviewList = reviewDao.getAllReviewByTicketNo(ticketNo);
+		List<HashMap<String, Object>> reviewImages = reviewDao.getReviewImagesByTicketNo(ticketNo);
+		Double ticketGradeAvg = reviewDao.getTicketGradeAverage(ticketNo);
+		Integer reviewAmount = reviewDao.getTicketReviewAmount(ticketNo);
+		HashMap<String, Object> reviewPercent = reviewDao.getTicketReviewAmountGroupByGrade(ticketNo);
+		
+		HashMap<String, Object> review = new HashMap<>();
+		review.put("list", reviewList);
+		review.put("images", reviewImages);
+		review.put("avg", ticketGradeAvg);
+		review.put("sum", reviewAmount);
+		review.put("ratio", reviewPercent);
+		
+		return review;
+	}
+	
+	@Override
+	public void addReview(HashMap<String, Object> reviewImage, Review review) {
+		reviewDao.addReview(review);
+		reviewDao.addReviewImage(reviewImage);
+	}
+}

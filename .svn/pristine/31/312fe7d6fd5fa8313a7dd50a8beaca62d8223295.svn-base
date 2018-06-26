@@ -1,0 +1,15 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.co.hta.peanuts.vo.Location;
+import kr.co.hta.peanuts.vo.Planner;
+
+@Transactional
+public interface MapService {
+
+	void addNewPlan(Planner planner);
+	List<Location> getLocation(Location location);
+}

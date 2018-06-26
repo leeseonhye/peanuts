@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.ReplyDao">
+	
+	<!-- 댓글 다 가져오기  -->
+	<select id="getReplyByBoardNo" parameterType="int" resultType="Reply">
+	select
+		no				as no,
+		rep_no			as repNo,
+		rep_category	as category,
+		user_id			as userId,
+		rep_contents	as contents,
+		rep_status		as status,
+		create_date		as createDate
+	from
+		reply
+	where
+		rep_category = 'PLANNER'
+	and 
+		no = #{value}
+	order by
+		create_date	desc
+	</select>
+	
+	<!-- 게시글 등록 -->
+	<insert id="addBoard" parameterType="Board">
+		insert into
+			board
+		(board_no, user_id, board_category, board_contents, plan_no)
+		values
+			(board_seq.nextval, #{userId}, 'PLANNER', #{contents}, #{planNo})			
+	</insert>
+	
+	<!-- 게시글 조회 -->
+	<select id="getBoardsByPlanNo" parameterType="int" resultType="Board">
+		select
+			board_no		as no,
+			user_id 		as userId,
+			board_category	as category,
+			board_title		as title,
+			board_contents	as contents,
+			board_view		as "view",
+			create_date		as createDate,
+			board_status	as status,
+			plan_no			as planNo
+		from
+			board
+		where
+			board_category = 'PLANNER'
+		and
+			plan_no = #{value}			
+	</select>
+	
+	<!-- 댓글 등록 -->
+	<insert id="addReply" parameterType="Reply">
+		insert into	reply
+			(no, rep_no, rep_category, user_id, rep_contents, rep_status)
+		values
+			(#{boardNo}, reply_seq.nextval, #{category}, #{userId}, #{contents}, 'NORMAL')
+	</insert>
+	
+	<!-- 댓글 수정 -->
+	<update id="reModiByNo" parameterType="Reply">
+		update reply
+		set rep_contents = #{contents}
+		where rep_no = #{repNo}	
+	</update>
+	
+	<!-- 댓글 삭제 -->
+	<update id="reDelByNo" parameterType="int">
+		update reply
+		set rep_status = 'DELETE'
+		where rep_no = #{no}
+	</update>
+</mapper>
+
+
+
+

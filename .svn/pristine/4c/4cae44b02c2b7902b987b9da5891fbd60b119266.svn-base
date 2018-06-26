@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.AdvertisingBoardDao">
+	<insert id="addAdvertisingboard" parameterType="Advertisingboard">
+		insert into advertising (advertising_no, advertising_title, advertising_id, advertising_no_pwd, advertising_status, advertising_image, start_date, advertising_term, advertising_type)
+		values (#{no}, #{title}, #{id}, #{noPwd}, #{status}, #{image}, #{startDate}, #{term}, #{type})
+	</insert>
+
+	<select id="getAllMyAdvertising" resultType="AdvertisingBoard">
+		select
+			advertising_no		as no,
+			advertising_title 	as title,
+			advertising_id		as id,
+			advertising_no_pwd	as noPwd,
+			advertising_status	as status,
+			advertising_image	as image,
+			start_date			as startDate,
+			advertising_term	as term,
+			advertising_type 	as type, 
+			create_date			as createDate
+		from
+			advertising_board		
+	</select>
+</mapper>

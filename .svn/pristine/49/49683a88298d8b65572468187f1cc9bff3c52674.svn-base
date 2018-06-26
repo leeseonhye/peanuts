@@ -1,0 +1,49 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import kr.co.hta.peanuts.service.ReviewService;
+import kr.co.hta.peanuts.service.TicketService;
+import kr.co.hta.peanuts.vo.Ticket;
+
+@Controller
+@RequestMapping("/ticket")
+public class TicketController {
+	
+	@Autowired
+	TicketService ticketService;
+	@Autowired
+	ReviewService reviewService;
+
+	@RequestMapping("/main.do")
+	public String main(Model model) {
+		List<Ticket> tickets = ticketService.getTicketList();
+		model.addAttribute("tickets", tickets);
+		
+		return "ticket/main.jsp";
+	}
+	
+	@RequestMapping("/form2.do")
+	public String form2() {
+		return "ticket/form2.jsp";
+	}
+	
+	@RequestMapping("/detail.do")
+	public String detail(@RequestParam int ticketNo, Model model) {
+		
+		HashMap<String, Object> ticket = ticketService.detail(ticketNo);
+		HashMap<String, Object> review = reviewService.detail(ticketNo);
+		
+		model.addAttribute("ticket", ticket);
+		model.addAttribute("review", review);
+		
+		return "ticket/detail.jsp";
+	}
+}

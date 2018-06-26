@@ -1,0 +1,16 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Plaza;
+import kr.co.hta.peanuts.vo.Reply;
+
+public interface PlazaDao {
+
+	void addPlaza(Plaza plaza);
+	List<Plaza> getAllPlaza(); 
+	List<Reply> getReplyByNo(int no);
+	void addReply(Reply re);
+	void listModiByNo(Plaza plaza);
+	void listDelByNo(int no);
+}

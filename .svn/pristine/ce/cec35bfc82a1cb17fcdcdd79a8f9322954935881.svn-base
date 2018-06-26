@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.AdminDao">
+
+	<select id="getAllUser" parameterType="boolean" resultType="User">
+		select
+			user_id				as id
+			,	user_pwd		as pwd
+			,	user_name		as name
+			,	user_status		as status
+			,	user_email		as email
+			,	user_tel		as tel
+			,	user_profile	as profile
+			,	create_date		as createDate
+		from
+			planner_user
+		order by
+			<if test="date==true">
+				create_date desc
+			</if>
+			<if test="status==true">
+				, user_status
+			</if>
+			<if test="userId==true">
+				, user_id
+			</if>
+	</select>
+	<!-- 
+	<select id="getAllReply"></select>
+	
+	<select id="getAllQna"></select>
+ -->
+</mapper>

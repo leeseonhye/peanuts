@@ -1,0 +1,13 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Ticket;
+
+
+public interface TicketDao {
+
+	List<Ticket> getAllTicket();
+	Ticket getTicketByNo(int ticketNo);
+	List<String> getTicketImageByNo(int ticketNo);
+}

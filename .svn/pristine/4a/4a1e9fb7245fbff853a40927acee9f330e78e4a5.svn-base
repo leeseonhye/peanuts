@@ -1,0 +1,8 @@
+package kr.co.hta.peanuts.service;
+
+import java.io.IOException;
+
+public interface WeatherService {
+
+	String getPastWeather(String locationId, String date) throws IOException;
+}

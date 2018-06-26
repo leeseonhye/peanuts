@@ -1,0 +1,14 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.Date;
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Wallet;
+
+
+public interface WalletService {
+	// 플래너별 한눈에보기 모든정보 불러오기
+	List<Wallet> allWalletByNo(int planNo);
+	// 플래너별 날짜 받아오기
+	List<Date> planerDays(int planNo);
+}

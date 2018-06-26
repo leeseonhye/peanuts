@@ -1,0 +1,27 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.SearchDao;
+import kr.co.hta.peanuts.vo.Planner;
+import kr.co.hta.peanuts.web.form.SearchForm;
+
+@Service
+public class SearchServiceImpl implements SearchService {
+
+	@Autowired
+	SearchDao searchDao;
+	
+	@Override
+	public List<Planner> searchPlanners(SearchForm searchForm) {
+		Integer members = searchForm.getSearchMemebers();
+		if(members == 0) {
+			searchForm.setSearchMemebers(null);
+		}
+		return searchDao.searchPlanners(searchForm);
+	}	
+	
+}

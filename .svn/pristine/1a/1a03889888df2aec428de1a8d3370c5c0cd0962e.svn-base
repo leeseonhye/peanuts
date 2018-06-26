@@ -1,0 +1,60 @@
+package kr.co.hta.peanuts.vo;
+
+public class AdminDashBoard {
+
+	private int planNo;
+	private String locationId;
+	private String locationCity;
+	private String locationName;
+	private int cnt;
+	private int avg;
+	private int date;
+	
+	public int getPlanNo() {
+		return planNo;
+	}
+	public void setPlanNo(int planNo) {
+		this.planNo = planNo;
+	}
+	public String getLocationId() {
+		return locationId;
+	}
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+	public String getLocationCity() {
+		return locationCity;
+	}
+	public void setLocationCity(String locationCity) {
+		this.locationCity = locationCity;
+	}
+	public String getLocationName() {
+		return locationName;
+	}
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
+	}
+	public int getCnt() {
+		return cnt;
+	}
+	public void setCnt(int cnt) {
+		this.cnt = cnt;
+	}
+	public int getAvg() {
+		return avg;
+	}
+	public void setAvg(int avg) {
+		this.avg = avg;
+	}
+	public int getDate() {
+		return date;
+	}
+	public void setDate(int date) {
+		this.date = date;
+	}
+	@Override
+	public String toString() {
+		return "AdminDashBoard [planNo=" + planNo + ", locationId=" + locationId + ", locationCity=" + locationCity
+				+ ", locationName=" + locationName + ", cnt=" + cnt + ", avg=" + avg + ", date=" + date + "]";
+	}
+}

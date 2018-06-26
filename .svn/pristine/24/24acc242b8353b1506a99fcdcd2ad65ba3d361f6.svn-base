@@ -1,0 +1,36 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.co.hta.peanuts.dao.PlazaDao;
+import kr.co.hta.peanuts.vo.Plaza;
+import kr.co.hta.peanuts.vo.Reply;
+
+@Service
+@Transactional
+public class PlazaServiceImpl implements PlazaService{
+	
+	@Autowired
+	private PlazaDao plazaDao;
+	
+	@Override
+	public void addPlaza(Plaza plaza) {
+		plazaDao.addPlaza(plaza);
+	}
+	@Override
+	public List<Plaza> getAllPlaza() {
+		List<Plaza> AllPlaza = plazaDao.getAllPlaza();
+		return AllPlaza;
+	}
+	@Override
+	public List<Reply> getReplyByNo(int no) {
+		List<Reply> re = plazaDao.getReplyByNo(no);
+		return re;
+	}
+
+	
+}

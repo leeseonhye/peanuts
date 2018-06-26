@@ -1,0 +1,96 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>admin :: main</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+body {
+    position: relative;
+}
+ul.nav-pills {
+	position: relative;
+    top: 140px;
+    position: fixed;
+}
+div.col-sm-9 div {
+    height: 250px;
+    font-size: 28px;
+}
+a:link, a:visited {
+	color: #000000;
+}
+
+/* @media screen and (max-width: 810px) {
+  #section1, #section2, #section3, #section41, #section42  {
+      margin-left: 150px;
+  }
+} */
+
+</style>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%; min-height: 740px;">
+	<div class="row">
+		<nav class="col-sm-3" id="myScrollspy">
+			<!-- 왼쪽 메뉴바 -->
+			<ul class="nav nav-pills nav-stacked">
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#">planner<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#">댓글순</a></li>
+						<li><a href="#">좋아요순</a></li>
+						<li><a href="#">조회수순</a></li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#">광장게시판<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#">댓글순</a></li>
+						<li><a href="#">좋아요순</a></li>
+						<li><a href="#">조회수순</a></li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#">티켓<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#">많이 팔린 순</a></li>
+						<li><a href="#">qna 많은 순</a></li>
+						<li><a href="#">리뷰가 많은 순</a></li>
+					</ul>
+				</li>
+				<li><a href="#">인기 많은 together 게시글</a></li>
+				<li><a href="#">많이 여행한 여행지(지역명)</a></li>
+				<li><a href="#">오래 여행한 여행지(할수 있으면 하기)</a></li>
+				<li><a href="#">많이 방문한 관광지</a></li>
+				<li><a href="#">오래 여행한 유저</a></li>
+				<li><a href="#">많이 여행한 유저</a></li>
+				<li><a href="#">도시별 많이 이용한 교통수단(도시명으로 검색해서 location)</a></li>
+				<li><a href="#"></a></li>
+				<li><a href="#"></a></li>
+				<li><a href="#"></a></li>
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#">다른 페이지로 이동 <span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="userManag.do">회원관리</a></li>
+						<li><a href="repoManag.do">신고댓글 관리</a></li>                     
+						<li><a href="qnaList.do">QnA</a></li>                     
+					</ul>
+				</li>
+				<li><a href="#top">△ 맨 위로</a></li>
+			</ul>
+		</nav>
+		<div class="col-sm-9" style="overflow-y: scroll; height:680px;">
+			<!-- 오른쪽 통계 -->
+		</div>
+	</div>
+</div>
+<jsp:include page="../include/footer.jsp" />
+</body>
+</html>

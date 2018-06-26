@@ -1,0 +1,268 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>dashboard</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+body {
+  background: #e6e6e6;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+}
+
+#conference-timeline {
+  position: relative;
+  max-width: 920px;
+  width: 100%;
+  margin: 0 auto;
+}
+#conference-timeline .timeline-start,
+#conference-timeline .timeline-end {
+  display: table;
+  font-family: "Roboto", sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+  background: #c68c53;
+  padding: 15px 23px;
+  color: #fff;
+  max-width: 30%;
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+#conference-timeline .conference-center-line {
+  position: absolute;
+  width: 3px;
+  height: 100%;
+  top: 0;
+  left: 50%;
+  margin-left: -2px;
+  background: #c68c53;
+  z-index: -1;
+}
+#conference-timeline .conference-timeline-content {
+  padding-top: 67px;
+  padding-bottom: 67px;
+}
+.timeline-article {
+  width: 100%;
+  /* height: 100%; */
+  position: relative;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.timeline-article .content-left-container,
+.timeline-article .content-right-container {
+  max-width: 44%;
+  width: 100%;
+}
+.timeline-article .timeline-author {
+  display: block;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  color: #242424;
+  text-align: right;
+}
+.timeline-article .content-left,
+.timeline-article .content-right {
+  position: relative;
+  width: auto;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.03);
+  padding: 27px 25px;
+}
+.timeline-article p {
+  margin: 0 0 0 60px;
+  padding: 0;
+  font-weight: 400;
+  color: #242424;
+  font-size: 14px;
+  line-height: 24px;
+  position: relative;
+}
+/*숫자*/
+.timeline-article p span.article-number {
+  /* position: absolute; */
+  position: static;
+  font-weight: 300;
+  font-size: 44px;
+  top: 10px;
+  left: -60px;
+  color: #c68c53;
+}
+.timeline-article .content-left-container {
+  float: left;
+}
+.timeline-article .content-right-container {
+  float: right;
+}
+.timeline-article .content-left:before,
+.timeline-article .content-right:before{
+  position: absolute;
+  top: 20px;
+  font-size: 23px;
+  font-family: "FontAwesome";
+  color: #fff;
+}
+.timeline-article .content-left:before {
+  content: "\f0da";
+  right: -8px;
+}
+.timeline-article .content-right:before {
+  content: "\f0d9";
+  left: -8px;
+}
+
+@media only screen and (max-width: 830px) {
+  #conference-timeline .timeline-start,
+  #conference-timeline .timeline-end {
+    margin: 0;
+  }
+  #conference-timeline .conference-center-line {
+    margin-left: 0;
+    left: 50px;
+  }
+  .timeline-article .meta-date {
+    margin-left: 0;
+    left: 20px;
+  }
+  .timeline-article .content-left-container,
+  .timeline-article .content-right-container {
+    max-width: 100%;
+    width: auto;
+    float: none;
+    margin-left: 110px;
+    min-height: 53px;
+  }
+  .timeline-article .content-left-container {
+    margin-bottom: 20px;
+  }
+  .timeline-article .content-left,
+  .timeline-article .content-right {
+    padding: 10px 25px;
+    min-height: 65px;
+  }
+  .timeline-article .content-left:before {
+    content: "\f0d9";
+    right: auto;
+    left: -8px;
+  }
+  .timeline-article .content-right:before {
+    display: none;
+  }
+}
+@media only screen and (max-width: 400px) {
+  .timeline-article p {
+    margin: 0;
+  }
+  .timeline-article p span.article-number {
+    display: none;
+  }
+  
+}
+</style>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<jsp:include page="../include/top.jsp">
+	<jsp:param name="top" value="home"/>
+	<jsp:param name="pno" value="${pno }"/>
+</jsp:include>
+<section id="conference-timeline" style="width: 60%">
+    <!--여행 시작일-->
+    <%-- <div class="timeline-start">${startDate }</div> --%>
+    
+    <!--가운데 선-->
+    <div class="conference-center-line"></div>
+    
+    <!--내용-->
+    <div class="conference-timeline-content">
+        <div class="timeline-article">
+            <div class="content-left-container">
+                <div class="content-left">
+                   	<p><span class="article-number">01 지도<span style="font-size: small;">(350*370)</span></span></p>
+                	<br>
+                   	<img width="350px" src="${mapImg}">
+                    <br>
+                    <c:if test="${status == 'N' && isWriter eq true }">
+                    	<a href="/map/map.do?pno=${pno }" class="btn btn-sm btn-default" style="margin-top: 10px; margin-left: 250px">루트수정</a>
+                    </c:if>
+                </div>
+            </div>
+            <div class="content-right-container">
+                <div class="content-right">
+                	<p><span class="article-number">02 일정</span></p>
+                	<jsp:include page="../schedule/dashCal.jsp">
+                		<jsp:param value="${pno }" name="pno"/>
+                	</jsp:include>
+                </div>
+                <span class="timeline-author">아주 작은 푸터</span>
+            </div>
+        </div>
+        <div class="timeline-article">
+            <div class="content-left-container">
+                <div class="content-left">
+                   	<p><span class="article-number">03 가계부</span></p>
+                	<br>
+                   	<p>
+                   		<jsp:include page="../wallet/dashWallet.jsp">
+                   			<jsp:param value="${pno }" name="pno"/>
+                   		</jsp:include>
+                   	</p>
+                </div>
+                <span class="timeline-author">아주 작은 푸터</span>
+            </div>
+            <div class="content-right-container">
+                <div class="content-right">
+                	<p><span class="article-number">04 날씨</span></p>
+                	<br>
+                    <p>
+                    	이 자리에 인클루드 시키기 
+                    </p>
+                </div>
+                <span class="timeline-author">아주 작은 푸터</span>
+            </div>
+        </div>
+        <div class="timeline-article">
+            <div class="content-left-container">
+                <div class="content-left">
+                   	<p><span class="article-number">05 티켓</span></p>
+                	<br>
+                   	<p>
+                   		<jsp:include page="../ticket/dashboardTicket.jsp">
+                   			<jsp:param value="${pno }" name="pno"/>
+                   			<jsp:param value="'planner'" name="type"/>
+                   		</jsp:include>
+                   	</p>
+                </div>
+            </div>
+            <div class="content-right-container">
+                <div class="content-right">
+                	<p><span class="article-number">05 티켓</span></p>
+                	<br>
+                    <p>
+                    	<jsp:include page="../ticket/dashboardTicket.jsp">
+                   			<jsp:param value="${pno }" name="pno"/>
+                   			<jsp:param value="'all'" name="type"/>
+                   		</jsp:include>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!--여행 종료일-->
+    <div class="timeline-end">${endDate }</div>
+</section>
+<jsp:include page="../include/footer.jsp" />
+</body>
+</html>

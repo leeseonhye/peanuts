@@ -1,0 +1,47 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.HomeDao;
+import kr.co.hta.peanuts.vo.Planner;
+import kr.co.hta.peanuts.vo.User;
+
+@Service
+public class HomeServiceImpl implements HomeService {
+
+	@Autowired
+	HomeDao homeDao;
+	
+	@Override
+	public Planner getPlannerInfo(int pno) {
+		return homeDao.getPlannerInfo(pno);
+	}
+	@Override
+	public User getUserInfo(int pno) {
+		return homeDao.getUserInfo(pno);
+	}
+	@Override
+	public int getPlannerLikes(int pno) {
+		return homeDao.getPlannerLikes(pno);
+	}
+	@Override
+	public int getPlannerReply(int pno) {
+		return homeDao.getPlannerReply(pno);
+	}
+	@Override
+	public void modifyPlannerNm(Map<String, Object> map) {
+		homeDao.modifyPlannerNm(map);
+	}
+	@Override
+	public void deletePlanner(int pno) {
+		homeDao.deletePlanner(pno);
+	}
+	@Override
+	public List<User> getBestMento() {
+		return homeDao.getBestMento();
+	}
+}

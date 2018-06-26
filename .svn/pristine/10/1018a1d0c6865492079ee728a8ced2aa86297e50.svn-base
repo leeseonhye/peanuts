@@ -1,0 +1,108 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+  	getOrderList()
+  	insertDate()
+  	function getOrderList() {
+  		$.ajax({
+  			type: "POST",
+  			url: "orderList.do",
+  			success: function(result) {
+  				var list = result.list;
+  				var row = "";
+  				$.each(list, function(index, item) {
+	  				row += "<tr>";
+	  				row += "<td>"+item.RN+"</td>";
+	  				row += "<td>"+item.TICKETNAME+"</td>";
+	  				row += "<td>"+item.ORDERQTY+"</td>";
+	  				row += "<td>"+((item.TICKETPRICE*((100-item.DISCOUNTRATE)/100))*item.ORDERQTY)+"</td>";
+	  				row += "<td>"+formatDate(item.ORDERDATE)+"</td>";
+	  				row += "<td><span><a class='btn btn-danger btn-xs'>취소</a></span></td>";
+	  				row += "</tr>";  					
+  				}) 
+  				$("#list-box").append(row);
+  			}
+  		})
+  	}
+
+  	function formatDate(date) {
+        var d = new Date(date),
+        	month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+        	hour = d.getHours();
+        	minute = d.getMinutes();
+        	second = d.getSeconds();
+
+        if(month.length < 2){ 
+        	month = '0' + month;
+        }
+        if(day.length < 2){
+        	day = '0' + day;
+        }
+        if(hour.length < 2 ){
+        	hour = '0' + hour;
+        }
+        if(minute.length  < 2) {
+        	minute = '0' + minute;
+        }
+        if(second.length < 2) {
+        	second = '0' + second;
+        }
+		var formattedDate = [year, month, day].join('-');
+        return formattedDate;
+    };
+    function insertDate() {
+    	var today = new Date();
+    	console.log(formatDate(today));
+    	$("#startDate").val(formatDate(today));
+    }
+	  
+  })
+  </script>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<form class="well">
+				<div style="margin: 10px">
+					<p>조회할 날짜를 선택해주세요.</p>
+					<input type="date" id="startDate" value=""> - 
+					<input type="date" id="endDate" value="">
+				</div>
+				<div style="margin: 10px">
+					<a class="btn btn-primary btn-xs">오늘</a>
+					<a class="btn btn-primary btn-xs">1주일</a>
+					<a class="btn btn-primary btn-xs">1개월</a>
+					<a class="btn btn-primary btn-xs">3개월</a>
+					<a class="btn btn-primary btn-xs">1년</a>
+				</div>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>주문번호</th>
+							<th>주문한 티켓</th>
+							<th>수량</th>
+							<th>가격</th>
+							<th>주문일</th>
+							<th>비고</th>
+						</tr>
+					</thead>
+					<tbody id="list-box">
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>	
+</body>
+</html>

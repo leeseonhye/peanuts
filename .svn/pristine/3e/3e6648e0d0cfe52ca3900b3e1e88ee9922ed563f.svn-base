@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.AdminQnaDao">
+
+	<!-- 모든 list를 받아와서 저장하는 기능 -->
+	<select id="getQnaList" parameterType="OrderBy" resultType="BoardForm">
+		select 
+			board_no 			as "no"
+			,	user_id			as userId
+			,	board_category	as "category"
+			,	board_title		as title
+			,	board_contents	as "contents"
+			,	board_view		as "view"
+			,	create_date		as createDate
+		from
+			board
+		where
+			board_category = 'QNA'
+		order by
+			create_date desc
+	</select>
+
+	<!-- qna detail을 받아오는 기능 -->
+	<select id="getQnaByNo" parameterType="int" resultType="Board">
+		select 
+			board_no 			as "no"
+			,	user_id			as userId
+			,	board_category	as "category"
+			,	board_title		as title
+			,	board_contents	as "contents"
+			,	board_view		as "view"
+			,	create_date		as createDate
+		from
+			board
+		where
+			board_no = #{value}
+	</select>
+	
+	<!-- 새 qna를 저장하는 기능 -->
+	<insert id="addNewQna" parameterType="Board">
+		insert into board
+			(board_no, user_id, board_category, board_title, board_contents)
+		values
+			(board_seq.nextval, 'park', 'QNA', #{title}, #{contents})
+	</insert>
+	
+	<!-- board_no에 따른 댓글을 불러오는 기능 -->
+	<select id="getReplyByBoardNo" parameterType="int" resultType="Reply">
+		select
+			no					as boardNo
+			,	rep_no			as repNo
+			,	rep_category	as "category"
+			,	user_id			as userId
+			,	rep_contents	as "contents"
+			,	rep_status		as status
+			,	create_date		as createDate
+		from
+			reply
+		where
+			no = #{value}
+	</select>
+	
+	<insert id="answerQna" parameterType="Reply">
+		insert into reply
+			(no, rep_no, rep_category, user_id, rep_contents)
+		values
+			(#{boardNo}, reply_seq.nextval, 'QNA', #{userId}, #{contents})
+	</insert>
+</mapper>

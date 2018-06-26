@@ -1,0 +1,108 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>qnaDetail</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+	button {
+		margin: 3px;
+	}
+</style>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%; min-height: 740px;">
+	<c:if test="${LOGIN_USER.id eq board.userId || LOGIN_USER.status eq 'ADMIN' }">
+		<div class="row" style="width: 75%; margin-right: auto; margin-left: auto;">
+			<h3 style="color: #8b4513">
+				${board.title }
+				<a href="qnaList.do" class="btn btn-default btn-sm pull-right">이전 페이지로</a>
+			</h3>
+			<hr/>
+			<p>
+				<span class="pull-right">
+					<strong><fmt:formatDate value="${board.createDate }" pattern="yyyy-MM-dd" /></strong> | 
+					<strong>view:${board.view }</strong>
+				</span>
+			</p>
+		</div>
+		<div class="row" style="width: 75%; margin-right: auto; margin-left: auto;">
+			${board.contensWithEnter }
+		</div>
+		<div class="row" style="width: 75%; margin-right: auto; margin-left: auto;">
+			<button class="btn btn-sm btn-danger pull-right">삭제</button>&nbsp;&nbsp;&nbsp;
+			<button class="btn btn-sm btn-warning pull-right">수정</button>
+			<hr />
+		</div>
+		
+		<!-- 댓글 -->
+		<c:if test="${LOGIN_USER.status eq 'ADMIN'}">
+			<div class="row" style="width: 75%; margin-right: auto; margin-left: auto;">
+				<form method="post" action="/adQna/answerQna.do" class="form-inline" id="reply-form">
+					<textarea rows="2" name="contents" class="form-control" style="resize: none; width: 90%;"></textarea>
+					<input type="hidden" name="boardNo" value="${board.no }" />
+					<button class="btn btn-default" id="submit-btn">입력</button>
+				</form>
+			</div>
+		</c:if>
+		<div class="row" style="width: 75%; margin-right: auto; margin-left: auto;" id="reply-list">
+			<table class="table">
+				<colgroup>
+					<col width="*">
+					<col width="20%">
+					<col width="15%">
+				</colgroup>
+				<tbody></tbody>
+			</table>
+		</div>
+	</c:if>
+</div>
+<jsp:include page="../include/footer.jsp" />
+</body>
+<script>
+$(function() {
+	var no = $('input[name=boardNo]').val();
+	var $reply = $('#reply-list table tbody');
+	
+	$.ajax({
+		type: "GET",
+		url: "/adQna/getReplyByBoardNo.do?no="+no,
+		dataType: "json",
+		data: {boardNo:no },
+		success: function(result) {
+			var rows = '<tr>';
+			$.each(result, function(index, reply) {
+				console.log(result);
+				rows += '<td>'+reply.contents+'</td>';
+				rows += '<td>'+reply.createDateToString+'</td>';
+				rows += '<td>';
+				rows += '<a href="updateQnaRepByRepNo.do?repNo='+reply.repNo+'" class="btn btn-default btn-xs">수정</a>';
+				rows += '&nbsp;';
+				rows += '<a href="delQnaRepByRepNo.do?"repNo='+reply.repNo+' class="btn btn-danger btn-xs">삭제</a>';
+				rows += '</td>';
+				rows += '</tr>';
+			});
+			$reply.empty().append(rows);
+		}
+	});
+	
+	$('#submit-btn').click(function(e) {
+		e.preventDefault();
+		
+		var contents = $('textarea[name="contents"]').val();
+		
+		if (contents == "") {
+			alert('내용을 입력해 주세요');
+			return false;
+		}
+		$('#reply-form').submit();
+	});
+})
+</script>
+</html>

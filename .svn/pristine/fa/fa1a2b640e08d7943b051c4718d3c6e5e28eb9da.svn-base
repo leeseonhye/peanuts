@@ -1,0 +1,81 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.TicketDao;
+import kr.co.hta.peanuts.vo.Ticket;
+
+@Service
+public class TicketServiceImpl implements TicketService {
+	
+	@Autowired
+	TicketDao ticketDao;
+	
+	@Override
+	public List<Ticket> getTicketList() {
+		List<Ticket> tickets = ticketDao.getAllTicket();
+		return tickets;
+	}
+	
+	@Override
+	public HashMap<String, Object> detail(int ticketNo) {
+		Ticket ticketInfo = ticketDao.getTicketByNo(ticketNo);
+		List<String> ticketImages = ticketDao.getTicketImageByNo(ticketNo);
+		
+		HashMap<String, Object> ticket = new HashMap<>();
+		ticket.put("info", ticketInfo);
+		ticket.put("images", ticketImages);
+		return ticket;
+	}
+	
+	@Override
+	public List<Ticket> getCriteriaTicketByPageNo(HashMap<String, Object> cr) {
+		List<Ticket> tickets = ticketDao.getCriteriaTicketByPageNo(cr);
+		return tickets;
+	}
+	
+	@Override
+	public int getTotalCnt(HashMap<String, Object> cr) {
+		int totalCnt = ticketDao.getTotalCnt(cr);
+		return totalCnt;
+	}
+	@Override
+	public List<Ticket> getNewTicket(HashMap<String, Object> cr) {
+		List<Ticket> tickets = ticketDao.getNewTicket(cr);
+		return tickets;
+	}
+	
+	@Override
+	public int getNewTicketCnt(HashMap<String, Object> cr) {
+		int totalCnt = ticketDao.getNewTicketCnt(cr);
+		return totalCnt;
+	}
+	@Override
+	public List<Ticket> getDeadlineTicket(HashMap<String, Object> cr) {
+		List<Ticket> tickets = ticketDao.getDeadlineTicket(cr);
+		return tickets;
+	}
+	@Override
+	public int getDeadlineTicketCnt(HashMap<String, Object> cr) {
+		int totalCnt = ticketDao.getDeadlineTicketCnt(cr);
+		return totalCnt;
+	}
+	
+	@Override
+	public void addTicket(HashMap<String, Object> ticket, List<String> imagesNames) {
+		int no = ticketDao.getTicketSeq();
+		ticket.put("no",no);
+		ticketDao.addTicket(ticket);
+		
+		HashMap<String, Object> ticketImages = new HashMap<>();
+		for(String imageName : imagesNames) {
+			ticketImages.put("no", no);
+			ticketImages.put("imageName", imageName);
+		}
+		ticketDao.addTicketImages(ticketImages);
+	}
+}

@@ -1,0 +1,130 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>  
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>ddangkong planer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<style type="text/css">
+	div.panel-body {width:270px; height: 35px; padding-top: 8px;}
+	div.panel-default {margin-bottom: 1px; margin-left: 20px;}
+</style>
+<script type="text/javascript">
+$(function(){
+	var pno = ${param.pno};
+	
+	$.ajax({
+		type: 'GET',
+		url: '/wallet/dashboard.do',
+		dataType: 'json',
+		data: {pno:pno},
+		success: function(result){
+			
+			var row = '';
+			row += '<div class="panel panel-default"><div class="panel-body">';
+			$.each(result, function(n, item){				
+				if(item.category)
+			});
+		}
+		
+	});
+
+	
+	//차트 이벤트
+	window.onload = function() {
+		/* var hotel = document.getElementById("hotel-sub-cost").innerHTML.replace(/[^\d]+/g, '');
+		var trans = document.getElementById("trans-sub-cost").innerHTML.replace(/[^\d]+/g, '');
+		var food = document.getElementById("food-sub-cost").innerHTML.replace(/[^\d]+/g, '');
+		var shop = document.getElementById("shop-sub-cost").innerHTML.replace(/[^\d]+/g, '');
+		var tour = document.getElementById("tour-sub-cost").innerHTML.replace(/[^\d]+/g, '');
+		var etc = document.getElementById("etc-sub-cost").innerHTML.replace(/[^\d]+/g, ''); */
+
+		var chart = new CanvasJS.Chart("chart-table", {
+			animationEnabled : true,
+			data : [ {
+				type : "doughnut",
+				startAngle : 60,
+				//innerRadius: 60,
+				indexLabelFontSize : 13,
+				indexLabel : "{label} ",
+				toolTipContent : "<b>{label}:</b> {y}", //#percent%
+				dataPoints : [ {
+					y : 10,
+					label : "숙소"
+				}, {
+					y : 10,
+					label : "교통"
+				}, {
+					y : 10,
+					label : "식비"
+				}, {
+					y : 10,
+					label : "관광"
+				}, {
+					y : 10,
+					label : "쇼핑"
+				}, {
+					y : 10,
+					label : "Etc."
+				} ]
+			} ]
+		});
+		chart.render();
+	}
+	
+});
+</script>
+</head>
+<body>
+<div class="container">
+	<div class="col-sm-3">
+		<div class="row">
+			<div id="chart-table" class="col-sm-6" style="height: 250px; width: 100%; margin-top: 5px; margin-bottom: 15px;"></div>
+		</div>
+		<div class="row" id="dash-wallet">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<span class="glyphicon glyphicon-home"></span> 숙소
+					<span class="pull-right"><span id="hotel-money">0</span>원</span>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<span class="glyphicon glyphicon-road"></span> 교통
+					<span class="pull-right"><span id="trans-money">0</span>원</span>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<span class="glyphicon glyphicon-globe"></span> 관광
+					<span class="pull-right"><span id="tour-money">0</span>원</span>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<span class="glyphicon glyphicon-cutlery"></span> 식비
+					<span class="pull-right"><span id="food-money">0</span>원</span>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<span class="glyphicon glyphicon-shopping-cart"></span> 쇼핑
+					<span class="pull-right"><span id="shop-money">0</span>원</span>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<span class="glyphicon glyphicon-folder-close"></span> Etc.
+					<span class="pull-right"><span id="etc-money">0</span>원</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

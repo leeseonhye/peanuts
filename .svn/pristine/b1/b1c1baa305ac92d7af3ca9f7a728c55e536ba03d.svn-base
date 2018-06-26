@@ -1,0 +1,71 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.TicketDao;
+import kr.co.hta.peanuts.vo.Images;
+import kr.co.hta.peanuts.vo.Review;
+import kr.co.hta.peanuts.vo.Ticket;
+
+@Service
+public class TicketServiceImpl implements TicketService {
+	
+	@Autowired
+	TicketDao ticketDao;
+	
+	@Override
+	public List<Ticket> getAllTickets() {
+		List<Ticket> tickets = ticketDao.getAllTicket();
+		return tickets;
+	}
+	
+	@Override
+	public Ticket getTicketByNo(int no) {
+		Ticket ticket = ticketDao.getTicketByNo(no);
+		return ticket;
+	}
+	@Override
+	public List<Images> getTicketImagesByNo(int no) {
+		List<Images> images = ticketDao.getTicketImageByNo(no);
+		return images;
+	}
+	@Override
+	public Integer getTicketReviewAmount(int no) {
+		int amount = ticketDao.getTicketReviewAmount(no);
+		return amount;
+	}
+	
+	@Override
+	public Double getTicketGradeAverage(int no) {
+		if(ticketDao.getTicketGradeAverage(no) != null) {			
+			double average = ticketDao.getTicketGradeAverage(no);
+			return average;
+		} else {
+			double average = 0;
+			return average;
+		}
+	}
+	
+	@Override
+	public HashMap<String, Object> getTicketReviewAmountGroupByGrade(int no) {
+		HashMap<String, Object> grades = ticketDao.getTicketReviewAmountGroupByGrade(no);
+		return grades;
+	}
+	
+	@Override
+	public List<HashMap<String, Object>> getReviewImagesByTicketNo(int no) {
+		List<HashMap<String, Object>> images = ticketDao.getReviewImagesByTicketNo(no);
+		return images;
+	}
+	
+	@Override
+	public List<Review> getAllReviewByTicketNo(int ticketNo) {
+		List<Review> reviews = ticketDao.getAllReviewByTicketNo(ticketNo);
+		return reviews;
+	}
+
+}

@@ -1,0 +1,32 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.co.hta.peanuts.vo.Daily;
+import kr.co.hta.peanuts.vo.DailyHotel;
+import kr.co.hta.peanuts.vo.DailyTour;
+import kr.co.hta.peanuts.vo.Planner;
+import kr.co.hta.peanuts.vo.PlannerLocation;
+import kr.co.hta.peanuts.vo.TransLocation;
+
+@Transactional
+public interface ScheduleService {
+
+	Planner getPlanner(int key);	
+	List<Daily> dailyByPlanNo(int planNo);
+	Date dailyByKey(int key);
+	List<TransLocation> transByDaily(int key);	
+	List<PlannerLocation> locationByDaily(int key);
+	List<PlannerLocation> getCities(int pno);	
+	List<DailyTour> tourByDaily(int key);
+	List<DailyHotel> hotelByDaily(int key);
+	void addDailyTour(DailyTour dailyTour);	
+	void addDailyHotel(DailyHotel dailyHotel);
+	void delTransBy(int tno);
+	TransLocation getTrans(int tkey);
+	
+}

@@ -1,0 +1,33 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.co.hta.peanuts.vo.Board;
+import kr.co.hta.peanuts.vo.Reply;
+import kr.co.hta.peanuts.vo.User;
+import kr.co.hta.peanuts.web.form.BoardForm;
+
+public interface AdminDao {
+	
+	// 공통 메소드
+	void plusView(int boardNo);
+	List<Reply> getReplyByBoardNo(int boardNo);
+	int boardlistCnt(String cetegory);
+	List<BoardForm> getBoardList(Map<String, Object> getList);
+	BoardForm getBoardByNo(int boardNo);
+	void delBoardByNo(int no);
+	
+	List<BoardForm> searchBoards(Map<String, Object> searchKeyword);
+	
+	// qna 관련 메소드 - list, detail 순서
+	void answerQna(Reply re);
+	void delQnaReply(int reNo);
+	void updateQnaReply(Reply re);
+	Reply getReplyByRepNo(int repNo);
+
+	User getUserByUserId(String userId);
+
+	//List<User> getAllUser(OrderBy o);
+	//List<Reply> getAllReply(OrderBy o);
+}

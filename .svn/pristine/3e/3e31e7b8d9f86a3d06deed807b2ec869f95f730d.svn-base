@@ -1,0 +1,47 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.co.hta.peanuts.service.AdvertisingService;
+import kr.co.hta.peanuts.vo.Advertising;
+import kr.co.hta.peanuts.vo.AdvertisingBoard;
+
+@Controller
+@RequestMapping("/advertising")
+public class AdvertisingController {
+	
+	@Autowired
+	AdvertisingService advertisingService;
+	
+	@RequestMapping("/form.do")
+	public String form() {
+		return "advertising/form.jsp";
+	}
+	
+	@RequestMapping("/boardform.do")
+	public String boardform() {
+		return "advertising/boardform.jsp";
+	}
+	
+	@RequestMapping("/list.do")
+	public String board(Model model) {
+		List<Advertising> adt = advertisingService.getAllAdvertising();
+		
+		model.addAttribute("advertisings", adt);
+		
+		return "advertising/list.jsp";
+	}
+	
+	@RequestMapping("/addAdvertising.do")
+	public String addAdvertising(Advertising advertising) {
+		
+		advertisingService.addAdvertising(advertising);
+		return "redirect:/advertising/list.do";
+	}
+	
+}

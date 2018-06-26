@@ -1,0 +1,6 @@
+package kr.co.hta.peanuts.service;
+
+public interface PlazaService {
+
+	
+}

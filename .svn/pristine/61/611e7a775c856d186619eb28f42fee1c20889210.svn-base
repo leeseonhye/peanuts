@@ -1,0 +1,26 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.co.hta.peanuts.vo.Board;
+
+public interface TogetherDao {
+
+	//최근 일주일 조회수 탑 3 동행 게시글
+	List<Board> getTopBoards();
+	//전체 동행게시글 조회
+	List<Board> getTogetherBoards(Map<String, Object> map);
+	//최근3개월 동행 참여수 탑 5
+	List<Board> getTogetherTopJoin();
+	//최근3개월 좋아요 탑5
+	List<Board> getTogetherTopLikes();
+	//해당번호 게시글 정보 가져오기 (좋아요수까지)
+	Board getBoardWithLikes(int bno);
+	//해당 게시글 조회수 +1
+	void viewBoard(Map<String, Object> map);
+	//해당 게시글 좋아요 여부
+	int hasLiked(Map<String, Object> map);
+	//해당 게시글 좋아요 +1 or -1
+	void likeBoard(Map<String, Object> map);
+}

@@ -1,0 +1,248 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import kr.co.hta.peanuts.annotation.LoginUser;
+import kr.co.hta.peanuts.service.UserService;
+import kr.co.hta.peanuts.vo.Images;
+import kr.co.hta.peanuts.vo.Message;
+import kr.co.hta.peanuts.vo.MessageUser;
+import kr.co.hta.peanuts.vo.User;
+import kr.co.hta.peanuts.web.form.UserForm;
+
+@Controller
+@RequestMapping("/user")
+public class UserController {
+	
+	@Value("${user.photo.saved.directory}")
+	private String path;
+	
+	@Value("${album.photo.saved.directory}")
+	private String albumPath;
+	
+	@Autowired
+	private UserService userService;
+
+	@RequestMapping("/form.do")
+	public String addUserForm() {
+		
+		return "user/form.jsp";
+	}
+	
+	
+	
+	
+	@RequestMapping("/register.do")
+	public String addUser(UserForm userForm) throws IOException {
+		
+		User user = new User();
+		user.setName(userForm.getName());
+		user.setId(userForm.getId());
+		user.setPwd(userForm.getPwd());
+		user.setEmail(userForm.getEmail());
+		user.setTel(userForm.getPhone());
+		
+		MultipartFile upfile = userForm.getProfile();
+		if(!upfile.isEmpty()) {
+			String originalFileName = upfile.getOriginalFilename();
+			FileCopyUtils.copy(upfile.getBytes(), new File(path,originalFileName));
+			user.setProfile(upfile.getOriginalFilename());
+		} else {
+			user.setProfile("DEFAULT_PROFILE.JPG");
+		}
+		
+		userService.addUser(user);
+		
+		return "redirect:/home.do";
+	}
+	
+	@RequestMapping(value="/login.do", method=RequestMethod.GET)
+	public String login() {
+		return "user/loginform.jsp";
+	}
+	
+	@RequestMapping(value="/login.do", method=RequestMethod.POST)
+	public String login(String id, String pwd, HttpSession session) {
+		
+		User user = userService.getUserDetail(id);
+		if(user == null) {
+			return "redirect:/user/login.do?err=fail";
+		}
+		if(!user.getPwd().equals(pwd)) {
+			return "redirect:/user/login.do?err=fail";
+		}
+		if(user.getStatus().equals("IN")) {			
+			session.setAttribute("LOGIN_USER", user);
+		} else if(user.getStatus().equals("ADMIN")) {
+			session.setAttribute("LOGIN_USER", user);
+			return "redirect:/home.do";
+		} else {
+			return "redirect:/user/login.do?err=outPutUser";
+		}
+		
+		return "redirect:/home.do";
+	}
+	
+	@RequestMapping("/logout.do")
+	public String logout(HttpSession session) {
+		session.invalidate();
+		return "redirect:/home.do";
+	}
+	// 사용자 프로필 파일변경
+	@RequestMapping("/imgModify.do")
+	public String imgModify(@LoginUser User user, MultipartFile profile) throws Exception {
+		User userform = new User();
+		userform.setId(user.getId());
+
+		MultipartFile modifile = profile;
+		if(!modifile.isEmpty()) {
+			String originalFileName = modifile.getOriginalFilename();
+			FileCopyUtils.copy(modifile.getBytes(), new File(path,originalFileName));
+			userform.setProfile(modifile.getOriginalFilename());
+		} else {
+			userform.setProfile("DEFAULT_PROFILE.JPG");
+		}
+		
+		userService.imgModify(userform);
+		
+		return "redirect:/user/mypage.do?id="+userform.getId();
+	}
+	// 마이페이지 사용자 플래너 불러오기
+	//@RequestMapping("/mypage.do")
+	//public String mypage(@LoginUser User user) throws Exception {
+	//	userService.getByIdPlanner(user.getId());
+	//	return "user/mypage.jsp";
+	//}
+	
+	@RequestMapping("/getMessages.do")
+	@ResponseBody
+	public List<Message> getMessages(String keyword, HttpSession session) {
+		User user = (User) session.getAttribute("LOGIN_USER");
+		Map<String , Object> map = new HashMap<String, Object>();
+		map.put("id", user.getId());
+		map.put("keyword", keyword);
+		return userService.getMessages(map);
+	}
+	
+	@RequestMapping("/getSentMessages.do")
+	@ResponseBody
+	public List<Message> getSentMessages(HttpSession session) {
+		User user = (User) session.getAttribute("LOGIN_USER");
+		return userService.getSentMessages(user.getId());
+	}
+
+	@RequestMapping("/getdelMessages.do")
+	@ResponseBody
+	public List<Message> getdelMessages(HttpSession session) {
+		User user = (User) session.getAttribute("LOGIN_USER");
+		return userService.getDelMessages(user.getId());
+	}
+	
+	@RequestMapping("/sendMessage.do")
+	@ResponseBody
+	public void sendMessage(String receiver, String contents, HttpSession session) {
+		User user = (User) session.getAttribute("LOGIN_USER");
+		Message message = new Message();
+		message.setUserId(user.getId());
+		message.setContents(contents);
+		message.setReceiver(receiver);
+		userService.sendMessages(message);
+	}
+	
+	@RequestMapping("/getMessageDetail.do")
+	@ResponseBody
+	public MessageUser getMessageDetail(String category, int key, HttpSession session) {
+		User user = (User) session.getAttribute("LOGIN_USER");		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("category", category);
+		map.put("id", user.getId());
+		map.put("key", key);
+		return userService.getMessageDetail(map);
+	}
+	
+	@RequestMapping("markMessage.do")
+	@ResponseBody
+	public void markMessage(int key) {
+		userService.markMessage(key);
+	}
+
+	@RequestMapping("delMessage.do")
+	@ResponseBody
+	public void delMessage(@RequestBody String[] keys) {
+		userService.delMessages(keys);
+	}
+	
+	@RequestMapping("cancelSendMessage.do")
+	@ResponseBody
+	public void cancelSendMessage(@RequestBody String[] keys) {
+		userService.cancelSendMessage(keys);
+	}
+	
+	@RequestMapping("recoveryMessage.do")
+	@ResponseBody
+	public void recoveryMessage(@RequestBody String[] keys) {
+		userService.recoveryMessage(keys);
+	}
+	
+	@RequestMapping("/formfilter.do")
+	public String formfilter() {
+		
+		return "user/formfilter.jsp";
+	}
+	
+	// 앨범 리스트로 넘어가는 기능
+	@RequestMapping("/photoList.do")
+	public String photoList(int pno, HttpSession session, Model model) {
+		// 넘겨준 pno를 통해서 해당 이미지들을 불러오기
+		List<Images> photos = userService.getAlbumByPno(pno);
+		model.addAttribute("photos", photos);
+		model.addAttribute("size", photos.size());
+		model.addAttribute("pno", pno);
+		
+		return "/album/photoList.jsp";
+	}
+	
+	// 새로운 사진을 추가하는 기능
+	@RequestMapping("/addPhoto.do")
+	public String addPhoto(int pno, MultipartFile photo, HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
+		Random random = new Random();
+		String filename = random.nextInt() + "_" + photo.getOriginalFilename();
+		
+		if(!photo.isEmpty()) {
+			FileCopyUtils.copy(photo.getBytes(), new File(albumPath, filename));
+			
+			Images addPhoto = new Images();
+			addPhoto.setNo(pno);
+			addPhoto.setCategory("PLANNER");
+			addPhoto.setName(filename);
+			
+			userService.addPhoto(addPhoto);
+			
+			redirectAttributes.addAttribute("pno", pno);
+			
+		}
+		return "redirect:/user/photoList.do";
+	}
+
+}

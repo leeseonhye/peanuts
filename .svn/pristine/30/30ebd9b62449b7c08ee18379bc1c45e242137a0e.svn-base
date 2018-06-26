@@ -1,0 +1,85 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MultipartFile;
+
+import kr.co.hta.peanuts.service.UserService;
+import kr.co.hta.peanuts.vo.User;
+import kr.co.hta.peanuts.vo.UserForm;
+
+@Controller
+@RequestMapping("/user")
+public class UserController {
+	
+	@Value("${user.photo.saved.directory}")
+	private String path;
+
+	@Autowired
+	private UserService userService;
+	
+	@RequestMapping("/form.do")
+	public String addUserForm() {
+		
+		return "user/form.jsp";
+	}
+	
+	@RequestMapping("/register.do")
+	public String addUser(UserForm userForm) throws IOException {
+		
+		User user = new User();
+		user.setName(userForm.getName());
+		user.setId(userForm.getId());
+		user.setPwd(userForm.getPwd());
+		user.setEmail(userForm.getEmail());
+		user.setTel(userForm.getPhone());
+		
+		MultipartFile upfile = userForm.getProfile();
+		if(!upfile.isEmpty()) {
+			String originalFileName = upfile.getOriginalFilename();
+			FileCopyUtils.copy(upfile.getBytes(), new File(path,originalFileName));
+			user.setProfile(upfile.getOriginalFilename());
+		} else {
+			user.setProfile("DEFAULT_PROFILE.JPG");
+		}
+		
+		userService.addUser(user);
+		
+		return "redirect:/home.do";
+	}
+	
+	@RequestMapping(value="/login.do", method=RequestMethod.GET)
+	public String login() {
+		return "user/loginform.jsp";
+	}
+	
+	@RequestMapping(value="/login.do", method=RequestMethod.POST)
+	public String login(String id, String pwd, HttpSession session) {
+		
+		User user = userService.getUserDetail(id);
+		if(user == null) {
+			return "redirect:/user/login.do?err=fail";
+		}
+		if(!user.getPwd().equals(pwd)) {
+			return "redirect:/user/login.do?err=fail";
+		}
+		session.setAttribute("LOGIN_USER", user);
+		
+		return "redirect:/home.do";
+	}
+	
+	@RequestMapping("/logout.do")
+	public String logout(HttpSession session) {
+		session.invalidate();
+		return "redirect:/home.do";
+	}
+}

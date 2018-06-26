@@ -1,0 +1,16 @@
+package kr.co.hta.peanuts.service;
+
+import java.io.IOException;
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Location;
+import kr.co.hta.peanuts.vo.Weather;
+
+public interface WeatherService {
+
+	String getPastWeather(String locationId, String date) throws IOException;
+	List<Weather> getCurrentWeather(String locationId) throws Exception;
+	List<Location> searchLocationByCity(String city);
+	Location searchLocationById(String id);
+}
+

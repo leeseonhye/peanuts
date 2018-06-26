@@ -1,0 +1,12 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Advertising;
+
+public interface AdvertisingDao {
+
+	void addAdvertising(Advertising advertising);
+	List<Advertising> getAllAdvertising();
+	Advertising getAdvertisingById(String id);
+}

@@ -1,0 +1,224 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>map</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel='stylesheet' href='resources/fullcalendar/fullcalendar.css' />
+<style>
+	#map {
+		height: 680px;
+		width: 100%;
+	}
+	input {
+		margin: 2px;
+	}
+	
+	
+</style>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 70%; min-height: 740px;">
+	<div class="row">
+		<div class="col-sm-3" id="plan" style="overflow-y: scroll; height:680px;">
+			<div class="text-center panel panel-default panel-heading">
+				<strong>여행 시작일</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span id="startDate">${param.strDate }</span>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<form action="/add.do" id="plan-form">
+						<p>
+							<select name="cityname" id="cityname">
+								<option value=""> - </option>
+								<option value="서울특별시">서울특별시</option>
+								<option value="부산광역시">부산광역시</option>
+								<option value="대구광역시">대구광역시</option>
+								<option value="인천광역시">인천광역시</option>
+								<option value="광주광역시">광주광역시</option>
+								<option value="대전광역시">대전광역시</option>
+								<option value="울산광역시">울산광역시</option>
+								<option value="경기도_경기남부">경기도(경기남부)</option>
+								<option value="경기도_경기북부">경기도(경기북부)</option>
+								<option value="강원도">강원도</option>
+								<option value="충청북도">충청북도</option>
+								<option value="충청남도">충청남도</option>
+								<option value="전라북도">전라북도</option>
+								<option value="전라남도">전라남도</option>
+								<option value="경상북도">경상북도</option>
+								<option value="경상남도">경상남도</option>
+								<option value="제주특별자치도">제주특별자치도</option>
+								<option value="세종특별자치시">세종특별자치시</option>
+							</select>
+							<select name="city" id="city">
+								<option value=""> - </option>
+							</select>
+						</p>
+						<p>
+							<label>종료일</label>
+							<input type="date" name="end-date" min="${param.strDate }" max="${param.endDate }" />
+						</p>
+						<p>
+							<label>다음도시까지 이동수단</label>
+							<select name="transportation" id="transportation">
+								<option value="etc">기타</option>
+								<option value="air">항공</option>
+								<option value="train">기차</option>
+								<option value="bus">버스</option>
+							</select>
+						</p>
+						<p class="text-right">
+							<input type="submit" value="저장">
+							<input type="reset" value="취소">
+						</p>
+					</form>
+				</div>
+			</div>
+			<div class="text-center panel panel-default panel-heading">
+				<strong>여행 종료일</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span id="endDate">${param.endDate }</span>
+			</div>
+			<div class="text-center panel panel-default panel-heading">
+				<a href="/home.do" >일정 저장</a>
+			</div>
+		</div>
+		<div class="col-sm-9">
+			<div id="map"></div>
+		</div>
+	</div>
+</div>
+<jsp:include page="../include/footer.jsp" />
+
+<!-- 
+	바꿀것
+	도시 선택하고 날짜 선택한 후 저장 누르자마자 DB에 저장되게 하기
+	DB에 저장된 데이터를 불러와서 지도에 표시하기
+	
+-->
+
+<script>
+// 지도에서 사용할 위도/경도
+var lat;
+var lng;
+
+$(function() {
+	$('#cityname').change(function() {
+		// 클릭하는 순간 db에서 데이터 읽어와서 city의 셀렉트 박스에 뿌려주기
+		$.ajax({
+			type: "POST",
+			url: "getLocation.do",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			dataType: "json",
+			data: {city: $(this).val()},
+			success: function(result) {
+				var rows = '<option value=""> - </option>';
+				$.each(result, function(index, location) {
+					rows += '<option value="'+location.id+'">'+location.name+'</option>';
+				});
+				$('#city').empty().append(rows);
+			}
+		});
+	});
+	
+	$('#city').change(function() {
+		// 클릭하는 순간 db에서 데이터 읽어와서 해당 위치의 위도/경도에 맞는곳에 위치 표시하기
+		$.ajax({
+			type: "POST",
+			url: "getLocation.do",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			dataType: "json",
+			data: {id: $(this).val()},
+			success: function(result) {
+				lat = result[0].lineX;
+				lng = result[0].lineY;
+				initMap();
+			}
+		});
+	});
+	
+	// 저장버튼을 눌렀을 때 실행되는 함수
+	// 빈칸을 허용하지 않음
+	$('#plan-form').submit(function(event) {
+		event.preventDefault();
+		
+		// 빈칸으로 넘기려고 하면 알람창 띄우기
+		var city = $('#city').val();
+		if (city == "") {
+			alert('도시 정보를 입력해 주세요');
+		}
+		var endDate = $('#plan-form input').attr('name', 'end-date').val();
+		if (endDate == null || endDate == "") {
+			alert('날짜를 입력해 주세요');
+		}
+		
+		return true;
+	});
+})
+
+// 지도 생성하는 함수
+function createMap(slat, slng, zoom) {
+	var map;
+	if (map) {
+		return;
+	}
+	
+	map = new google.maps.Map(document.getElementById('map'), {
+		zoom: zoom,
+		center: {lat:slat, lng:slng}
+	});
+	return map;
+}
+
+var x = [];
+var y = [];
+
+// 마커 생성하는 함수
+function addMarkers(lat, lng, map) {
+	var i = 0;
+	console.log(i);
+	i++;
+	
+	x.push(lat);
+	y.push(lng);
+	
+	for (var i=0; i<x.length; i++) {
+		var newMarker = new google.maps.LatLng(x[i], y[i]);
+		map.setOptions({
+			zoom: 14,
+			center: newMarker
+		});
+		
+		var marker = new google.maps.Marker({
+			position: newMarker,
+			map: map
+		});
+		
+		marker.setMap(map);
+	}
+}
+
+// 지도 생성
+function initMap() {
+
+	var zoom = 8;
+	var slat = 37.5729503;
+	var slng = 126.97935789999997;
+	//var myLatLng = {lat: slat, lng: slng};
+	var map = createMap(slat, slng, zoom);
+	
+	if (lat) {
+		addMarkers(lat, lng, map);
+	}
+	
+}
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOUv6PtH7XPdvPxZdqklHVocb4tLYqwFQ&callback=initMap">
+</script>
+</body>
+</html>

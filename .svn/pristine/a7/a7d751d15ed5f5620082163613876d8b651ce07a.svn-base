@@ -1,0 +1,45 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title></title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel='stylesheet' href='resources/fullcalendar/fullcalendar.css' />
+</head>
+<body>
+<div class="container">
+	<img width="600" src="https://maps.googleapis.com/maps/api/staticmap?autoscale=1&size=600x300&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0080%7Clabel:1%7C37.5172363,127.04732480000007&markers=size:mid%7Ccolor:0x0000a0%7Clabel:2%7C37.5247192,129.11429150000004&markers=size:mid%7Ccolor:0x8000ff%7Clabel:3%7C35.2122157,128.98056659999997&path=color:0xff0000ff|weight:1|37.5301251,127.12376199999994|37.5247192,129.11429150000004|35.2122157,128.98056659999997">
+	
+	<img src="https://maps.googleapis.com/maps/api/staticmap?autoscale=1&size=160x229&maptype=roadmap&format=png&visual_refresh=true &markers=size:mid%7Ccolor:0xc68c53%7Clabel:1%7C"+#{lat},#{lng}+"&path=color:0xff0000ff|weight:1|"+#{lat},#{lng}/>
+	
+    <!--
+    <img width="600" src="https://maps.googleapis.com/maps/api/staticmap?
+    autoscale=1
+    &size=600x300(사이즈 지정)
+    &maptype=roadmap
+    &format=png
+    &visual_refresh=true
+    &markers=
+        size:mid
+        %7C
+        color:0x컬러코드6자리
+        %7C
+        label:몇번째 마커인지 표시 혹은 도시 이름 표시 혹은 공란으로 비우면 그냥 가운데 점
+        %7C
+        위도,경도
+    &path=
+        color:0xff0000ff
+        |weight:1
+        |37.5301251,127.12376199999994
+        |37.5247192,129.11429150000004
+        |35.2122157,128.98056659999997
+        위도 경도가 쌓인 순서대로 선이 그어진다">
+    -->
+</div>
+</body>
+</html>

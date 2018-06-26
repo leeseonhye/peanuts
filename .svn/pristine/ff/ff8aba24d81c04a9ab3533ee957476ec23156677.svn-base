@@ -1,0 +1,64 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<style>
+	.container {width: 60%;}
+	#header-top li a {font-size: 11px; color: #808080;}
+	#header .container-fluid a {font-size: 13px; color: #ffffff;}
+	#header nav.navbar a:hover {background-color: #c68c53;}
+	#header nav.navbar a:active {background-color: #c68c53;}
+	#header nav.navbar a:focus {background-color: #c68c53;}
+	#header nav.navbar li.active {background-color: #c68c53;}
+	#header ul.dropdown-menu a:hover {color: #ffffff;}
+</style>
+<div class="container">
+	<div class="pull-center">
+		<div id="header">
+			<div style="height: 80px; margin-right: 20px;">
+			    <ul class="nav navbar-nav navbar-right" id="header-top">
+			    	<c:choose>
+			    		<c:when test="${empty LOGIN_USER && empty LOGIN_AD}">
+							<li class="${param.header == 'register' ? 'active' : '' }"><a href="/user/formfilter.do"><span class="glyphicon glyphicon-user"></span> 회원가입</a></li>
+						    <li class="${param.header == 'login' ? 'active' : '' }"><a href="/user/login.do"><span class="glyphicon glyphicon-log-in"></span> 로그인</a></li>
+			    		</c:when>
+			    		<c:when test="${not empty LOGIN_USER }">
+							<li><a href="/user/mypage.do?id=${LOGIN_USER.id }"><span class="glyphicon glyphicon-user"></span> <strong>${LOGIN_USER.id }</strong>님 환영합니다!</a></li>
+					    	<c:if test="${LOGIN_USER.status eq 'ADMIN'}">
+						    	<li class="${param.header == 'admin' ? 'active' : '' }"><a href="/admin/main.do"> 관리자메뉴</a></li>
+							</c:if>			    		
+					    	<c:if test="${LOGIN_USER.status eq 'IN'}">
+						    	<li class="${param.header == 'qna' ? 'active' : '' }"><a href="/adQna/qnaList.do"> 회원문의</a></li>
+							</c:if>							
+							<li><a href="/user/logout.do"><span class="glyphicon glyphicon-log-out"></span> 로그아웃</a></li>	    		
+			    		</c:when>
+			    		<c:when test="${not empty LOGIN_AD }">
+				    		<li class="${param.header == 'advertising' ? 'active' : '' }"><a href="#"> 광고문의</a></li>
+						    <li><a href="/user/logout.do"><span class="glyphicon glyphicon-log-out"></span> 로그아웃</a></li>	    		
+			    		</c:when>
+			    	</c:choose>
+			    </ul>
+			</div>
+			<nav class="navbar" style="background-color: #ac7339; margin-top: -25px;">
+			  <div class="container-fluid">
+			    <div class="navbar-header">
+			      <span class="navbar-brand">
+			      	<img src="/resources/images/logo/peanuts.png" id="logoPeanuts" style="opacity: 1; width: auto; height: 100px; margin-top: -70px; margin-left: -20px;"/>
+			      </span>
+			    </div>
+			    <ul class="nav navbar-nav">
+			      	<li class="${param.header == 'home' ? 'active' : '' }"><a href="/home.do"><strong>홈</strong></a></li>
+					<li class="dropdown">
+			    		<a class="dropdown-toggle" data-toggle="dropdown" href="#">플래너<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+			          		<li class="${param.header == 'newPlanner' ? 'active' : '' }"><a href="/map/addPlanForm.do" style="color: #000000;">새 플래너</a></li>
+			          		<li class="${param.header == 'mypage' ? 'active' : '' }"><a href="/user/mypage.do?id=${LOGIN_USER.id }" style="color: #000000;">내 플래너 리스트</a></li>
+			      		</ul>
+			     	</li>
+			      	<li class="${param.header == 'ticket' ? 'active' : '' }"><a href="/ticket/main.do">티켓</a></li>
+			      	<li class="${param.header == 'plaza' ? 'active' : '' }"><a href="../board/plaza.do">광장게시판</a></li>
+			      	<li class="${param.header == 'together' ? 'active' : '' }"><a href="/together/together.do">동행게시판</a></li>
+			    </ul>
+			  </div>
+			</nav>
+		</div>
+	</div>
+</div>
+

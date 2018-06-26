@@ -1,0 +1,53 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.co.hta.peanuts.service.AdminQnaService;
+import kr.co.hta.peanuts.vo.Board;
+import kr.co.hta.peanuts.vo.OrderBy;
+import kr.co.hta.peanuts.web.form.BoardForm;
+
+@Controller
+@RequestMapping("/adQna")
+public class AdminQnaController {
+
+	@Autowired
+	private AdminQnaService qnaService;
+	
+	@RequestMapping("/qnaList.do")
+	public String qnaList(OrderBy orderBy, Model model) {
+		// 등록된 qna 출력하면서 넘어가기
+		// service에서 로그인된 유저의 qna만 불러오기
+		orderBy.setDate(true);
+		List<BoardForm> boards = qnaService.getQnaList(orderBy);
+		model.addAttribute("boards", boards);
+		return "board/qnaList.jsp";
+	}
+	
+	// qna detail 페이지로 이동
+	@RequestMapping("/qnaDetail.do")
+	public String qnaDetail() {
+		return "board/qnaDetail.jsp";
+	}
+		
+	// qnd form 페이지로 이동
+	@RequestMapping("/qnaForm.do")
+	public String qnaForm() {
+		return "board/qnaForm.jsp";
+	}
+	
+	// 새 qna 등록
+	@RequestMapping("/addNewQna.do")
+	public String addNewQna(Board board) {
+		qnaService.addNewQna(board);
+		return "redirect:/adQna/qnaList.do";
+	}
+}

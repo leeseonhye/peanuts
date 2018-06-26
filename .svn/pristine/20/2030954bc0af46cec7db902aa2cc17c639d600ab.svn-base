@@ -1,0 +1,9 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+import kr.co.hta.peanuts.vo.TogetherPart;
+
+public interface TogetherDao {
+
+	List<TogetherPart> getAllParts(int boardNo);
+}

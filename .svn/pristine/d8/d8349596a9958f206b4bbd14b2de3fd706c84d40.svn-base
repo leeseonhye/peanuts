@@ -1,0 +1,16 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Message;
+import kr.co.hta.peanuts.vo.User;
+
+public interface UserService {
+
+	void addUser(User user);
+	User getUserDetail(String id);
+	void imgModify(User user);
+	List<Message> getMessages(Message message);
+	List<Message> getSentMessages(String id);
+	List<Message> getDelMessages(String id);
+}

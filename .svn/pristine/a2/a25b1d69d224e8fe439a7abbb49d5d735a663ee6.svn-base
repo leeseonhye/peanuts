@@ -1,0 +1,94 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.co.hta.peanuts.annotation.LoginAd;
+import kr.co.hta.peanuts.annotation.LoginUser;
+import kr.co.hta.peanuts.service.AdvertisingService;
+import kr.co.hta.peanuts.vo.Advertising;
+import kr.co.hta.peanuts.vo.AdvertisingBoard;
+import kr.co.hta.peanuts.vo.User;
+
+@Controller
+@RequestMapping("/advertising")
+public class AdvertisingController {
+	
+	@Autowired
+	AdvertisingService advertisingService;
+	
+	@RequestMapping("/advertising.do")
+	public String advertising(@LoginAd Advertising advertising) {
+		
+		if(advertising == null) {
+			return "redirect:/user/login.do?err=fail";			
+		}
+		return "redirect:/home.do";
+	}
+	
+	@RequestMapping("/form.do")
+	public String form(@LoginAd Advertising advertising) {
+		
+		if(advertising == null) {
+			return "redirect:/user/login.do?err=fail";			
+		}
+		
+		return "advertising/form.jsp";
+	}
+	
+	@RequestMapping("/boardform.do")
+	public String boardform(Model model, @LoginAd Advertising advertising, HttpSession session) {
+		Advertising ad = (Advertising) session.getAttribute("LOGIN_AD");
+		
+		if(advertising == null) {
+			return "redirect:/user/login.do?err=fail";			
+		}
+		
+		LocalDate now = LocalDate.now();
+		LocalDate date = now.plusDays(15);
+		
+		model.addAttribute("dateDay", date.toString());
+		
+		return "advertising/boardform.jsp";
+	}
+	
+	// 관리자가 업체리스트 보는 기능
+	@RequestMapping("/list.do")
+	public String board(Model model, HttpSession session) {
+		User loginUser = (User) session.getAttribute("LOGIN_USER");
+		
+		if(!loginUser.getStatus().equals("ADMIN")) {
+			session.setAttribute("LOGIN_USER", loginUser);
+			return "redirect:/home.do";
+		}
+		List<Advertising> adt = advertisingService.getAllAdvertising();
+		
+		model.addAttribute("advertisings", adt);
+		
+		return "advertising/list.jsp";
+	}
+	
+	@RequestMapping("/addAdvertising.do")
+	public String addAdvertising(Advertising advertising) {
+		advertisingService.addAdvertising(advertising);
+		return "redirect:/advertisingBoard/boardlist.do";
+	}
+	
+	// 아이디 중복확인을 위해 아이디 조회
+	@RequestMapping("/searchAdvertisingId.do")
+	@ResponseBody
+	public List<Advertising> searchAdvertisingId(String id) {
+		System.out.println(id);
+		System.out.println(advertisingService.searchAdvertisingId(id));
+		return advertisingService.searchAdvertisingId(id); 
+	}
+	
+}

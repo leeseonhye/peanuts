@@ -1,0 +1,53 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<style>
+	.container {width: 60%;}
+	#header-top li a {font-size: 11px; color: #808080;}
+	#header .container-fluid a {font-size: 13px; color: #ffffff;}
+	#header nav.navbar a:hover {background-color: #c68c53;}
+	#header nav.navbar a:active {background-color: #c68c53;}
+	#header nav.navbar a:focus {background-color: #c68c53;}
+	#header ul.dropdown-menu a:hover {color: #ffffff;}
+</style>
+<div class="container">
+	<div class="pull-center">
+		<div id="header">
+			<div style="height: 80px; margin-right: 20px;">
+			    <ul class="nav navbar-nav navbar-right" id="header-top">
+			    	<c:choose>
+			    		<c:when test="${empty LOGIN_USER }">
+							<li><a href="#"><span class="glyphicon glyphicon-user"></span> 회원가입</a></li>
+						    <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 로그인</a></li>
+			    		</c:when>
+			    		<c:otherwise>
+							<li><a href="#"><span class="glyphicon glyphicon-user"></span> <strong>${LOGIN_USER.id }</strong>님 환영합니다!</a></li>
+						    <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> 로그아웃</a></li>	    		
+			    		</c:otherwise>
+			    	</c:choose>
+			    
+			      <li><a href="#"> 문의</a></li>
+			    </ul>
+			</div>
+			<nav class="navbar" style="background-color: #ac7339; margin-top: -25px;">
+			  <div class="container-fluid">
+			    <div class="navbar-header">
+			      <a class="navbar-brand" href="#"><img src="/resources/images/logo/peanuts.png" style="width: auto; height: 100px; margin-top: -70px;"/></a>
+			    </div>
+			    <ul class="nav navbar-nav">
+			      	<li><a href="#"><strong>홈</strong></a></li>
+					<li class="dropdown">
+			    		<a class="dropdown-toggle" data-toggle="dropdown" href="#">플래너<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+			          		<li><a href="#" style="color: #000000;">새 플래너</a></li>
+			          		<li><a href="#" style="color: #000000;">내 플래너 리스트</a></li>
+			      		</ul>
+			     	</li>	
+			      	<li><a href="#">티켓</a></li>
+			      	<li><a href="#">광장게시판</a></li>
+			      	<li><a href="#">동행게시판</a></li>
+			    </ul>
+			  </div>
+			</nav>
+			</div>
+	</div>
+</div>
+

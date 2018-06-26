@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.WeatherDao">
+
+	<select id="searchLocation" parameterType="string" resultType="location">
+		select
+			location_id			as id,
+			location_code		as code,
+			location_city		as city,
+			location_name		as name,
+			line_x				as x, 
+			line_y				as y,
+			location_weather	as weatherId
+		from	
+			Locations
+		where
+			Location_CITY = #{value}
+		order by
+			Location_name 
+	</select>
+</mapper>

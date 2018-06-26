@@ -1,0 +1,65 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.co.hta.peanuts.service.AdvertisingService;
+import kr.co.hta.peanuts.vo.Advertising;
+import kr.co.hta.peanuts.vo.AdvertisingBoard;
+
+@Controller
+@RequestMapping("/advertising")
+public class AdvertisingController {
+	
+	@Autowired
+	AdvertisingService advertisingService;
+	
+	@RequestMapping("/form.do")
+	public String form() {
+		return "advertising/form.jsp";
+	}
+	
+	@RequestMapping("/boardform.do")
+	public String boardform(Model model) {
+		
+		LocalDate now = LocalDate.now();
+		LocalDate date = now.plusDays(15);
+		
+		model.addAttribute("dateDay", date.toString());
+		
+		return "advertising/boardform.jsp";
+	}
+	
+	@RequestMapping("/list.do")
+	public String board(Model model) {
+		System.out.println("111111");
+		List<Advertising> adt = advertisingService.getAllAdvertising();
+		
+		model.addAttribute("advertisings", adt);
+		
+		return "advertising/list.jsp";
+	}
+	
+	@RequestMapping("/addAdvertising.do")
+	public String addAdvertising(Advertising advertising) {
+		System.out.println("Asdfasdf");
+		advertisingService.addAdvertising(advertising);
+		return "redirect:/advertisingBoard/boardlist.do";
+	}
+	
+	// 아이디 중복확인을 위해 아이디 조회
+	@RequestMapping("/searchAdvertisingId.do")
+	@ResponseBody
+	public List<Advertising> searchAdvertisingId(String id) {
+		System.out.println(id);
+		System.out.println(advertisingService.searchAdvertisingId(id));
+		return advertisingService.searchAdvertisingId(id); 
+	}
+	
+}

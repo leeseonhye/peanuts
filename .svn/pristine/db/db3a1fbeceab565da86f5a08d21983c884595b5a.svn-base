@@ -1,0 +1,8 @@
+package kr.co.hta.peanuts.dao;
+
+import kr.co.hta.peanuts.vo.Plaza;
+
+public interface PlazaDao {
+
+	void addPlaza(Plaza plaza);
+}

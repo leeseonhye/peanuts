@@ -1,0 +1,13 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.co.hta.peanuts.vo.Wallet;
+
+@Transactional
+public interface WalletService {
+	// 플래너별 한눈에보기 숙소정보 불러오기
+		List<Wallet> AllWalletByNo(int planNo);
+}

@@ -1,0 +1,102 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.MapDao;
+import kr.co.hta.peanuts.vo.Daily;
+import kr.co.hta.peanuts.vo.Location;
+import kr.co.hta.peanuts.vo.Planner;
+import kr.co.hta.peanuts.vo.PlannerLocationForm;
+
+@Service
+public class MapServiceImpl implements MapService {
+
+	@Autowired
+	private MapDao mapDao;
+	
+	@Override
+	public void addNewPlan(Planner planner) {
+		mapDao.addNewPlan(planner);
+	}
+	
+	@Override
+	public List<Location> getLocation(Location location) {
+		return mapDao.getLocation(location);
+	}
+	
+	@Override
+	public int dailyNum(Planner planner) {
+		return mapDao.dailyNum(planner);
+	}
+	
+	@Override
+	public void addNewDaily(Daily daily) {
+		mapDao.addNewDaily(daily);
+	}
+	
+	@Override
+	public Planner getPlannerByNo(int no) {
+		return mapDao.getPlannerByNo(no);
+	}
+
+	@Override
+	public Planner addPL(PlannerLocationForm pl) {
+		// 만약 endDate 또는 locationId 이 null로 넘어오면 에러발생시키기
+		if (pl.getEndDate() == null) {
+			// 에러페이지 생기면 넣기
+		}
+		if (pl.getLocationId() == null) {
+			// 에러페이지 생기면 넣기
+		}
+		
+		Planner planner = mapDao.getPlannerByNo(pl.getPlanNo());
+		String startDate = planner.getStartDate();		// 여행 시작일
+		
+		List<PlannerLocationForm> pls = mapDao.getPLByPno(pl.getPlanNo());
+		
+		// 만약 planner_location이 하나도 존재하지 않으면 
+		// planner의 plan_no와 일치하는 데이터의 plan_start를 start_date로 넣어줘야 한다
+		if (pls.size() == 0) {
+			pl.setStartDate(startDate);
+		}
+		// 만약 planner_location이 하나라도 존재하면 
+		// planner_location의 end_date를 새로 추가할 planner_location의 start_date로 넣어줘야 한다
+		if (pls.size() != 0) {
+			// list의 마지막 데이터를 저장한다
+			int index = pls.size()-1;
+			PlannerLocationForm last = pls.get(index);
+			pl.setStartDate(last.getEndDate());
+		}
+		
+		// planner_location에 해당 데이터 저장하기
+		mapDao.addPL(pl);
+		
+		return planner;
+		
+	}
+
+	@Override
+	public List<PlannerLocationForm> getPLByPno(int planNo) {
+		List<PlannerLocationForm> pls = mapDao.getPLByPno(planNo);
+		for (PlannerLocationForm pl : pls) {
+			Location loId= new Location();
+			loId.setId(pl.getLocationId());
+			List<Location> locations = mapDao.getLocation(loId);
+			Location location = locations.get(0);
+			
+			pl.setLocationCity(location.getCity());
+			pl.setLocationName(location.getName());
+			pl.setLineX(location.getLineX());
+			pl.setLineY(location.getLineY());
+		}
+		return pls;
+	}
+
+	@Override
+	public void delPLByPnoAndLid(PlannerLocationForm pl) {
+		mapDao.delPLByPnoAndLid(pl);
+	}
+}

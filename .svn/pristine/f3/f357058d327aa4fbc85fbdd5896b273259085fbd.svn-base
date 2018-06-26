@@ -1,0 +1,79 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<style>
+	.container {width: 60%;}
+	#top-title p, #top-title span {color: #666666;}
+	#top-table td {background-color: #cccccc; height: 60px; padding-top: 10px; border: 1px solid #ffffff;}
+	#top-table p {font-size: 12px; color: #ffffff;}
+	#top-table span {font-size: 20px; color: #ffffff;}
+	#top-table a:link {color: #ffffff; text-decoration: none;}
+	#top-table a:visited {color: #ffffff; text-decoration: none;}
+	#top-table a:hover {color: #ffffff; text-decoration: none;}
+	#top-table a:active {color: #ffffff; text-decoration: none;}
+	#top-table td:hover {background-color: #d2a679;}
+	#planner-setting {width: 70px; height: 40px; padding: 0px;}
+</style>
+<div class="container">
+	<div class="row" id="top-title">
+		<div class="row">
+			<span style="display: none" id="pno">${pno }</span>
+			<span id="plannerTitle" style="box-sizing: content-box; font-size: 25px; font-weight: bolder;"></span>
+			<img id="plannerUserProfile" width="30px;" height="30px;" style="border-radius: 50%;" class="pull-right"/><span id="plannerUser" class="pull-right"  style="font-size: 15px; font-weight: light;"></span>
+		</div>
+		<div class="row">
+			<span class="glyphicon glyphicon-calendar"></span>&nbsp;<span id="plannerStart"></span>&nbsp;&nbsp;
+			<span class="glyphicon glyphicon-user"></span> 2people&nbsp;&nbsp;
+			<span class="glyphicon glyphicon-heart-empty"></span> 1likes&nbsp;&nbsp;	
+			<span class="glyphicon glyphicon-comment"></span> 0comments&nbsp;&nbsp;
+			<ul class="nav navbar-nav pull-right">
+				<li class="dropdown">
+		    		<a class="dropdown-toggle" data-toggle="dropdown" href="#" id="planner-setting"><span class="glyphicon glyphicon-cog"></span> 설정<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+		          		<li><a href="#">루트수정</a></li>
+		          		<li><a href="#">제목수정</a></li>
+		          		<li><a href="#">플래너삭제</a></li>
+		      		</ul>
+		     	</li>		
+			</ul>			
+		</div>
+	</div>
+	<table class="text-center" id="top-table" width="100%" style="margin-top: -20px;">
+		<colgroup>
+			<col width="12%;">
+			<col width="13%;">
+			<col width="13%;">
+			<col width="13%;">
+			<col width="13%;">
+			<col width="13%;">
+			<col width="13%;">
+		</colgroup>
+		<tr>
+			<td><a href="#"><span class="glyphicon glyphicon-home" ></span><p>HOME</p></a></td>
+			<td><a href="#"><span class="glyphicon glyphicon-map-marker"></span><p>지도</p></a></td>
+			<td><a href="/schedule/calendar.do?pno=${param.pno }"><span class="glyphicon glyphicon-calendar"></span><p>일정</p></a></td>
+			<td><a href="#"><span class="glyphicon glyphicon-piggy-bank"></span><p>가계부</p></a></td>
+			<td><a href="#"><span class="glyphicon glyphicon-picture"></span><p>앨범</p></a></td>
+			<td><a href="#"><span class="glyphicon glyphicon-cloud"></span><p>날씨</p></a></td>
+			<td><a href="#"><span class="glyphicon glyphicon-comment"></span><p>댓글</p></a></td>
+		</tr>
+	</table>
+</div>	
+<script>
+$(function() {
+	var pno = $('#pno').text();
+	$.ajax({
+		type: 'GET',
+		url: '/planner.do',
+		data: {pno: pno},
+		dataType: 'json',
+		success: function(result) {
+			var planner = result.planner;
+			var user = result.user;
+			var likes = result.likes;
+			var reply = result.reply;
+			
+		}
+		
+	});
+});
+</script>

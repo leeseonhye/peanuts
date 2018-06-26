@@ -1,0 +1,185 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>ddangkong planer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+  <style type="text/css">
+  	th { text-align: center;}
+  </style>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%; margin-top: 20px;">
+	<div class="col-sm-8">
+		<div class="jumbotron" style="height: 150px; padding: 10px;">
+			<h5><img src="../resources/images/logo/peanutbw.png" style="width: 20px; height: 20px;">
+				 땅콩플래너 광장은 여행의 정보와 이야기를 자유롭게 공유하는 공간입니다.</h5>
+			<h5><img src="../resources/images/logo/peanutbw.png" style="width: 20px; height: 20px;">
+				 게시글 작성은 로그인한 회원만 작성 가능합니다.</h5>
+			<h5><img src="../resources/images/logo/peanutbw.png" style="width: 20px; height: 20px;">
+				 여행 고수인 왕땅콩님들에게 여행의 도움을 받아보세요.</h5>
+			<h5><img src="../resources/images/logo/peanutbw.png" style="width: 20px; height: 20px;">
+				 마음에 드는 글에는  <span class="glyphicon glyphicon-thumbs-up"></span> (추천)을 할 수 있습니다.</h5>
+		</div>
+		<div class="row">
+			<c:choose>
+				<c:when test="${empty LOGIN_USER }">
+				</c:when>
+				<c:otherwise>
+					<form action="addplaza.do" class="form-inline" method="post">
+						<input type="hidden" name="id" value="${LOGIN_USER.id }"/>
+						<div class="form-group">											
+							<img width="70px;" src="../resources/images/profile/${LOGIN_USER.profile }">						
+						</div>
+						<div class="form-group">
+							<textarea id="" name="content" style="width: 580px;" rows="4"></textarea>
+						</div>
+						<button class="btn btn-default btn-sm" style="margin-top: 50px;">등록</button>
+					</form>
+				</c:otherwise>
+			</c:choose>
+			<div class="row pull-right" style="margin-right: 30px;">
+			<form action="" method="post">
+				<input type="text" style="width: 200px; height: 25px;" />
+				<button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-search"></span></button>
+			</form>
+		</div>
+		</div>
+		<div class="row" id="plaza">			
+		</div>
+	</div>
+	<div class="col-sm-4">
+			<h4 id="bestplaza" style="margin-top: 20px;"><strong>광장 인기 게시글</strong></h4>			
+			<hr />
+			<h4 id="newplaza" style="margin-top: 30px;"><strong>최근 등록 글</strong></h4>
+	</div>
+</div>
+
+</body>
+<script type="text/javascript">
+$(function(){
+	if ('${param.like}' == 'cancel'){
+		alert('좋아요 취소');
+	}
+
+	$.ajax({
+		type: 'GET',
+		url: '/board/allplaza.do',
+		dataType: 'json',
+		success: function(result){
+			
+			//최신글 top5
+			var newp = result.newRe;
+			$.each(newp, function(n, items){
+				var row = "";
+				row += '<div class="row" style="margin: 10px;"><div class="col-sm-2">';
+				row += '<img width="40px;" height="40px;" src="../resources/images/profile/'+items.profile+'"></div>';
+				row += '<div class="col-sm-10" style="font-size: 13px;">';
+				row += '<a href="#"><strong>'+items.userId+'</strong> '+items.contents+'</a><span>13시간전</span>';
+				row += '</div></div>';
+				
+				$('#newplaza').append(row);	
+			}); 
+			//인기글 top5
+			var best = result.best;
+			$.each(best, function(j, items){
+				var row = "";
+				row += '<div class="row" style="margin: 10px;"><div class="col-sm-2">';
+				row += '<img width="40px;" height="40px;" src="../resources/images/profile/'+items.profile+'"></div>';
+				row += '<div class="col-sm-10" style="font-size: 13px;">';
+				row += '<strong>'+items.id+'</strong><span class="badge">'+items.likes+'</span> <a href="#">'+items.content+'</a><span>13시간전</span>';
+				row += '</div>'; 
+				
+				$('#bestplaza').append(row);
+			});
+			//게시판 전체글
+			var list = result.list;
+			$.each(list, function(i, item){
+				var row = "";
+				row += '<div class="col-sm-2">';
+				row += '<img width="50px;" height="50px;" src="../resources/images/profile/'+item.profile+'"></div>';
+				row += '<div class="col-sm-9">';
+				row += '<div class="row">';
+				row += '<span id="userId"><strong style="font-size: 17px; color: #0066ff;">'+item.id+'</strong></span>';
+				row += ' <a href="addlike.do?no='+item.no+'" class="btn btn-default btn-xs" type="button">';
+				row += '<span class="glyphicon glyphicon-thumbs-up"></span></a><span class="badge">'+item.likes+'</span>'; //좋아요 개수
+				row += '<a href="listdel.do?no='+item.no+'" class="btn btn-default btn-xs pull-right" id="listdel-'+item.no+'">삭제</a>';
+				row += '<button class="btn btn-default btn-xs pull-right" id="listmodi-'+item.no+'">수정</button></div>';
+				row += '<div class="row" id="modidiv-"'+item.no+'>';
+				row += '<h5 id="replylist-'+item.no+'">'+item.content+'<span style="color: gray;">..3시간전</span></h5>';			
+				row += '<form id="modiform-'+item.no+'" class="form-group" action="listModi.do?no='+item.no+'" method="post" style="margin-top: 3px;">';
+				row += '<textarea  name="content" style="width: 500px;" rows="3">'+item.content+'</textarea>';
+				row += '<button class="btn btn-default btn-xs" style="margin-left: 5px;">저장</button></form>';
+				row += '<form class="form-group" action="addRe.do" method="post" style="margin-top: 10px;">'
+				row += '<input type="hidden" name="boardNo" value="'+item.no+'" />';
+				row += '<input type="text" name="contents" style="width: 530px; height: 28px;" placeholder="Write a Comment.." /></form>';
+				row += '</div></div>'
+				$('#plaza').append(row);
+				$('[id^="modiform-"]').hide();
+				
+				if ('${LOGIN_USER.id}' != item.id){
+					$('#listdel-'+item.no).hide();
+					$('#listmodi-'+item.no).hide();
+				} else{
+					$('a[href="addlike.do?no='+item.no+'"]').click(function(){
+						alert('본인이 작성한 글에는 추천을 할 수 없습니다.');
+						return false;
+					});
+				}
+
+				$.ajax({	
+					type: 'GET',
+					url: '/board/reply.do',
+					data: {no:item.no },
+					dataType: 'json',
+					success: function(re){
+							$.each(re, function(i, item){
+								var rows = '';
+								rows += '<div id="reply" class="row" style="margin-top: 10px; margin-left: 10px;">';
+								rows += '<img width="35px;" height="35px;" src="../resources/images/profile/'+item.profile+'">';
+								rows += '<span style="font-size: 14px; color: #0066ff;"> '+item.userId+'</span>';
+								rows += '<span id="relist-'+item.repNo+'" style="font-size: 13px;"> '+item.contents;
+								rows += '<span style="color: gray; font-size: 12px;">..3시간전</span></span>';
+								rows += '<button class="btn btn-default btn-xs" id ="remodib-'+item.repNo+'"><span class="glyphicon glyphicon-pencil"></span></button>';
+								rows += ' <a href="redel.do?reno='+item.repNo+'" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-remove"></span></a>';
+								rows += '<form id="remodiform-'+item.repNo+'" class="form-group" action="reModi.do?reno='+item.repNo+'" method="post" style="margin-left: 40px;">'
+								rows += '<input type="hidden" name="boardNo" value="" />';
+								rows += '<input type="text" name="contents" style="width: 480px; height: 28px;" value="'+item.contents+'"></input></form>';
+								rows += '</div>';						
+								$('#modiform-' + item.boardNo).after(rows);
+								$('[id^="remodiform-"]').hide();
+								
+								$('button[id^="remodib-'+item.repNo+'"]').click(function(){
+									var reno = $(this).attr('id').replace('remodib-','');
+									
+									$('[id^="remodib-"]').hide();
+									$('#relist-'+reno).hide();
+									$('#remodiform-'+reno).show();
+								});
+								if ('${LOGIN_USER.id}' != item.userId){
+									$('#remodib-'+item.repNo).hide();
+									$('a[href^="redel.do?reno='+item.repNo+'"]').hide();
+								}
+							})	
+					}
+				});
+			})
+			//게시글 수정
+			$('button[id^="listmodi-"]').click(function(){
+				var no = $(this).attr('id').replace('listmodi-','');
+				$('#replylist-'+no).hide();
+				$('[id^="listmodi-"]').hide();
+				$('#modiform-'+no).show();
+			});			
+		}
+	});
+});
+</script>
+</html>

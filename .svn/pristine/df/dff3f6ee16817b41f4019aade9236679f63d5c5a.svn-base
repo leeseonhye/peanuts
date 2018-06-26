@@ -1,0 +1,60 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>admin :: qnaDetail</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+	th {
+		background-color: #dcdcdc;
+	}
+</style>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%; min-height: 740px;">
+	<h1>
+		게시글 상세내용
+		<a href="qnaList.do" class="btn btn-default btn-sm pull-right">이전 페이지로</a>
+	</h1>
+
+	<table class="table">
+		<colgroup>
+			<col width="10%">
+			<col width="20%">
+			<col width="10%">
+			<col width="20%">
+			<col width="10%">
+			<col width="20%">
+		</colgroup>
+	
+		<tr>
+			<th>제목</th>
+			<td colspan="5">테스트</td>
+		</tr>
+		<tr>
+			<th>작성자</th>
+			<td>홍길동</td>
+			<th>작성일</th>
+			<td>2018-05-29</td>
+			<th>view</th>
+			<td>54</td>
+		</tr>
+		<tr>
+			<th colspan="6">내용</th>
+		</tr>
+		<tr>
+			<td colspan="6">테스트 내용입니다</td>
+		</tr>
+	</table>
+	
+	
+</div>
+<jsp:include page="../include/footer.jsp" />
+</body>
+</html>

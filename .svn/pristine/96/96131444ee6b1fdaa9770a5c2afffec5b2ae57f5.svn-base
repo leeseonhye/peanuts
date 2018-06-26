@@ -1,0 +1,80 @@
+package kr.co.hta.peanuts.vo;
+
+import java.util.Date;
+
+public class AdvertisingBoard {
+
+	private String no;
+	private String title;
+	private String id;
+	private char noPwd;
+	private String status;
+	private String image;
+	private Date startDate;
+	private char term;
+	private char type;
+	private Date cretatDate;
+	
+	public String getNo() {
+		return no;
+	}
+	public void setNo(String no) {
+		this.no = no;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public char getNoPwd() {
+		return noPwd;
+	}
+	public void setNoPwd(char noPwd) {
+		this.noPwd = noPwd;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
+	public Date getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	public char getTerm() {
+		return term;
+	}
+	public void setTerm(char term) {
+		this.term = term;
+	}
+	public char getType() {
+		return type;
+	}
+	public void setType(char type) {
+		this.type = type;
+	}
+	public Date getCretatDate() {
+		return cretatDate;
+	}
+	public void setCretatDate(Date cretatDate) {
+		this.cretatDate = cretatDate;
+	}
+	
+	
+}

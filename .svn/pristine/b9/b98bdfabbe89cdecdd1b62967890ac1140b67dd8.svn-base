@@ -1,0 +1,11 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.AdvertisingBoard;
+
+public interface AdvertisingBoardDao {
+
+	void addAdvertisingBoard(AdvertisingBoard advertisingBoard);
+	List<AdvertisingBoard> getAllMyAdvertising();
+}

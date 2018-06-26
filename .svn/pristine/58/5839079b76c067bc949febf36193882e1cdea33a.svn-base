@@ -1,0 +1,72 @@
+package kr.co.hta.peanuts.web.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.co.hta.peanuts.service.AdminService;
+import kr.co.hta.peanuts.vo.OrderBy;
+
+@Controller
+@RequestMapping("/admin")
+public class AdminController {
+
+	@Autowired
+	private AdminService adminService;
+	
+	// admin main 페이지로 이동
+	@RequestMapping("/main.do")
+	public String main() {
+		return "admin/main.jsp";
+	}
+	
+	// 회원관리 페이지로 이동
+	@RequestMapping("/userList.do")
+	public String userManag() {
+		// 회원 목록 출력하면서 넘어가기
+		//OrderBy o = new OrderBy();
+		
+		// 정렬 어떻게 할지 여기서 거르기??
+		// 어떻게 하지요?
+		
+		//adminService.getAllReply(o);
+		//adminService.getAllUser(o);
+		return "admin/userList.jsp";
+	}
+	
+	// 신고댓글관리 페이지로 이동
+	@RequestMapping("/repoList.do")
+	public String repoList() {
+		// 신고댓글들 출력하면서 넘어가기
+		//OrderBy o = new OrderBy();
+		//adminService.getAllReply(o);
+		return "admin/repoList.jsp";
+	}
+	
+	// qna list 페이지로 이동
+	@RequestMapping("/qnaList.do")
+	public String qnaList() {
+		// 등록된 qna 출력하면서 넘어가기
+		//OrderBy o = new OrderBy();
+		//adminService.getAllQna(o);
+		return "admin/qnaList.jsp";
+	}
+	
+	// qna detail 페이지로 이동
+	@RequestMapping("/qnaDetail.do")
+	public String qnaDetail() {
+		return "admin/qnaDetail.jsp";
+	}
+	
+	// qnd form 페이지로 이동
+	@RequestMapping("/qnaForm.do")
+	public String qnaForm() {
+		return "admin/qnaForm.jsp";
+	}
+	
+	// 새 qna 등록
+	@RequestMapping("/addNewQna.do")
+	public String addNewQna() {
+		return "redirect:/qnaList.do";
+	}
+}

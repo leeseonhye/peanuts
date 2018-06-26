@@ -1,0 +1,69 @@
+package kr.co.hta.peanuts.vo;
+
+import java.util.Date;
+
+public class Ticket {
+
+	private int no;
+	private String name;
+	private int price;
+	private String Category;
+	private String images;
+	private Double discountRate;
+	private Date sellingStart;
+	private Date sellingEnd;
+	public int getNo() {
+		return no;
+	}
+	public void setNo(int no) {
+		this.no = no;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	public String getImages() {
+		return images;
+	}
+	public void setImages(String images) {
+		this.images = images;
+	}
+	public String getCategory() {
+		return Category;
+	}
+	public void setCategory(String category) {
+		Category = category;
+	}
+	public Double getDiscountRate() {
+		return discountRate;
+	}
+	public void setDiscountRate(Double discountRate) {
+		this.discountRate = discountRate;
+	}
+	public Date getSellingStart() {
+		return sellingStart;
+	}
+	public void setSellingStart(Date sellingStart) {
+		this.sellingStart = sellingStart;
+	}
+	public Date getSellingEnd() {
+		return sellingEnd;
+	}
+	public void setSellingEnd(Date sellingEnd) {
+		this.sellingEnd = sellingEnd;
+	}
+	@Override
+	public String toString() {
+		return "Ticket [no=" + no + ", name=" + name + ", price=" + price + ", Category=" + Category + ", images="
+				+ images + ", discountRate=" + discountRate + ", sellingStart=" + sellingStart + ", sellingEnd="
+				+ sellingEnd + "]";
+	}
+}

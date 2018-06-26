@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hta.peanuts.dao.PlazaDao">
+	
+	<!-- 광장게시판 게시글 등록 -->
+	<insert id="addPlaza" parameterType="string">
+		INSERT INTO BOARD
+			(board_no, user_id, board_category, board_contents)
+		VALUES
+			(board_seq.nextval, #{id}, 'ALL', #{content})
+	</insert>
+	
+	<!-- 광장게시판 모든 글 보기 -->
+	<select id="getAllPlaza" resultType="Plaza">
+		SELECT	U.USER_ID as id,
+				U.USER_PROFILE as profile, 
+				B.BOARD_NO as no, 
+				B.BOARD_CONTENTS as content, 
+				B.CREATE_DATE as createDate, 
+				L.CNT as likes
+		FROM BOARD B, PLANNER_USER U, (SELECT NO, COUNT(NO) AS CNT
+										FROM LIKES
+										WHERE LIKES_CATEGORY = 'ALL'
+										GROUP BY NO) L
+		WHERE B.USER_ID = U.USER_ID
+		AND B.BOARD_NO = L.NO(+)
+		AND B.BOARD_CATEGORY = 'ALL'
+		ORDER BY B.CREATE_DATE DESC
+	</select>
+	
+	<!-- 광장게시판 좋아요 개수 불러오기 -->
+	<select id="allLikes" resultType="Likes">
+		select	no as no,
+			 	user_id as userId, 
+			 	create_date createDate
+		from LIKES
+		where likes_category = 'ALL'
+	</select>
+	
+	<!-- 댓글 조회 -->
+	<select id="getReplyByNo" parameterType="int" resultType="Reply">
+		SELECT 	NO as boardNo, 
+				REP_NO as repNo, 
+				REP_CATEGORY as category, 
+				USER_ID as userId, 
+				REP_CONTENTS as contents, 
+				REP_STATUS as status, 
+				CREATE_DATE as createDate
+		FROM REPLY
+		WHERE NO = #{value}
+		order by create_date desc
+	</select>
+	
+</mapper>

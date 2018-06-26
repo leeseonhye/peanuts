@@ -1,0 +1,35 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.dao.TicketDao;
+import kr.co.hta.peanuts.vo.Ticket;
+
+@Service
+public class TicketServiceImpl implements TicketService {
+	
+	@Autowired
+	TicketDao ticketDao;
+	
+	@Override
+	public List<Ticket> getTicketList() {
+		List<Ticket> tickets = ticketDao.getAllTicket();
+		return tickets;
+	}
+	
+	@Override
+	public HashMap<String, Object> detail(int ticketNo) {
+		Ticket ticketInfo = ticketDao.getTicketByNo(ticketNo);
+		List<String> ticketImages = ticketDao.getTicketImageByNo(ticketNo);
+		
+		HashMap<String, Object> ticket = new HashMap<>();
+		ticket.put("info", ticketInfo);
+		ticket.put("images", ticketImages);
+		return ticket;
+	}
+
+}

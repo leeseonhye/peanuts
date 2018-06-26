@@ -1,0 +1,11 @@
+package kr.co.hta.peanuts.dao;
+
+import kr.co.hta.peanuts.vo.User;
+
+public interface UserDao {
+
+	void addUser(User user);
+	User getUserDetail(String id);
+	//사용자 사진 변경
+	void imgModify(User user);
+}

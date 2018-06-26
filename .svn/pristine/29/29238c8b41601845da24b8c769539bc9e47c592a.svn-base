@@ -1,0 +1,18 @@
+package kr.co.hta.peanuts.dao;
+
+import java.util.List;
+
+import kr.co.hta.peanuts.vo.Reply;
+
+public interface ReplyDao {
+
+	//List<Reply> getReplyByUserId(String userId);
+	//List<Reply> getSearchReplyByNo(int repNo); 
+	//List<Reply> getPlanerReply();
+	
+	// 조회
+	List<Reply> getAllSearchReplyByNo(int plannerNo);
+	// 댓글 등록
+	void addReply(Reply reply);
+	
+}

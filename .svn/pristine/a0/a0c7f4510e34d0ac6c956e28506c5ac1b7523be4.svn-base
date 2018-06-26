@@ -1,0 +1,18 @@
+package kr.co.hta.peanuts.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import kr.co.hta.peanuts.vo.Reply;
+
+@Service
+public interface ReplyService {
+
+	// 내 댓글 조회.. 안씀......
+	//List<Reply> getReplyByUserId(String userId);
+	//List<Reply> getPlanerReply();
+	
+	List<Reply> getAllSearchReplyByNo(int plannerNo);
+	void addReply(Reply reply);
+}

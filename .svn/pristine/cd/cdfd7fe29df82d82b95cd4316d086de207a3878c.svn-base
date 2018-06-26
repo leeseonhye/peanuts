@@ -1,0 +1,89 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>댓글페이지</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+$(function() {
+	$('#commentRe').click(function(event){
+	
+		var userId = $('#rep_userId').val();
+		var boardNo = $('#rep_boardNo').val();
+		var category = $('#rep_category').val();
+		var contents = $('#rep_contents').val();
+		var date = $('#rep_date').val();	
+	}); 
+})
+</script>
+<style type="text/css">
+</style>
+</head>
+<body>
+<jsp:include page="../include/header.jsp" />
+<div class="container" style="width: 60%;">
+	<div class="row">
+		<div class="col-sm-2">
+		</div>
+		<div class="col-sm-8">
+			<c:forEach var="item" items="${replys }">
+			<div class="row" style="border-top: 1px solid #ccc; padding: 2px; margin: 5px 2px;">
+				<div class="col-sm-2"> 
+					<div class="form-group">											
+						<img width="75px;" src="../resources/images/profile/${item.profile }">						
+					</div>
+				</div>
+				<div class="col-sm-10">
+					<div id="rep_userId">
+						<span><strong>${item.userId }</strong></span>
+					</div>
+					<div id="rep_contents">
+						<span>${item.contents }</span>
+					</div> 
+					<div id="rep_date">
+						<fmt:formatDate value="${item.createDate }"/> 
+					</div>
+					<form action="/reply/addReply.do" class="form-inline form-group" style="" method="post">
+						<input type="hidden" name="boardNo" value="${param.pno }" />
+						<input type="hidden" name="category" value="PLANNER" />
+						<input type="hidden" name="status" value="PLANNER" />
+						<div class="form-group">
+							<textarea id="" name="contents" style="width: 500px;" rows="2"></textarea>
+							<button id="commentRe" class="btn btn-default btn-sm pull-right" style="">등록</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			</c:forEach>
+		</div>
+		<div class="col-sm-2">
+		</div>
+	</div>
+</div>
+<jsp:include page="../include/footer.jsp" />
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
